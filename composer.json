@@ -1,0 +1,17 @@
+{
+    "name": "gingerframework/app-core",
+    "description": "Application Core for Ginger WfMS",
+    "license": "BSD-3-Clause",
+    "keywords": [
+        "gingerframework",
+        "zf2"
+    ],
+    "homepage": "https://github.com/gingerframework",
+    "require": {
+        "php": ">=5.4.8",
+        "zendframework/zendframework": "~2.3",
+        "gingerframework/gingerframework" : "dev-master",
+        "prooph/prooph-service-bus-module": "~1.0",
+        "prooph/prooph-event-store-module": "~1.0"
+    }
+}

@@ -1,0 +1,29 @@
+body {
+    padding-top: 60px;
+    padding-bottom: 40px;
+}
+
+.ginger-color {color: #269abc }
+
+.btn-success {
+  background-color: #269abc;
+  background-image: -moz-linear-gradient(top, #269abc, #245269);
+  background-image: -ms-linear-gradient(top, #269abc, #245269);
+  background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#269abc), to(#245269));
+  background-image: -webkit-linear-gradient(top, #269abc, #245269);
+  background-image: -o-linear-gradient(top, #269abc, #245269);
+  background-image: linear-gradient(top, #269abc, #245269);
+  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#269abc', endColorstr='#245269', GradientType=0);
+}
+
+.btn-success:hover,
+.btn-success:active,
+.btn-success.active,
+.btn-success.disabled,
+.btn-success[disabled] {
+  background-color: #245269;
+}
+
+.btn-success:active, .btn-success.active {
+  background-color: #245269;
+}
