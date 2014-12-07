@@ -10,6 +10,7 @@
  */
 
 namespace SystemConfig\Projection;
+use Codeliner\ArrayReader\ArrayReader;
 
 /**
  * Class GingerConfig
@@ -17,11 +18,32 @@ namespace SystemConfig\Projection;
  * @package ProcessConfig\Projection
  * @author Alexander Miertsch <kontakt@codeliner.ws>
  */
-class GingerConfig 
+final class GingerConfig
 {
+    /**
+     * @var ArrayReader
+     */
+    private $config;
+
+    public function __construct(array $gingerConfig = null)
+    {
+        $this->config = new ArrayReader($gingerConfig);
+    }
+
+    /**
+     * @return bool
+     */
     public function isConfigured()
     {
-        return false;
+        return ! is_null($this->config);
+    }
+
+    /**
+     * @return string
+     */
+    public function getNodeName()
+    {
+        return $this->config->stringValue('node_name');
     }
 }
  

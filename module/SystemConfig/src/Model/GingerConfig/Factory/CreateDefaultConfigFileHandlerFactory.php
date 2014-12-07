@@ -6,33 +6,33 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  * 
- * Date: 07.12.14 - 00:18
+ * Date: 07.12.14 - 21:36
  */
 
-namespace SystemConfig\Controller\Factory;
+namespace SystemConfig\Model\GingerConfig\Factory;
 
-use SystemConfig\Controller\DashboardWidgetController;
-use SystemConfig\Projection\GingerConfig;
+use SystemConfig\Model\ConfigWriter\ZendPhpArrayWriter;
+use SystemConfig\Model\GingerConfig\CreateDefaultConfigFileHandler;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
 /**
- * Class DashboardWidgetControllerFactory
+ * Class CreateDefaultConfigFileHandlerFactory
  *
- * @package ProcessConfig\Controller\Factory
+ * @package SystemConfig\Model\GingerConfig\Factory
  * @author Alexander Miertsch <kontakt@codeliner.ws>
  */
-class DashboardWidgetControllerFactory implements  FactoryInterface
+final class CreateDefaultConfigFileHandlerFactory implements FactoryInterface
 {
     /**
      * Create service
      *
      * @param ServiceLocatorInterface $serviceLocator
-     * @return mixed
+     * @return CreateDefaultConfigFileHandler
      */
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
-        return new DashboardWidgetController($serviceLocator->getServiceLocator()->get('ginger_config_projection'));
+        return new CreateDefaultConfigFileHandler(new ZendPhpArrayWriter());
     }
 }
  

@@ -13,5 +13,6 @@
         "gingerframework/gingerframework" : "dev-master",
         "prooph/prooph-service-bus-module": "~1.0",
         "prooph/prooph-event-store-module": "~1.0"
-    }
+    },
+    "bin-dir" : "./bin"
 }

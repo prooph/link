@@ -6,23 +6,22 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  * 
- * Date: 07.12.14 - 00:18
+ * Date: 07.12.14 - 20:38
  */
 
-namespace SystemConfig\Controller\Factory;
+namespace SystemConfig\Projection\Factory;
 
-use SystemConfig\Controller\DashboardWidgetController;
 use SystemConfig\Projection\GingerConfig;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
 /**
- * Class DashboardWidgetControllerFactory
+ * Class GingerConfigFactory
  *
- * @package ProcessConfig\Controller\Factory
+ * @package SystemConfig\Projection\Factory
  * @author Alexander Miertsch <kontakt@codeliner.ws>
  */
-class DashboardWidgetControllerFactory implements  FactoryInterface
+class GingerConfigFactory implements FactoryInterface
 {
     /**
      * Create service
@@ -32,7 +31,11 @@ class DashboardWidgetControllerFactory implements  FactoryInterface
      */
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
-        return new DashboardWidgetController($serviceLocator->getServiceLocator()->get('ginger_config_projection'));
+        $config = $serviceLocator->get('config');
+
+        $gingerConfig = (isset($config['ginger']))? $config['ginger'] : null;
+
+        return new GingerConfig($gingerConfig);
     }
 }
  

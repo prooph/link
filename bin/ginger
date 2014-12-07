@@ -1,0 +1,67 @@
+#!/usr/bin/env php
+<?php
+/*
+ * This file is part of the Ginger Workflow Framework.
+ * (c) Alexander Miertsch <contact@prooph.de>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ *
+ * Date: 16.11.14 - 23:00
+ */
+
+$tryPaths = ['/../vendor/autoload.php', '/../../../../vendor/autoload.php', '/../../vendor/autoload.php'];
+
+foreach ($tryPaths as $path) {
+    if (file_exists(__DIR__ . $path)) {
+        require_once __DIR__ . $path;
+        break;
+    }
+}
+
+
+
+define("VERSION", "1.0.0");
+
+$standardArgs = [
+    '--config-file' => 'Alternative path to config file',
+    '--config' => 'Additional json encoded configuration string',
+    '--quit'   => 'No verbosity',
+    '--verbose' => 'Increase verbosity',
+];
+
+$standardRouteArgs = '[--config-file=] [--config=] [--verbose|-v]:verbose [--quit|-q]:quit';
+
+$routeConfig = [
+    [
+        'name' => 'receive',
+        'route' => '<message> <target> ' . $standardRouteArgs,
+        'description' => 'Bootstrap a Ginger Environment and receive a json encoded service bus message and forward it to a target. By default the script is looking for a ginger.config.php(.dist) file in the current directory.',
+        'short_description' => 'Receive a service bus message',
+        'options_descriptions' => array_merge([
+            '<message>' => 'Json encoded message string',
+            '<target>'  => 'Target for the message',
+        ], $standardArgs)
+    ],
+    [
+        'name' => 'collect',
+        'route' => '<type> ' . $standardRouteArgs,
+        'description' => 'Start a workflow with a collect ginger type task. By default the script is looking for a ginger.config.php(.dist) file in the current directory.',
+        'short_description' => 'Start workflow by collecting ginger type',
+        'options_descriptions' => array_merge([
+            '<type>' => 'Class of Ginger\Type',
+        ], $standardArgs)
+    ],
+];
+
+$dispatcher = new \ZF\Console\Dispatcher();
+
+$dispatcher->map('receive', new \Ginger\Console\ReceiveCommand());
+
+$dispatcher->map('collect', new \Ginger\Console\CollectCommand());
+
+$app = new \ZF\Console\Application('GingerNode', VERSION, $routeConfig, \Zend\Console\Console::getInstance(), $dispatcher);
+
+$exit = $app->run();
+
+exit($exit);

@@ -1,4 +1,6 @@
 <?php if (! $this->ginger_is_configured) : ?>
-    <p class="text-center"><span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span>&nbsp;<span class="alert-warning"><?php echo $this->translate('Ginger runs currently in default mode') ?>!</span></p>
-    <p class="text-center"><a href="#" class="btn btn-success"><?php echo $this->translate('Set up the system') ?></a></p>
+    <div class="alert alert-warning">
+        <span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span>&nbsp;<?php echo $this->translate('Ginger runs currently in default mode') ?>!
+    </div>
+    <p class="text-center"><a href="<?php echo $this->url('system_config') ?>" class="btn btn-success"><?php echo $this->translate('Set up the system') ?></a></p>
 <?php endif; ?>

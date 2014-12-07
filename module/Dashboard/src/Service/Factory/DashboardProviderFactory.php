@@ -11,6 +11,7 @@
 
 namespace Dashboard\Service\Factory;
 
+use Assert\Assertion;
 use Dashboard\Service\DashboardProvider;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
@@ -21,6 +22,7 @@ class DashboardProviderFactory implements FactoryInterface
      * Create service
      *
      * @param ServiceLocatorInterface $serviceLocator
+     * @throws \RuntimeException
      * @return DashboardProvider
      */
     public function createService(ServiceLocatorInterface $serviceLocator)
@@ -31,8 +33,21 @@ class DashboardProviderFactory implements FactoryInterface
 
         $controllers = [];
 
-        foreach ($config['dashboard'] as $widgetControllerAlias) {
-            $controllers[] = $controllerLoader->get($widgetControllerAlias);
+        $sortArr = [];
+
+        foreach ($config['dashboard'] as $widgetName => $widgetConfig) {
+
+            if (! array_key_exists('controller', $widgetConfig)) {
+                throw new \RuntimeException('controller key missing in widget config: ' . $widgetName);
+            }
+
+            $sortArr[$widgetName] = (isset($widgetConfig['order']))? (int)$widgetConfig['order'] : 0;
+        }
+
+        asort($sortArr);
+
+        foreach ($sortArr as $widgetName => $order) {
+            $controllers[] = $controllerLoader->get($config['dashboard'][$widgetName]['controller']);
         }
 
         return new DashboardProvider($controllers);

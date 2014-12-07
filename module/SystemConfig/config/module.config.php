@@ -10,16 +10,60 @@
  */
 return array(
     'dashboard' => [
-        'SystemConfig\Controller\DashboardWidget'
+        'system_config_widget' => [
+            'controller' => 'SystemConfig\Controller\DashboardWidget',
+            'order' => 11 //10 - 20 config order range
+        ]
+    ],
+    'router' => [
+        'routes' => [
+            'system_config' => [
+                'type' => 'Zend\Mvc\Router\Http\Literal',
+                'options' => [
+                    'route' => '/system-config',
+                    'defaults' => array(
+                        'controller' => 'SystemConfig\Controller\Overview',
+                        'action'     => 'show',
+                    ),
+                ],
+                'may_terminate' => true,
+                'child_routes' => [
+                    'ginger_set_up' => [
+                        'type' => 'Literal',
+                        'options' => [
+                            'route' => '/ginger-set-up',
+                            'defaults' => [
+                                'controller' => 'SystemConfig\Controller\GingerSetUp',
+                                'action' => 'start'
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        ]
     ],
     'view_manager' => array(
         'template_path_stack' => array(
             __DIR__ . '/../view',
         ),
     ),
+    'service_manager' => [
+        'factories' => [
+            'ginger_config_projection' => 'SystemConfig\Projection\Factory\GingerConfigFactory',
+            'SystemConfig\Model\GingerConfig\CreateDefaultConfigFileHandler' => 'SystemConfig\Model\GingerConfig\Factory\CreateDefaultConfigFileHandlerFactory'
+
+        ]
+    ],
     'controllers' => array(
         'factories' => array(
-            'SystemConfig\Controller\DashboardWidget' => 'SystemConfig\Controller\Factory\DashboardWidgetControllerFactory'
+            'SystemConfig\Controller\DashboardWidget' => 'SystemConfig\Controller\Factory\DashboardWidgetControllerFactory',
+            'SystemConfig\Controller\Overview'        => 'SystemConfig\Controller\Factory\OverviewControllerFactory',
+            'SystemConfig\Controller\GingerSetUp'     => 'SystemConfig\Controller\Factory\GingerSetUpControllerFactory'
         ),
     ),
+    'prooph.psb' => [
+        'command_router_map' => [
+            'SystemConfig\Command\CreateDefaultGingerConfigFile' => 'SystemConfig\Model\GingerConfig\CreateDefaultConfigFileHandler'
+        ]
+    ],
 );

@@ -6,33 +6,32 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  * 
- * Date: 07.12.14 - 00:18
+ * Date: 07.12.14 - 20:29
  */
 
 namespace SystemConfig\Controller\Factory;
 
-use SystemConfig\Controller\DashboardWidgetController;
-use SystemConfig\Projection\GingerConfig;
+use SystemConfig\Controller\OverviewController;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
 /**
- * Class DashboardWidgetControllerFactory
+ * Class OverviewControllerFactory
  *
- * @package ProcessConfig\Controller\Factory
+ * @package SystemConfig\Controller\Factory
  * @author Alexander Miertsch <kontakt@codeliner.ws>
  */
-class DashboardWidgetControllerFactory implements  FactoryInterface
+class OverviewControllerFactory implements FactoryInterface
 {
     /**
      * Create service
      *
      * @param ServiceLocatorInterface $serviceLocator
-     * @return mixed
+     * @return OverviewController
      */
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
-        return new DashboardWidgetController($serviceLocator->getServiceLocator()->get('ginger_config_projection'));
+        return new OverviewController($serviceLocator->getServiceLocator()->get('ginger_config_projection'));
     }
 }
  

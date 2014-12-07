@@ -80,5 +80,12 @@ return array(
         ),
     ),
     // Placeholder for AbstractWidgetControllers
-    'dashboard' => [],
+    'dashboard' => [
+        /*
+        'widget_name' => [
+            'controller' => 'controller_alias_loaded_via_controller_loader',
+            'order' => 1 //-> order by ASC
+        ]
+        */
+    ],
 );

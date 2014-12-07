@@ -10,7 +10,11 @@
  */
 return array(
     'dashboard' => [
-        'ProcessConfig\Controller\DashboardWidget'
+        'process_config_widget' => [
+            'controller' => 'ProcessConfig\Controller\DashboardWidget',
+            'order' => 10 //10 - 20 config order range
+        ]
+
     ],
     'view_manager' => array(
         'template_path_stack' => array(

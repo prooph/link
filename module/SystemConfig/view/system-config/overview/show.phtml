@@ -1,0 +1,39 @@
+<h1><?php echo $this->translate('System Configuration') ?></h1>
+<div class="row">
+    <?php if (!$this->config_dir_is_writable) : ?>
+        <div class="col-md-12">
+            <div class="alert alert-danger">
+                <span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span>&nbsp;<?php
+                echo sprintf($this->translate('The directory %s is not writable. Please make sure the webserver has write access!'), $this->config_dir)
+                ?>
+            </div>
+        </div>
+    <?php endif; ?>
+    <?php if (!$this->gingerConfig->isConfigured()) : ?>
+        <div class="col-md-12">
+            <div class="alert alert-warning">
+                <span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span>&nbsp;<?php echo sprintf(
+                    $this->translate('No configuration found for Ginger. Would you like to %screate one%s?'),
+                    '<a href="'.$this->url('system_config/ginger_set_up').'">', '</a>') ?>
+            </div>
+        </div>
+    <?php else : ?>
+        <div class="col-md-12">
+            <div class="row">
+                <div class="col-md-2">
+                    <p class="text-info">Ginger Node Name</p>
+                </div>
+                <div id="config-node-name" class="col-md-2"><?php echo $this->gingerConfig->getNodeName() ?></div>
+                <div class="col-md-2"><a id="btn-node-name" href="#"><span class="glyphicon glyphicon-edit"></a></button></div>
+            </div>
+        </div>
+    <?php endif; ?>
+</div>
+<script type="text/javascript">
+    $('#btn-node-name').click(function (e) {
+        e.preventDefault();
+
+        var nodeName = $('#config-node-name').html();
+
+    })
+</script>
