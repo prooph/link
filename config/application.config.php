@@ -3,9 +3,10 @@ return array(
     // This should be an array of module namespaces used in the application.
     'modules' => array(
         'ProophServiceBusModule',
-        'Dashboard',
         'SystemConfig',
         'ProcessConfig',
+        'Application',
+        'Dashboard',
     ),
 
     // These are various options for the listeners attached to the ModuleManager

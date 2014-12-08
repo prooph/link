@@ -5,6 +5,8 @@ body {
 
 .ginger-color {color: #269abc }
 
+.text-btn-align {padding: 6px; vertical-align: middle;}
+
 .btn-success {
   background-color: #269abc;
   background-image: -moz-linear-gradient(top, #269abc, #245269);
