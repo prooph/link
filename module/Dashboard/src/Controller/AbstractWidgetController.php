@@ -11,8 +11,8 @@
 
 namespace Dashboard\Controller;
 
+use Application\Service\AbstractQueryController;
 use Dashboard\View\DashboardWidget;
-use Zend\Mvc\Controller\AbstractActionController;
 
 /**
  * Class AbstractWidgetController
@@ -20,7 +20,7 @@ use Zend\Mvc\Controller\AbstractActionController;
  * @package Dashboard\Controller
  * @author Alexander Miertsch <kontakt@codeliner.ws>
  */
-abstract class AbstractWidgetController extends AbstractActionController
+abstract class AbstractWidgetController extends AbstractQueryController
 {
     /**
      * @return DashboardWidget

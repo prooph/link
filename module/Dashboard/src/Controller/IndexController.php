@@ -11,13 +11,27 @@
 
 namespace Dashboard\Controller;
 
-use Zend\Mvc\Controller\AbstractActionController;
+use Application\Service\AbstractQueryController;
 use Zend\View\Model\ViewModel;
 
-class IndexController extends AbstractActionController
+/**
+ * Class IndexController
+ *
+ * This controller is the application entry point. In the associated view the DashboardViewHelper requests and
+ * renders all activated dashboard widgets.
+ *
+ *
+ * @package Dashboard\Controller
+ * @author Alexander Miertsch <alexander.miertsch.extern@sixt.com>
+ */
+class IndexController extends AbstractQueryController
 {
     public function indexAction()
     {
-        return new ViewModel();
+        $viewModel = new ViewModel();
+
+        $viewModel->setTemplate('dashboard/index/index');
+
+        return $viewModel;
     }
 }

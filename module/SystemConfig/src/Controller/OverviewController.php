@@ -11,9 +11,9 @@
 
 namespace SystemConfig\Controller;
 
+use Application\Service\AbstractQueryController;
 use SystemConfig\Definition;
 use SystemConfig\Projection\GingerConfig;
-use Zend\Mvc\Controller\AbstractActionController;
 use Zend\ServiceManager\ServiceManager;
 use Zend\View\Model\ViewModel;
 
@@ -23,7 +23,7 @@ use Zend\View\Model\ViewModel;
  * @package SystemConfig\Controller
  * @author Alexander Miertsch <kontakt@codeliner.ws>
  */
-class OverviewController extends AbstractActionController
+class OverviewController extends AbstractQueryController
 {
     /**
      * @var GingerConfig
