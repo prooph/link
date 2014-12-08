@@ -10,6 +10,8 @@
  */
 namespace Application;
 
+use Application\Service\ActionControllerInitializer;
+use Zend\Mvc\Controller\ControllerManager;
 use Zend\Mvc\ModuleRouteListener;
 use Zend\Mvc\MvcEvent;
 
@@ -20,6 +22,10 @@ class Module
         $eventManager        = $e->getApplication()->getEventManager();
         $moduleRouteListener = new ModuleRouteListener();
         $moduleRouteListener->attach($eventManager);
+
+        /** @var $sm ControllerManager */
+        $cm = $e->getApplication()->getServiceManager()->get('ControllerLoader');
+        $cm->addInitializer(new ActionControllerInitializer());
     }
 
     public function getConfig()

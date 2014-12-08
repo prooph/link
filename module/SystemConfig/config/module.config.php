@@ -55,10 +55,12 @@ return array(
         ]
     ],
     'controllers' => array(
+        'invokables' => array(
+            'SystemConfig\Controller\GingerSetUp'     => 'SystemConfig\Controller\GingerSetUpController'
+        ),
         'factories' => array(
             'SystemConfig\Controller\DashboardWidget' => 'SystemConfig\Controller\Factory\DashboardWidgetControllerFactory',
             'SystemConfig\Controller\Overview'        => 'SystemConfig\Controller\Factory\OverviewControllerFactory',
-            'SystemConfig\Controller\GingerSetUp'     => 'SystemConfig\Controller\Factory\GingerSetUpControllerFactory'
         ),
     ),
     'prooph.psb' => [

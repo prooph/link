@@ -11,10 +11,9 @@
 
 namespace SystemConfig\Controller;
 
-use Prooph\ServiceBus\CommandBus;
+use Application\Service\AbstractActionController;
 use SystemConfig\Command\CreateDefaultGingerConfigFile;
 use SystemConfig\Definition;
-use Zend\Mvc\Controller\AbstractActionController;
 
 /**
  * Class GingerSetUpController
@@ -24,16 +23,6 @@ use Zend\Mvc\Controller\AbstractActionController;
  */
 final class GingerSetUpController extends AbstractActionController
 {
-    /**
-     * @var CommandBus
-     */
-    private $commandBus;
-
-    public function __construct(CommandBus $commandBus)
-    {
-        $this->commandBus = $commandBus;
-    }
-
     /**
      * Starts the initial set up of the Ginger system
      */

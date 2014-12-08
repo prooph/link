@@ -10,13 +10,29 @@
  */
 namespace Application\Service;
 
+use Zend\ServiceManager\InitializerInterface;
+use Zend\ServiceManager\ServiceLocatorInterface;
+
 /**
  * Class ActionControllerInitializer
  *
  * @package Application\src\Service
  * @author Alexander Miertsch <alexander.miertsch.extern@sixt.com>
  */
-final class ActionControllerInitializer 
+final class ActionControllerInitializer implements InitializerInterface
 {
-
-} 
+    /**
+     * Initialize
+     *
+     * @param $instance
+     * @param ServiceLocatorInterface $serviceLocator
+     * @return mixed
+     */
+    public function initialize($instance, ServiceLocatorInterface $serviceLocator)
+    {
+        if ($instance instanceof ActionController) {
+            //We are dealing with a ControllerManager so we need to get the main service manger first
+            $instance->setCommandBus($serviceLocator->getServiceLocator()->get('prooph.psb.command_bus'));
+        }
+    }
+}
