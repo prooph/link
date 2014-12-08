@@ -25,9 +25,22 @@ final class GingerConfig
      */
     private $config;
 
+    /**
+     * @var bool
+     */
+    private $configured = false;
+
+    /**
+     * @param array $gingerConfig
+     */
     public function __construct(array $gingerConfig = null)
     {
-        $this->config = new ArrayReader($gingerConfig);
+        if (is_null($gingerConfig)) {
+            $this->config = new ArrayReader([]);
+        } else {
+            $this->configured = true;
+            $this->config = new ArrayReader($gingerConfig);
+        }
     }
 
     /**
@@ -35,7 +48,7 @@ final class GingerConfig
      */
     public function isConfigured()
     {
-        return ! is_null($this->config);
+        return $this->configured;
     }
 
     /**

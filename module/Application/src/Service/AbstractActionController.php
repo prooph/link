@@ -11,6 +11,7 @@
 namespace Application\Service;
 
 use Prooph\ServiceBus\CommandBus;
+use Zend\Mvc\I18n\Translator;
 
 /**
  * Class AbstractActionController
@@ -20,12 +21,18 @@ use Prooph\ServiceBus\CommandBus;
  * @package Application\Service
  * @author Alexander Miertsch <alexander.miertsch.extern@sixt.com>
  */
-class AbstractActionController extends \Zend\Mvc\Controller\AbstractActionController implements ActionController
+class AbstractActionController extends \Zend\Mvc\Controller\AbstractActionController
+    implements ActionController, TranslatorAwareController
 {
     /**
      * @var CommandBus
      */
     protected $commandBus;
+
+    /**
+     * @var Translator
+     */
+    protected $translator;
 
     /**
      * @param CommandBus $commandBus
@@ -34,5 +41,14 @@ class AbstractActionController extends \Zend\Mvc\Controller\AbstractActionContro
     public function setCommandBus(CommandBus $commandBus)
     {
         $this->commandBus = $commandBus;
+    }
+
+    /**
+     * @param Translator $translator
+     * @return void
+     */
+    public function setTranslator(Translator $translator)
+    {
+        $this->translator = $translator;
     }
 }

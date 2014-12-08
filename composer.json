@@ -10,6 +10,8 @@
     "require": {
         "php": ">=5.4.8",
         "zendframework/zendframework": "~2.3",
+        "zfcampus/zf-api-problem": "~1.0",
+        "zfcampus/zf-content-negotiation": "~1.0",
         "gingerframework/gingerframework" : "dev-master",
         "prooph/prooph-service-bus-module": "~1.0",
         "prooph/prooph-event-store-module": "~1.0"

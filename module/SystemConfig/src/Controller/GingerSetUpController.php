@@ -24,9 +24,9 @@ use SystemConfig\Definition;
 final class GingerSetUpController extends AbstractActionController
 {
     /**
-     * Starts the initial set up of the Ginger system
+     * Runs the initial set up of the Ginger system
      */
-    public function startAction()
+    public function runAction()
     {
         $this->commandBus->dispatch(CreateDefaultGingerConfigFile::in(Definition::SYSTEM_CONFIG_DIR));
 

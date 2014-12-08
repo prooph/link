@@ -23,6 +23,9 @@ return array(
         ),
     ),
     'service_manager' => array(
+        'invokables' => [
+            'application.psb.single_handle_method_invoke_strategy' => 'Application\ProophPlugin\SingleHandleMethodInvokeStrategy',
+        ],
         'abstract_factories' => array(
             'Zend\Cache\Service\StorageCacheAbstractServiceFactory',
             'Zend\Log\LoggerAbstractServiceFactory',
@@ -52,5 +55,26 @@ return array(
             'error/404'               => __DIR__ . '/../view/error/404.phtml',
             'error/index'             => __DIR__ . '/../view/error/index.phtml',
         ),
+        'strategies' => array(
+            'ViewJsonStrategy',
+        ),
     ),
+    'zf-content-negotiation' => [
+        //Application wide selectors for the content negotiation module
+        'selectors'   => array(
+            'Json' => array(
+                'ZF\ContentNegotiation\JsonModel' => array(
+                    'application/json',
+                    'application/*+json',
+                ),
+            ),
+        ),
+    ],
+    'zf-api-problem' => [
+        'accept_filters' => [
+            'application/json',
+            'application/*+json',
+        ]
+    ],
+    ''
 );

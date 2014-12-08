@@ -25,7 +25,8 @@ $settings = array(
         'prooph.psb.command_router',
         'prooph.psb.service_locator_proxy',
         'prooph.psb.callback_invoke_strategy',
-        'prooph.psb.handle_command_invoke_strategy',
+        //We force the rule -one handler per command- with a custom invoke strategy (Application\ProophPlugin\SingleHandleMethodInvokeStrategy)
+        'application.psb.single_handle_method_invoke_strategy',
     ),
     /**
      * Define a list of utils that should be used by the event bus.

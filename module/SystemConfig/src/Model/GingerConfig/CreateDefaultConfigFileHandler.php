@@ -40,7 +40,7 @@ final class CreateDefaultConfigFileHandler
      * @param CreateDefaultGingerConfigFile $command
      * @throws \RuntimeException
      */
-    public function handleCreateDefaultGingerConfigFile(CreateDefaultGingerConfigFile $command)
+    public function handle(CreateDefaultGingerConfigFile $command)
     {
         $gingerConfig = GingerConfig::initializeWithDefaults();
 

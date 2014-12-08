@@ -11,6 +11,7 @@
 namespace Application;
 
 use Application\Service\ActionControllerInitializer;
+use Application\Service\ControllerTranslatorProvider;
 use Zend\Mvc\Controller\ControllerManager;
 use Zend\Mvc\ModuleRouteListener;
 use Zend\Mvc\MvcEvent;
@@ -26,6 +27,7 @@ class Module
         /** @var $sm ControllerManager */
         $cm = $e->getApplication()->getServiceManager()->get('ControllerLoader');
         $cm->addInitializer(new ActionControllerInitializer());
+        $cm->addInitializer(new ControllerTranslatorProvider());
     }
 
     public function getConfig()

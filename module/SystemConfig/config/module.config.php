@@ -34,7 +34,17 @@ return array(
                             'route' => '/ginger-set-up',
                             'defaults' => [
                                 'controller' => 'SystemConfig\Controller\GingerSetUp',
-                                'action' => 'start'
+                                'action' => 'run'
+                            ]
+                        ],
+                    ],
+                    'change_node_name' => [
+                        'type' => 'Literal',
+                        'options' => [
+                            'route' => '/change-node-name',
+                            'defaults' => [
+                                'controller' => 'SystemConfig\Controller\Configuration',
+                                'action' => 'change-node-name'
                             ]
                         ]
                     ]
@@ -56,7 +66,8 @@ return array(
     ],
     'controllers' => array(
         'invokables' => array(
-            'SystemConfig\Controller\GingerSetUp'     => 'SystemConfig\Controller\GingerSetUpController'
+            'SystemConfig\Controller\GingerSetUp'     => 'SystemConfig\Controller\GingerSetUpController',
+            'SystemConfig\Controller\Configuration'     => 'SystemConfig\Controller\ConfigurationController',
         ),
         'factories' => array(
             'SystemConfig\Controller\DashboardWidget' => 'SystemConfig\Controller\Factory\DashboardWidgetControllerFactory',
@@ -65,7 +76,26 @@ return array(
     ),
     'prooph.psb' => [
         'command_router_map' => [
-            'SystemConfig\Command\CreateDefaultGingerConfigFile' => 'SystemConfig\Model\GingerConfig\CreateDefaultConfigFileHandler'
+            'SystemConfig\Command\CreateDefaultGingerConfigFile' => 'SystemConfig\Model\GingerConfig\CreateDefaultConfigFileHandler',
+            'SystemConfig\Command\ChangeNodeName' => 'SystemConfig\Model\GingerConfig\CreateDefaultConfigFileHandler',
         ]
     ],
+    'zf-content-negotiation' => [
+        'controllers' => [
+            'SystemConfig\Controller\Configuration' => 'Json',
+        ],
+        'accept_whitelist' => [
+            'SystemConfig\Controller\Configuration' => ['application/json'],
+        ],
+        'content_type_whitelist' => [
+            'SystemConfig\Controller\Configuration' => ['application/json'],
+        ],
+        /*
+        'zf-api-problem' => [
+            'render_error_controllers' => [
+                'SystemConfig\Controller\Configuration'
+            ]
+        ]
+        */
+    ]
 );

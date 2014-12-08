@@ -18,22 +18,66 @@
             </div>
         </div>
     <?php else : ?>
-        <div class="col-md-12">
+        <div class="col-md-8">
             <div class="row">
-                <div class="col-md-2">
-                    <p class="text-info">Ginger Node Name</p>
-                </div>
-                <div id="config-node-name" class="col-md-2"><?php echo $this->gingerConfig->getNodeName() ?></div>
-                <div class="col-md-2"><a id="btn-node-name" href="#"><span class="glyphicon glyphicon-edit"></a></button></div>
+                <table class="table table-hover">
+                    <tr>
+                        <td>
+                            <p class="text-info text-btn-align"><strong>Ginger Node Name</strong></p>
+                        </td>
+                        <td>
+                            <p id="config-node-name" class="text-btn-align"><strong><?php echo $this->gingerConfig->getNodeName() ?></strong></p>
+                        </td>
+                        <td>
+                            <a id="btn-node-name" href="#" class="btn btn-default edit"><?php echo $this->translate('edit') ?></a>
+                        </td>
+                    </tr>
+                </table>
             </div>
         </div>
     <?php endif; ?>
 </div>
 <script type="text/javascript">
-    $('#btn-node-name').click(function (e) {
-        e.preventDefault();
+    var toggleBtn = function($btn) {
+        if ($btn.hasClass('edit')) {
+            $btn.toggleClass('edit', 'save').html('<?php echo $this->translate('save') ?>');
+        } else {
+            $btn.toggleClass('edit', 'save').html('<?php echo $this->translate('edit') ?>');
+        }
+    };
 
-        var nodeName = $('#config-node-name').html();
+    $(function() {
+        $('#btn-node-name').click(function (e) {
+            e.preventDefault();
 
+            var $btn = $('#btn-node-name'), $nodeNameConfig = $('#config-node-name'),
+            nodeName = '', oldNodeName = '';
+
+            if ($btn.hasClass('edit')) {
+                nodeName = $nodeNameConfig.children('strong').html();
+                var $input = $('<input>').attr('type', 'text').addClass('form-control')
+                    .val(nodeName)
+                    .data('old-val', nodeName);
+
+                $nodeNameConfig.removeClass('text-btn-align');
+
+                $nodeNameConfig.html($input);
+
+                toggleBtn($btn);
+            } else {
+                nodeName = $nodeNameConfig.children('input').val();
+                oldNodeName = $nodeNameConfig.children('input').data('old-val');
+                $nodeNameConfig.addClass('text-btn-align').html('<strong>'+nodeName+'</strong>');
+                toggleBtn($btn);
+
+                if (nodeName != oldNodeName) {
+                    $.postJSON('<?php echo $this->url('system_config/change_node_name') ?>', {node_name : nodeName})
+                        .done(function (data) {
+                            $.notify('Node Name <?php echo $this->translate('successfully changed') ?>', 'success')
+                        })
+                        .fail($.failNotify);
+                }
+            }
+        })
     })
 </script>
