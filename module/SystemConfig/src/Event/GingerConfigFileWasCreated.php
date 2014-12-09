@@ -12,7 +12,7 @@
 namespace SystemConfig\Event;
 
 use Application\Event\SystemChanged;
-use SystemConfig\Model\GingerConfig\ConfigLocation;
+use Application\SharedKernel\ConfigLocation;
 
 /**
  * Event GingerConfigFileWasCreated

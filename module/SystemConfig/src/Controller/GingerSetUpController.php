@@ -14,7 +14,7 @@ namespace SystemConfig\Controller;
 use Application\Service\AbstractActionController;
 use SystemConfig\Command\CreateDefaultGingerConfigFile;
 use SystemConfig\Definition;
-use SystemConfig\Model\GingerConfig\ConfigLocation;
+use Application\SharedKernel\ConfigLocation;
 
 /**
  * Class GingerSetUpController

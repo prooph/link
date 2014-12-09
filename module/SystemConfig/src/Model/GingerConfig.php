@@ -14,8 +14,9 @@ namespace SystemConfig\Model;
 use Application\Event\RecordsSystemChangedEvents;
 use Application\Event\SystemChangedEventRecorder;
 use Ginger\Environment\Environment;
+use Ginger\Processor\NodeName;
 use SystemConfig\Event\GingerConfigFileWasCreated;
-use SystemConfig\Model\GingerConfig\ConfigLocation;
+use Application\SharedKernel\ConfigLocation;
 
 /**
  * Class GingerConfig
@@ -66,23 +67,13 @@ final class GingerConfig implements SystemChangedEventRecorder
     }
 
     /**
-     * @param string $path
-     * @return GingerConfig
+     * @param ConfigLocation $configLocation
      * @throws \InvalidArgumentException
+     * @return GingerConfig
      */
-    public static function initializeFromConfigLocation($path)
+    public static function initializeFromConfigLocation(ConfigLocation $configLocation)
     {
-        if (! file_exists((string)$path . '/' . self::$configFileName)) {
-            throw new \InvalidArgumentException(sprintf('The ginger config file %s can not be found in location %s', self::$configFileName, (string)$path));
-        }
-
-        $config = include ((string)$path . '/' . self::$configFileName);
-
-        if (! is_array($config)) {
-            throw new \InvalidArgumentException(sprintf('Config file %s does not return a valid config array', (string)$path . '/' . self::$configFileName));
-        }
-
-        return new self($config);
+        return new self($configLocation->getConfigArray(self::$configFileName));
     }
 
     /**
@@ -111,7 +102,11 @@ final class GingerConfig implements SystemChangedEventRecorder
         return self::$configFileName;
     }
 
-    public function changeNodeName($newNodeName)
+    /**
+     * @param NodeName $newNodeName
+     * @param ConfigWriter $configWriter
+     */
+    public function changeNodeName(NodeName $newNodeName, ConfigWriter $configWriter)
     {
 
     }

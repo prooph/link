@@ -12,7 +12,7 @@
 namespace SystemConfig\Command;
 
 use Application\Command\SystemCommand;
-use SystemConfig\Model\GingerConfig\ConfigLocation;
+use Application\SharedKernel\ConfigLocation;
 
 /**
  * Command CreateDefaultGingerConfigFile

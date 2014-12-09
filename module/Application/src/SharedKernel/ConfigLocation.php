@@ -9,7 +9,7 @@
  * Date: 09.12.14 - 21:14
  */
 
-namespace SystemConfig\Model\GingerConfig;
+namespace Application\SharedKernel;
 
 /**
  * Class ConfigLocation
@@ -52,6 +52,25 @@ final class ConfigLocation
     public function toString()
     {
         return $this->path;
+    }
+
+    /**
+     * @param $fileName
+     * @return array
+     * @throws \InvalidArgumentException
+     */
+    public function getConfigArray($fileName)
+    {
+        $configFile = $this->path . DIRECTORY_SEPARATOR . $fileName;
+
+        if (! file_exists($configFile)) throw new \InvalidArgumentException(sprintf('Config file %s does not exist', $configFile));
+        if (! preg_match('/\.php$/', $fileName)) throw new \InvalidArgumentException(sprintf('Config file %s must be a php file', $configFile));
+
+        $config = include $configFile;
+
+        if (!is_array($config)) throw new \InvalidArgumentException(sprintf('Config read from %s is not an array', $configFile));
+
+        return $config;
     }
 
     /**

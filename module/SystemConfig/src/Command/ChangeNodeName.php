@@ -11,6 +11,7 @@
 namespace SystemConfig\Command;
 
 use Application\Command\SystemCommand;
+use Ginger\Processor\NodeName;
 
 /**
  * Command ChangeNodeName
@@ -21,21 +22,21 @@ use Application\Command\SystemCommand;
 final class ChangeNodeName extends SystemCommand
 {
     /**
-     * @param $newNodeName
+     * @param NodeName $newNodeName
      * @return ChangeNodeName
      * @throws \InvalidArgumentException
      */
-    public static function to($newNodeName)
+    public static function to(NodeName $newNodeName)
     {
-        return new self(__CLASS__, ['node_name' => $newNodeName]);
+        return new self(__CLASS__, ['node_name' => $newNodeName->toString()]);
     }
 
     /**
-     * @return string
+     * @return NodeName
      */
     public function newNodeName()
     {
-        return $this->payload['node_name'];
+        return NodeName::fromString($this->payload['node_name']);
     }
 
     /**
