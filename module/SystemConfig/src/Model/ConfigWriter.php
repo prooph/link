@@ -25,5 +25,12 @@ interface ConfigWriter
      * @return void
      */
     public function writeNewConfigToDirectory(array $config, $path);
+
+    /**
+     * @param array $config
+     * @param string $path
+     * @return void
+     */
+    public function replaceConfigInDirectory(array $config, $path);
 }
  

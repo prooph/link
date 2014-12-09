@@ -12,7 +12,10 @@ namespace SystemConfig\Controller;
 
 use Application\Service\AbstractActionController;
 use Application\Service\TranslatorAwareController;
+use Application\SharedKernel\ConfigLocation;
+use Ginger\Processor\NodeName;
 use SystemConfig\Command\ChangeNodeName;
+use SystemConfig\Definition;
 use Zend\Http\PhpEnvironment\Response;
 use ZF\ApiProblem\ApiProblem;
 use ZF\ApiProblem\ApiProblemResponse;
@@ -38,7 +41,10 @@ final class ConfigurationController extends AbstractActionController
             return new ApiProblemResponse(new ApiProblem(422, $this->translator->translate('The node name must be at least 3 characters long')));
         }
 
-        $this->commandBus->dispatch(ChangeNodeName::to($nodeName));
+        $this->commandBus->dispatch(ChangeNodeName::to(
+            NodeName::fromString($nodeName),
+            ConfigLocation::fromPath(Definition::SYSTEM_CONFIG_DIR)
+        ));
 
         return ['success' => true];
     }

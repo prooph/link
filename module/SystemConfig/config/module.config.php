@@ -59,8 +59,13 @@ return array(
     ),
     'service_manager' => [
         'factories' => [
+
+            //Projections
             'ginger_config_projection' => 'SystemConfig\Projection\Factory\GingerConfigFactory',
-            'SystemConfig\Model\GingerConfig\CreateDefaultConfigFileHandler' => 'SystemConfig\Service\Factory\CreateDefaultConfigFileHandlerFactory'
+
+            //Command handlers
+            'SystemConfig\Model\GingerConfig\CreateDefaultConfigFileHandler' => 'SystemConfig\Service\Factory\CreateDefaultConfigFileHandlerFactory',
+            'SystemConfig\Model\GingerConfig\ChangeNodeNameHandler' => 'SystemConfig\Service\Factory\ChangeNodeNameHandlerFactory',
 
         ]
     ],
@@ -77,7 +82,7 @@ return array(
     'prooph.psb' => [
         'command_router_map' => [
             'SystemConfig\Command\CreateDefaultGingerConfigFile' => 'SystemConfig\Model\GingerConfig\CreateDefaultConfigFileHandler',
-            'SystemConfig\Command\ChangeNodeName' => 'SystemConfig\Model\GingerConfig\CreateDefaultConfigFileHandler',
+            'SystemConfig\Command\ChangeNodeName' => 'SystemConfig\Model\GingerConfig\ChangeNodeNameHandler',
         ]
     ],
     'zf-content-negotiation' => [

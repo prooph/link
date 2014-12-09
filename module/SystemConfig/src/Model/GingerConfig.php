@@ -17,6 +17,7 @@ use Ginger\Environment\Environment;
 use Ginger\Processor\NodeName;
 use SystemConfig\Event\GingerConfigFileWasCreated;
 use Application\SharedKernel\ConfigLocation;
+use SystemConfig\Event\NodeNameWasChanged;
 
 /**
  * Class GingerConfig
@@ -37,6 +38,11 @@ final class GingerConfig implements SystemChangedEventRecorder
     private $config = array();
 
     /**
+     * @var ConfigLocation
+     */
+    private $configLocation;
+
+    /**
      * Local config file name
      *
      * @var string
@@ -51,7 +57,7 @@ final class GingerConfig implements SystemChangedEventRecorder
     {
         $env = Environment::setUp();
 
-        $instance = new self(['ginger' => $env->getConfig()->toArray()]);
+        $instance = new self(['ginger' => $env->getConfig()->toArray()], $configLocation);
 
         $configFilePath = $configLocation->toString() . DIRECTORY_SEPARATOR . self::$configFileName;
 
@@ -60,6 +66,8 @@ final class GingerConfig implements SystemChangedEventRecorder
         }
 
         $configWriter->writeNewConfigToDirectory($instance->toArray(), $configFilePath);
+
+        $instance->configLocation = $configLocation;
 
         $instance->recordThat(GingerConfigFileWasCreated::in($configLocation, self::$configFileName));
 
@@ -73,15 +81,17 @@ final class GingerConfig implements SystemChangedEventRecorder
      */
     public static function initializeFromConfigLocation(ConfigLocation $configLocation)
     {
-        return new self($configLocation->getConfigArray(self::$configFileName));
+        return new self($configLocation->getConfigArray(self::$configFileName), $configLocation);
     }
 
     /**
      * @param array $config
+     * @param ConfigLocation $configLocation
      */
-    private function __construct(array $config)
+    private function __construct(array $config, ConfigLocation $configLocation)
     {
         $this->setConfig($config);
+        $this->configLocation = $configLocation;
     }
 
     /**
@@ -108,7 +118,28 @@ final class GingerConfig implements SystemChangedEventRecorder
      */
     public function changeNodeName(NodeName $newNodeName, ConfigWriter $configWriter)
     {
+        $oldNodeName = NodeName::fromString($this->config['ginger']['node_name']);
 
+        $this->config['ginger']['node_name'] = $newNodeName->toString();
+
+        foreach ($this->config['ginger']['buses']['workflow_processor_command_bus']['targets'] as $i => $target) {
+            if ($target === $oldNodeName->toString()) {
+                $this->config['ginger']['buses']['workflow_processor_command_bus']['targets'][$i] = $newNodeName->toString();
+            }
+        }
+
+        foreach ($this->config['ginger']['buses']['workflow_processor_event_bus']['targets'] as $i => $target) {
+            if ($target === $oldNodeName->toString()) {
+                $this->config['ginger']['buses']['workflow_processor_event_bus']['targets'][$i] = $newNodeName->toString();
+            }
+        }
+
+        $configWriter->replaceConfigInDirectory(
+            $this->toArray(),
+            $this->configLocation->toString() . DIRECTORY_SEPARATOR . self::$configFileName
+        );
+
+        $this->recordThat(NodeNameWasChanged::to($newNodeName, $oldNodeName));
     }
 
     /**
@@ -119,10 +150,35 @@ final class GingerConfig implements SystemChangedEventRecorder
      */
     private function setConfig(array $config)
     {
-        if (! array_key_exists('ginger', $config)) {
-            throw new \InvalidArgumentException('Missing the root key ginger in configuration');
-        }
+        if (! array_key_exists('ginger', $config))                                 throw new \InvalidArgumentException('Missing the root key ginger in configuration');
+        if (! array_key_exists('node_name', $config['ginger']))                    throw new \InvalidArgumentException('Missing key node_name in ginger config');
+        if (! array_key_exists('plugins', $config['ginger']))                      throw new \InvalidArgumentException('Missing key plugins in ginger config');
+        if (! is_array($config['ginger']['plugins']))                              throw new \InvalidArgumentException('Plugins must be an array in ginger config');
+        if (! array_key_exists('buses', $config['ginger']))                        throw new \InvalidArgumentException('Missing key buses in ginger config');
+        if (! is_array($config['ginger']['buses']))                                throw new \InvalidArgumentException('Buses must be an array in ginger config');
+        if (! isset($config['ginger']['buses']['workflow_processor_command_bus'])) throw new \InvalidArgumentException('Missing workflow_processor_command_bus in config ginger.buses');
+        if (! isset($config['ginger']['buses']['workflow_processor_event_bus']))   throw new \InvalidArgumentException('Missing workflow_processor_event_bus in config ginger.buses');
+        if (! array_key_exists('processes', $config['ginger']))                    throw new \InvalidArgumentException('Missing key processes in ginger config');
+        if (! is_array($config['ginger']['processes']))                            throw new \InvalidArgumentException('Processes must be an array in ginger config');
+
+        $this->assertBusConfig($config['ginger']['buses']['workflow_processor_command_bus'], 'workflow_processor_command_bus');
+        $this->assertBusConfig($config['ginger']['buses']['workflow_processor_event_bus'], 'workflow_processor_event_bus');
+
         $this->config = $config;
+    }
+
+    /**
+     * @param array $config
+     * @param string $busName
+     * @throws \InvalidArgumentException
+     */
+    private function assertBusConfig(array $config, $busName)
+    {
+        if (! array_key_exists('type', $config))    throw new \InvalidArgumentException('Missing key type in config ginger.buses.'.$busName);
+        if (! array_key_exists('targets', $config)) throw new \InvalidArgumentException('Missing key targets in config ginger.buses.'.$busName);
+        if (! array_key_exists('utils', $config))   throw new \InvalidArgumentException('Missing key utils in config ginger.buses.'.$busName);
+        if (! is_array($config['targets']))         throw new \InvalidArgumentException(sprintf('Config ginger.buses.%s.targets must be an array', $busName));
+        if (! is_array($config['targets']))         throw new \InvalidArgumentException(sprintf('Config ginger.buses.%s.utils must be an array', $busName));
     }
 }
  

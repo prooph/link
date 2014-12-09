@@ -11,6 +11,7 @@
 namespace SystemConfig\Command;
 
 use Application\Command\SystemCommand;
+use Application\SharedKernel\ConfigLocation;
 use Ginger\Processor\NodeName;
 
 /**
@@ -23,12 +24,12 @@ final class ChangeNodeName extends SystemCommand
 {
     /**
      * @param NodeName $newNodeName
+     * @param ConfigLocation $configLocation
      * @return ChangeNodeName
-     * @throws \InvalidArgumentException
      */
-    public static function to(NodeName $newNodeName)
+    public static function to(NodeName $newNodeName, ConfigLocation $configLocation)
     {
-        return new self(__CLASS__, ['node_name' => $newNodeName->toString()]);
+        return new self(__CLASS__, ['node_name' => $newNodeName->toString(), 'config_location'  => $configLocation->toString()]);
     }
 
     /**
@@ -40,15 +41,24 @@ final class ChangeNodeName extends SystemCommand
     }
 
     /**
+     * @return ConfigLocation
+     */
+    public function configLocation()
+    {
+        return ConfigLocation::fromPath($this->payload['config_location']);
+    }
+
+    /**
      * @param null|array $aPayload
      * @throws \InvalidArgumentException
      */
     protected function assertPayload($aPayload = null)
     {
-        if (! is_array($aPayload) || ! array_key_exists('node_name', $aPayload)) {
-            throw new \InvalidArgumentException('Payload does not contain a node_name');
+        if (! is_array($aPayload) || ! array_key_exists('node_name', $aPayload) || ! array_key_exists('config_location', $aPayload)) {
+            throw new \InvalidArgumentException('Payload does not contain a node_name or config_location');
         }
 
         if (! is_string($aPayload['node_name'])) throw new \InvalidArgumentException('Node name must be string');
+        if (! is_string($aPayload['config_location'])) throw new \InvalidArgumentException('Config location must be string');
     }
 }

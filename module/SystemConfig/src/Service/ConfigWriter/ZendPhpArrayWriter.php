@@ -38,6 +38,16 @@ final class ZendPhpArrayWriter implements ConfigWriter
     }
 
     /**
+     * @param array $config
+     * @param string $path
+     * @return void
+     */
+    public function replaceConfigInDirectory(array $config, $path)
+    {
+        $this->getWriter()->toFile($path, $config);
+    }
+
+    /**
      * @return PhpArray
      */
     private function getWriter()

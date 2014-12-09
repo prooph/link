@@ -10,7 +10,10 @@
  */
 namespace SystemConfig\Model\GingerConfig;
 
+use Prooph\ServiceBus\EventBus;
 use SystemConfig\Command\ChangeNodeName;
+use SystemConfig\Model\ConfigWriter;
+use SystemConfig\Model\GingerConfig;
 
 /**
  * Class ChangeNodeNameHandler
@@ -20,8 +23,35 @@ use SystemConfig\Command\ChangeNodeName;
  */
 final class ChangeNodeNameHandler 
 {
+    /**
+     * @var ConfigWriter
+     */
+    private $configWriter;
+
+    /**
+     * @var EventBus
+     */
+    private $eventBus;
+
+    /**
+     * @param ConfigWriter $configWriter
+     * @param EventBus $eventBus
+     */
+    public function __construct(ConfigWriter $configWriter, EventBus $eventBus)
+    {
+        $this->configWriter = $configWriter;
+        $this->eventBus = $eventBus;
+    }
+
+    /**
+     * @param ChangeNodeName $command
+     */
     public function handle(ChangeNodeName $command)
     {
+        $gingerConfig = GingerConfig::initializeFromConfigLocation($command->configLocation());
 
+        $gingerConfig->changeNodeName($command->newNodeName(), $this->configWriter);
+
+        foreach($gingerConfig->popRecordedEvents() as $event) $this->eventBus->dispatch($event);
     }
 } 
