@@ -71,12 +71,10 @@ return array(
     ],
     'controllers' => array(
         'invokables' => array(
-            'SystemConfig\Controller\GingerSetUp'     => 'SystemConfig\Controller\GingerSetUpController',
+            'SystemConfig\Controller\GingerSetUp'       => 'SystemConfig\Controller\GingerSetUpController',
             'SystemConfig\Controller\Configuration'     => 'SystemConfig\Controller\ConfigurationController',
-        ),
-        'factories' => array(
-            'SystemConfig\Controller\DashboardWidget' => 'SystemConfig\Controller\Factory\DashboardWidgetControllerFactory',
-            'SystemConfig\Controller\Overview'        => 'SystemConfig\Controller\Factory\OverviewControllerFactory',
+            'SystemConfig\Controller\DashboardWidget'   => 'SystemConfig\Controller\DashboardWidgetController',
+            'SystemConfig\Controller\Overview'          => 'SystemConfig\Controller\OverviewController',
         ),
     ),
     'prooph.psb' => [

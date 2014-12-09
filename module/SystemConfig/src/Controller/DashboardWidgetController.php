@@ -11,9 +11,11 @@
 
 namespace SystemConfig\Controller;
 
+use Application\SharedKernel\ConfigLocation;
 use Dashboard\Controller\AbstractWidgetController;
 use Dashboard\View\DashboardWidget;
-use SystemConfig\Projection\GingerConfig;
+use SystemConfig\Definition;
+use SystemConfig\Model\GingerConfig;
 
 /**
  * Class DashboardWidgetController
@@ -24,25 +26,13 @@ use SystemConfig\Projection\GingerConfig;
 class DashboardWidgetController extends AbstractWidgetController
 {
     /**
-     * @var GingerConfig
-     */
-    private $gingerConfig;
-
-    public function __construct(GingerConfig $gingerConfig)
-    {
-        $this->gingerConfig = $gingerConfig;
-    }
-
-    /**
      * @return DashboardWidget
      */
     public function widgetAction()
     {
-        $variables = [
-            'gingerIsConfigured' => $this->gingerConfig->isConfigured()
-        ];
+        $config = GingerConfig::asProjectionFrom(ConfigLocation::fromPath(Definition::SYSTEM_CONFIG_DIR));
 
-        return DashboardWidget::initialize('system-config/dashboard/widget', 'System Configuration', 4, $variables);
+        return DashboardWidget::initialize('system-config/dashboard/widget', 'System Configuration', 4, ['gingerConfig' => $config]);
     }
 }
  

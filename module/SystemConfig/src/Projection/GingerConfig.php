@@ -32,15 +32,12 @@ final class GingerConfig
 
     /**
      * @param array $gingerConfig
+     * @param bool  $isConfigured
      */
-    public function __construct(array $gingerConfig = null)
+    public function __construct(array $gingerConfig, $isConfigured = false)
     {
-        if (is_null($gingerConfig)) {
-            $this->config = new ArrayReader([]);
-        } else {
-            $this->configured = true;
-            $this->config = new ArrayReader($gingerConfig);
-        }
+        $this->configured = $isConfigured;
+        $this->config = new ArrayReader($gingerConfig);
     }
 
     /**
@@ -56,7 +53,7 @@ final class GingerConfig
      */
     public function getNodeName()
     {
-        return $this->config->stringValue('node_name');
+        return $this->config->stringValue('ginger.node_name');
     }
 }
  

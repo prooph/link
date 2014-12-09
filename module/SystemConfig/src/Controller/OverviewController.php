@@ -12,9 +12,9 @@
 namespace SystemConfig\Controller;
 
 use Application\Service\AbstractQueryController;
+use Application\SharedKernel\ConfigLocation;
 use SystemConfig\Definition;
-use SystemConfig\Projection\GingerConfig;
-use Zend\ServiceManager\ServiceManager;
+use SystemConfig\Model\GingerConfig;
 use Zend\View\Model\ViewModel;
 
 /**
@@ -26,26 +26,12 @@ use Zend\View\Model\ViewModel;
 class OverviewController extends AbstractQueryController
 {
     /**
-     * @var GingerConfig
-     */
-    private $gingerConfig;
-
-    /**
-     * @param GingerConfig $gingerConfig
-     */
-    public function __construct(GingerConfig $gingerConfig)
-    {
-        $this->gingerConfig = $gingerConfig;
-        new ServiceManager();
-    }
-
-    /**
      * @return ViewModel
      */
     public function showAction()
     {
         return new ViewModel([
-            'gingerConfig' => $this->gingerConfig,
+            'gingerConfig' => GingerConfig::asProjectionFrom(ConfigLocation::fromPath(Definition::SYSTEM_CONFIG_DIR)),
             'config_dir_is_writable' => is_writable(Definition::SYSTEM_CONFIG_DIR),
             'config_dir' => Definition::SYSTEM_CONFIG_DIR
         ]);

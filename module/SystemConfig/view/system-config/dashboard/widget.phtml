@@ -1,6 +1,11 @@
-<?php if (! $this->ginger_is_configured) : ?>
+<?php if (! $this->gingerConfig->isConfigured()) : ?>
     <div class="alert alert-warning">
         <span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span>&nbsp;<?php echo $this->translate('Ginger runs currently in default mode') ?>!
     </div>
     <p class="text-center"><a href="<?php echo $this->url('system_config') ?>" class="btn btn-success"><?php echo $this->translate('Set up the system') ?></a></p>
+<?php else : ?>
+    <div class="alert alert-info">
+        Node "<?php echo $this->escapeHtml($this->gingerConfig->getNodeName()) ?>"&nbsp;<?php echo $this->translate('config looks good') ?>&nbsp;<span class="glyphicon glyphicon-ok"></span>
+    </div>
+    <p class="text-center"><a href="<?php echo $this->url('system_config') ?>" class="btn btn-success"><?php echo $this->translate('Change Config') ?></a></p>
 <?php endif; ?>

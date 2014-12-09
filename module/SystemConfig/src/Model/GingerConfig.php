@@ -85,6 +85,21 @@ final class GingerConfig implements SystemChangedEventRecorder
     }
 
     /**
+     * @param ConfigLocation $configLocation
+     * @return \SystemConfig\Projection\GingerConfig
+     */
+    public static function asProjectionFrom(ConfigLocation $configLocation)
+    {
+        if (file_exists($configLocation->toString() . DIRECTORY_SEPARATOR . self::$configFileName)) {
+            return new \SystemConfig\Projection\GingerConfig($configLocation->getConfigArray(self::$configFileName), true);
+        } else {
+            $env = Environment::setUp();
+
+            return new \SystemConfig\Projection\GingerConfig(['ginger' => $env->getConfig()]);
+        }
+    }
+
+    /**
      * @param array $config
      * @param ConfigLocation $configLocation
      */
@@ -107,7 +122,7 @@ final class GingerConfig implements SystemChangedEventRecorder
     /**
      * @return string
      */
-    public function configFileName()
+    public static function configFileName()
     {
         return self::$configFileName;
     }
