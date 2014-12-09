@@ -14,7 +14,8 @@
         "zfcampus/zf-content-negotiation": "~1.0",
         "gingerframework/gingerframework" : "dev-master",
         "prooph/prooph-service-bus-module": "~1.0",
-        "prooph/prooph-event-store-module": "~1.0"
+        "prooph/prooph-event-store-module": "~1.0",
+        "prooph/event-sourcing": "~1.0"
     },
     "bin-dir" : "./bin"
 }

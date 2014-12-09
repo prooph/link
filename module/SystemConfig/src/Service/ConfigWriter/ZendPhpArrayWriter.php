@@ -9,7 +9,7 @@
  * Date: 07.12.14 - 22:16
  */
 
-namespace SystemConfig\Model\ConfigWriter;
+namespace SystemConfig\Service\ConfigWriter;
 
 use SystemConfig\Model\ConfigWriter;
 use Zend\Config\Writer\PhpArray;
@@ -17,7 +17,7 @@ use Zend\Config\Writer\PhpArray;
 /**
  * Class ZendPhpArrayWriter
  *
- * @package SystemConfig\Model\ConfigWriter
+ * @package SystemConfig\Service\ConfigWriter
  * @author Alexander Miertsch <kontakt@codeliner.ws>
  */
 final class ZendPhpArrayWriter implements ConfigWriter

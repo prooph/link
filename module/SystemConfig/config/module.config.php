@@ -60,7 +60,7 @@ return array(
     'service_manager' => [
         'factories' => [
             'ginger_config_projection' => 'SystemConfig\Projection\Factory\GingerConfigFactory',
-            'SystemConfig\Model\GingerConfig\CreateDefaultConfigFileHandler' => 'SystemConfig\Model\GingerConfig\Factory\CreateDefaultConfigFileHandlerFactory'
+            'SystemConfig\Model\GingerConfig\CreateDefaultConfigFileHandler' => 'SystemConfig\Service\Factory\CreateDefaultConfigFileHandlerFactory'
 
         ]
     ],

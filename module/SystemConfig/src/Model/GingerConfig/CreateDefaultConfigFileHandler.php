@@ -11,6 +11,7 @@
 
 namespace SystemConfig\Model\GingerConfig;
 
+use Prooph\ServiceBus\EventBus;
 use SystemConfig\Command\CreateDefaultGingerConfigFile;
 use SystemConfig\Model\ConfigWriter;
 use SystemConfig\Model\GingerConfig;
@@ -29,11 +30,18 @@ final class CreateDefaultConfigFileHandler
     private $configWriter;
 
     /**
-     * @param ConfigWriter $configWriter
+     * @var EventBus
      */
-    public function __construct(ConfigWriter $configWriter)
+    private $eventBus;
+
+    /**
+     * @param ConfigWriter $configWriter
+     * @param EventBus $eventBus
+     */
+    public function __construct(ConfigWriter $configWriter, EventBus $eventBus)
     {
         $this->configWriter = $configWriter;
+        $this->eventBus = $eventBus;
     }
 
     /**
@@ -42,16 +50,9 @@ final class CreateDefaultConfigFileHandler
      */
     public function handle(CreateDefaultGingerConfigFile $command)
     {
-        $gingerConfig = GingerConfig::initializeWithDefaults();
+        $gingerConfig = GingerConfig::initializeWithDefaultsIn($command->configLocation(), $this->configWriter);
 
-        if (! is_writable($command->configLocation())) {
-            throw new \RuntimeException(sprintf('Config location %s is not writable', $command->configLocation()));
-        }
-
-        $this->configWriter->writeNewConfigToDirectory(
-            $gingerConfig->toArray(),
-            $command->configLocation() . '/' . $gingerConfig->configFileName()
-        );
+        foreach($gingerConfig->popRecordedEvents() as $event) $this->eventBus->dispatch($event);
     }
 }
  

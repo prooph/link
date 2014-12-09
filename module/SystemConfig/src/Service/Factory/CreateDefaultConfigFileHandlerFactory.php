@@ -9,9 +9,9 @@
  * Date: 07.12.14 - 21:36
  */
 
-namespace SystemConfig\Model\GingerConfig\Factory;
+namespace SystemConfig\Service\Factory;
 
-use SystemConfig\Model\ConfigWriter\ZendPhpArrayWriter;
+use SystemConfig\Service\ConfigWriter\ZendPhpArrayWriter;
 use SystemConfig\Model\GingerConfig\CreateDefaultConfigFileHandler;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
@@ -19,7 +19,7 @@ use Zend\ServiceManager\ServiceLocatorInterface;
 /**
  * Class CreateDefaultConfigFileHandlerFactory
  *
- * @package SystemConfig\Model\GingerConfig\Factory
+ * @package SystemConfig\Service\Factory
  * @author Alexander Miertsch <kontakt@codeliner.ws>
  */
 final class CreateDefaultConfigFileHandlerFactory implements FactoryInterface
@@ -32,7 +32,7 @@ final class CreateDefaultConfigFileHandlerFactory implements FactoryInterface
      */
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
-        return new CreateDefaultConfigFileHandler(new ZendPhpArrayWriter());
+        return new CreateDefaultConfigFileHandler(new ZendPhpArrayWriter(), $serviceLocator->get('prooph.psb.event_bus'));
     }
 }
  

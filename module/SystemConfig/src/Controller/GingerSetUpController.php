@@ -14,6 +14,7 @@ namespace SystemConfig\Controller;
 use Application\Service\AbstractActionController;
 use SystemConfig\Command\CreateDefaultGingerConfigFile;
 use SystemConfig\Definition;
+use SystemConfig\Model\GingerConfig\ConfigLocation;
 
 /**
  * Class GingerSetUpController
@@ -28,7 +29,7 @@ final class GingerSetUpController extends AbstractActionController
      */
     public function runAction()
     {
-        $this->commandBus->dispatch(CreateDefaultGingerConfigFile::in(Definition::SYSTEM_CONFIG_DIR));
+        $this->commandBus->dispatch(CreateDefaultGingerConfigFile::in(ConfigLocation::fromPath(Definition::SYSTEM_CONFIG_DIR)));
 
         return $this->redirect()->toRoute('system_config');
     }

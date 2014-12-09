@@ -11,30 +11,45 @@
 
 namespace SystemConfig\Command;
 
+use Application\Command\SystemCommand;
+use SystemConfig\Model\GingerConfig\ConfigLocation;
+
 /**
  * Command CreateDefaultGingerConfigFile
  *
  * @package SystemConfig\Command
  * @author Alexander Miertsch <kontakt@codeliner.ws>
  */
-final class CreateDefaultGingerConfigFile extends AbstractCommand
+final class CreateDefaultGingerConfigFile extends SystemCommand
 {
     /**
-     * @param string $configLocation
+     * @var ConfigLocation
+     */
+    private $configLocation;
+
+    /**
+     * @param ConfigLocation $configLocation
      * @return CreateDefaultGingerConfigFile
      * @throws \InvalidArgumentException
      */
-    public static function in($configLocation)
+    public static function in(ConfigLocation $configLocation)
     {
-        return new self(__CLASS__, ['config_location' => $configLocation]);
+        $instance = new self(__CLASS__, ['config_location' => $configLocation->toString()]);
+
+        $instance->configLocation = $configLocation;
+
+        return $instance;
     }
 
     /**
-     * @return string
+     * @return ConfigLocation
      */
     public function configLocation()
     {
-        return $this->payload['config_location'];
+        if (is_null($this->configLocation)) {
+            $this->configLocation = ConfigLocation::fromPath($this->payload['config_location']);
+        }
+        return $this->configLocation;
     }
 
     /**
@@ -49,10 +64,6 @@ final class CreateDefaultGingerConfigFile extends AbstractCommand
 
         if (! is_string($aPayload['config_location'])) {
             throw new \InvalidArgumentException("Config location must be string, but type " . gettype($aPayload['config_location']) . " given");
-        }
-
-        if (! is_dir($aPayload['config_location'])) {
-            throw new \InvalidArgumentException("Config location {$aPayload['config_location']} is not a valid directory");
         }
     }
 }

@@ -8,18 +8,20 @@
  * 
  * Date: 12/8/14 - 7:28 PM
  */
-namespace SystemConfig\Command;
+namespace Application\Command;
 
 use Prooph\ServiceBus\Command;
 use Rhumsaa\Uuid\Uuid;
 
 /**
- * Class AbstractCommand
+ * Command SystemCommand
  *
- * @package SystemConfig\Command
+ * All commands that trigger changes in the system must be of type SystemCommand
+ *
+ * @package Application\Command
  * @author Alexander Miertsch <alexander.miertsch.extern@sixt.com>
  */
-abstract class AbstractCommand extends Command
+abstract class SystemCommand extends Command
 {
     /**
      * @throws \BadMethodCallException

@@ -10,13 +10,15 @@
  */
 namespace SystemConfig\Command;
 
+use Application\Command\SystemCommand;
+
 /**
  * Command ChangeNodeName
  *
  * @package SystemConfig\Command
  * @author Alexander Miertsch <alexander.miertsch.extern@sixt.com>
  */
-final class ChangeNodeName extends AbstractCommand
+final class ChangeNodeName extends SystemCommand
 {
     /**
      * @param $newNodeName
