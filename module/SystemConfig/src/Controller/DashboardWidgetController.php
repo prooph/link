@@ -11,11 +11,13 @@
 
 namespace SystemConfig\Controller;
 
+use Application\Service\TranslatorAwareController;
 use Application\SharedKernel\ConfigLocation;
 use Dashboard\Controller\AbstractWidgetController;
 use Dashboard\View\DashboardWidget;
 use SystemConfig\Definition;
 use SystemConfig\Model\GingerConfig;
+use Zend\Mvc\I18n\Translator;
 
 /**
  * Class DashboardWidgetController
@@ -30,9 +32,16 @@ class DashboardWidgetController extends AbstractWidgetController
      */
     public function widgetAction()
     {
-        $config = GingerConfig::asProjectionFrom(ConfigLocation::fromPath(Definition::SYSTEM_CONFIG_DIR));
+        $params = [];
+        try {
+            $params['gingerConfig'] = GingerConfig::asProjectionFrom(ConfigLocation::fromPath(Definition::SYSTEM_CONFIG_DIR));
+            $params['error'] = false;
+        } catch (\Exception $ex) {
+            $params['gingerConfig'] = null;
+            $params['error'] = $ex->getMessage();
+        }
 
-        return DashboardWidget::initialize('system-config/dashboard/widget', 'System Configuration', 4, ['gingerConfig' => $config]);
+        return DashboardWidget::initialize('system-config/dashboard/widget', 'System Configuration', 4, $params);
     }
 }
  

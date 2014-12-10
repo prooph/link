@@ -30,11 +30,19 @@ class OverviewController extends AbstractQueryController
      */
     public function showAction()
     {
-        return new ViewModel([
-            'gingerConfig' => GingerConfig::asProjectionFrom(ConfigLocation::fromPath(Definition::SYSTEM_CONFIG_DIR)),
-            'config_dir_is_writable' => is_writable(Definition::SYSTEM_CONFIG_DIR),
-            'config_dir' => Definition::SYSTEM_CONFIG_DIR
-        ]);
+        $params = [];
+        try {
+            $params['gingerConfig'] = GingerConfig::asProjectionFrom(ConfigLocation::fromPath(Definition::SYSTEM_CONFIG_DIR));
+            $params['error'] = false;
+        } catch (\Exception $ex) {
+            $params['gingerConfig'] = null;
+            $params['error'] = $ex->getMessage();
+        }
+
+        $params['config_dir_is_writable'] = is_writable(Definition::SYSTEM_CONFIG_DIR);
+        $params['config_dir'] = Definition::SYSTEM_CONFIG_DIR;
+
+        return new ViewModel($params);
     }
 }
  

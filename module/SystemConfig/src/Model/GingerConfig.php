@@ -91,7 +91,8 @@ final class GingerConfig implements SystemChangedEventRecorder
     public static function asProjectionFrom(ConfigLocation $configLocation)
     {
         if (file_exists($configLocation->toString() . DIRECTORY_SEPARATOR . self::$configFileName)) {
-            return new \SystemConfig\Projection\GingerConfig($configLocation->getConfigArray(self::$configFileName), true);
+            $instance = self::initializeFromConfigLocation($configLocation);
+            return new \SystemConfig\Projection\GingerConfig($instance->toArray(), true);
         } else {
             $env = Environment::setUp();
 
@@ -137,15 +138,9 @@ final class GingerConfig implements SystemChangedEventRecorder
 
         $this->config['ginger']['node_name'] = $newNodeName->toString();
 
-        foreach ($this->config['ginger']['buses']['workflow_processor_command_bus']['targets'] as $i => $target) {
+        foreach ($this->config['ginger']['channels']['local']['targets'] as $i => $target) {
             if ($target === $oldNodeName->toString()) {
-                $this->config['ginger']['buses']['workflow_processor_command_bus']['targets'][$i] = $newNodeName->toString();
-            }
-        }
-
-        foreach ($this->config['ginger']['buses']['workflow_processor_event_bus']['targets'] as $i => $target) {
-            if ($target === $oldNodeName->toString()) {
-                $this->config['ginger']['buses']['workflow_processor_event_bus']['targets'][$i] = $newNodeName->toString();
+                $this->config['ginger']['channels']['local']['targets'][$i] = $newNodeName->toString();
             }
         }
 
@@ -169,31 +164,27 @@ final class GingerConfig implements SystemChangedEventRecorder
         if (! array_key_exists('node_name', $config['ginger']))                    throw new \InvalidArgumentException('Missing key node_name in ginger config');
         if (! array_key_exists('plugins', $config['ginger']))                      throw new \InvalidArgumentException('Missing key plugins in ginger config');
         if (! is_array($config['ginger']['plugins']))                              throw new \InvalidArgumentException('Plugins must be an array in ginger config');
-        if (! array_key_exists('buses', $config['ginger']))                        throw new \InvalidArgumentException('Missing key buses in ginger config');
-        if (! is_array($config['ginger']['buses']))                                throw new \InvalidArgumentException('Buses must be an array in ginger config');
-        if (! isset($config['ginger']['buses']['workflow_processor_command_bus'])) throw new \InvalidArgumentException('Missing workflow_processor_command_bus in config ginger.buses');
-        if (! isset($config['ginger']['buses']['workflow_processor_event_bus']))   throw new \InvalidArgumentException('Missing workflow_processor_event_bus in config ginger.buses');
+        if (! array_key_exists('channels', $config['ginger']))                     throw new \InvalidArgumentException('Missing key channels in ginger config');
+        if (! is_array($config['ginger']['channels']))                             throw new \InvalidArgumentException('Channels must be an array in ginger config');
+        if (! isset($config['ginger']['channels']['local']))                       throw new \InvalidArgumentException('Missing local channel config in ginger.channels');
         if (! array_key_exists('processes', $config['ginger']))                    throw new \InvalidArgumentException('Missing key processes in ginger config');
         if (! is_array($config['ginger']['processes']))                            throw new \InvalidArgumentException('Processes must be an array in ginger config');
 
-        $this->assertBusConfig($config['ginger']['buses']['workflow_processor_command_bus'], 'workflow_processor_command_bus');
-        $this->assertBusConfig($config['ginger']['buses']['workflow_processor_event_bus'], 'workflow_processor_event_bus');
+        $this->assertChannelConfig($config['ginger']['channels']['local'], 'local');
 
         $this->config = $config;
     }
 
     /**
      * @param array $config
-     * @param string $busName
+     * @param string $channelName
      * @throws \InvalidArgumentException
      */
-    private function assertBusConfig(array $config, $busName)
+    private function assertChannelConfig(array $config, $channelName)
     {
-        if (! array_key_exists('type', $config))    throw new \InvalidArgumentException('Missing key type in config ginger.buses.'.$busName);
-        if (! array_key_exists('targets', $config)) throw new \InvalidArgumentException('Missing key targets in config ginger.buses.'.$busName);
-        if (! array_key_exists('utils', $config))   throw new \InvalidArgumentException('Missing key utils in config ginger.buses.'.$busName);
-        if (! is_array($config['targets']))         throw new \InvalidArgumentException(sprintf('Config ginger.buses.%s.targets must be an array', $busName));
-        if (! is_array($config['targets']))         throw new \InvalidArgumentException(sprintf('Config ginger.buses.%s.utils must be an array', $busName));
+        if (! array_key_exists('targets', $config)) throw new \InvalidArgumentException('Missing key targets in config ginger.channels.'.$channelName);
+        if (! array_key_exists('utils', $config))   throw new \InvalidArgumentException('Missing key utils in config ginger.channels.'.$channelName);
+        if (! is_array($config['targets']))         throw new \InvalidArgumentException(sprintf('Config ginger.channels.%s.targets must be an array', $channelName));
     }
 }
  
