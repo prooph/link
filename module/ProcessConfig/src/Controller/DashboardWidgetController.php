@@ -11,8 +11,11 @@
 
 namespace ProcessConfig\Controller;
 
+use Application\SharedKernel\ConfigLocation;
 use Dashboard\Controller\AbstractWidgetController;
 use Dashboard\View\DashboardWidget;
+use SystemConfig\Definition;
+use SystemConfig\Model\GingerConfig;
 
 /**
  * Class DashboardWidgetController
@@ -22,13 +25,22 @@ use Dashboard\View\DashboardWidget;
  */
 class DashboardWidgetController extends AbstractWidgetController
 {
-
     /**
      * @return DashboardWidget
      */
     public function widgetAction()
     {
-        return DashboardWidget::initialize('process-config/dashboard/widget', 'Process Configuration', 4);
+        $params = [];
+
+        try {
+            $params['gingerConfig'] = GingerConfig::asProjectionFrom(ConfigLocation::fromPath(Definition::SYSTEM_CONFIG_DIR));
+            $params['error'] = false;
+        } catch (\Exception $ex) {
+            $params['gingerConfig'] = null;
+            $params['error'] = $ex->getMessage();
+        }
+
+        return DashboardWidget::initialize('process-config/dashboard/widget', 'Process Configuration', 4, $params);
     }
 }
  

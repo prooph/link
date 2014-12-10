@@ -1,1 +1,29 @@
-<p>No content available</p>
+<?php if ($this->error) : ?>
+    <div class="alert alert-danger">
+        <span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span>&nbsp;<?php echo $this->translate('Configuration error detected') ?>!
+    </div>
+    <p class="text-center"><a href="<?php echo $this->url('system_config') ?>" class="btn btn-success"><?php echo $this->translate('see what is going on') ?></a></p>
+<?php else :  ?>
+    <?php if (! $this->gingerConfig->isConfigured()) : ?>
+        <div class="alert alert-warning">
+            <span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span>&nbsp;<?php echo $this->translate('No processes configured yet') ?>!
+        </div>
+        <p class="text-center"><a href="<?php echo $this->url('system_config') ?>" class="btn btn-success"><?php echo $this->translate('set up the system') ?></a></p>
+    <?php elseif (count($this->gingerConfig->getProcessDefinitions()) === 0) : ?>
+        <div class="alert alert-warning">
+            <span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span>&nbsp;<?php echo $this->translate('No processes configured yet') ?>!
+        </div>
+        <p class="text-center"><a href="<?php echo $this->url('process_config/configurator') ?>" class="btn btn-success"><?php echo $this->translate('create your first process') ?></a></p>
+    <?php else : ?>
+        <?php
+        $numberOfProcesses = count($this->gingerConfig->getProcessDefinitions());
+        $message = ($numberOfProcesses == 1)?
+            $this->translate('There is currently %s process defined')
+            : $this->translate('There are currently %s processes defined');
+        ?>
+        <div class="alert alert-info">
+            <?php echo sprintf($message, $numberOfProcesses) ?>&nbsp;<span class="glyphicon glyphicon-ok"></span>
+        </div>
+        <p class="text-center"><a href="<?php echo $this->url('process_config') ?>" class="btn btn-success"><?php echo $this->translate('see details') ?></a></p>
+    <?php endif; ?>
+<?php endif; ?>

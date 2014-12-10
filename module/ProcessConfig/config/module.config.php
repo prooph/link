@@ -9,6 +9,29 @@
  * Date: 06.12.14 - 22:26
  */
 return array(
+    'router' => [
+        'routes' => [
+            'process_config' => [
+                'type' => 'Literal',
+                'options' => [
+                    'route' => '/process-config',
+                ],
+                'may_terminate' => false,
+                'child_routes' => [
+                    'configurator' => [
+                        'type' => 'Literal',
+                        'options' => [
+                            'route' => '/configurator',
+                            'defaults' => [
+                                'controller' => 'ProcessConfig\Controller\ConfigureProcessApp',
+                                'action' => 'start-app'
+                            ]
+                        ]
+                    ]
+                ],
+            ]
+        ]
+    ],
     'dashboard' => [
         'process_config_widget' => [
             'controller' => 'ProcessConfig\Controller\DashboardWidget',
@@ -22,6 +45,9 @@ return array(
         ),
     ),
     'controllers' => array(
+        'invokables' => [
+            'ProcessConfig\Controller\ConfigureProcessApp' => 'ProcessConfig\Controller\ConfigureProcessAppController',
+        ],
         'factories' => array(
             'ProcessConfig\Controller\DashboardWidget' => 'ProcessConfig\Controller\Factory\DashboardWidgetControllerFactory'
         ),

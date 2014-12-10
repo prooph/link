@@ -2,17 +2,17 @@
     <div class="alert alert-danger">
         <span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span>&nbsp;<?php echo $this->translate('Configuration error detected') ?>!
     </div>
-    <p class="text-center"><a href="<?php echo $this->url('system_config') ?>" class="btn btn-success"><?php echo $this->translate('See what is going on') ?></a></p>
+    <p class="text-center"><a href="<?php echo $this->url('system_config') ?>" class="btn btn-success"><?php echo $this->translate('see what is going on') ?></a></p>
 <?php else :  ?>
     <?php if (! $this->gingerConfig->isConfigured()) : ?>
         <div class="alert alert-warning">
             <span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span>&nbsp;<?php echo $this->translate('Ginger runs currently in default mode') ?>!
         </div>
-        <p class="text-center"><a href="<?php echo $this->url('system_config') ?>" class="btn btn-success"><?php echo $this->translate('Set up the system') ?></a></p>
+        <p class="text-center"><a href="<?php echo $this->url('system_config') ?>" class="btn btn-success"><?php echo $this->translate('set up the system') ?></a></p>
     <?php else : ?>
         <div class="alert alert-info">
             Node "<?php echo $this->escapeHtml($this->gingerConfig->getNodeName()) ?>"&nbsp;<?php echo $this->translate('config looks good') ?>&nbsp;<span class="glyphicon glyphicon-ok"></span>
         </div>
-        <p class="text-center"><a href="<?php echo $this->url('system_config') ?>" class="btn btn-success"><?php echo $this->translate('Change Config') ?></a></p>
+        <p class="text-center"><a href="<?php echo $this->url('system_config') ?>" class="btn btn-success"><?php echo $this->translate('change config') ?></a></p>
     <?php endif; ?>
 <?php endif; ?>

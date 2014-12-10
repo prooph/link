@@ -57,7 +57,7 @@ final class GingerConfig implements SystemChangedEventRecorder
     {
         $env = Environment::setUp();
 
-        $instance = new self(['ginger' => $env->getConfig()->toArray()], $configLocation);
+        $instance = new self(['ginger' => array_merge($env->getConfig()->toArray(), ["connectors" => []])], $configLocation);
 
         $configFilePath = $configLocation->toString() . DIRECTORY_SEPARATOR . self::$configFileName;
 
@@ -164,6 +164,8 @@ final class GingerConfig implements SystemChangedEventRecorder
         if (! array_key_exists('node_name', $config['ginger']))                    throw new \InvalidArgumentException('Missing key node_name in ginger config');
         if (! array_key_exists('plugins', $config['ginger']))                      throw new \InvalidArgumentException('Missing key plugins in ginger config');
         if (! is_array($config['ginger']['plugins']))                              throw new \InvalidArgumentException('Plugins must be an array in ginger config');
+        if (! array_key_exists('connectors', $config['ginger']))                   throw new \InvalidArgumentException('Missing key connectors in ginger config');
+        if (! is_array($config['ginger']['connectors']))                           throw new \InvalidArgumentException('Connectors must be an array in ginger config');
         if (! array_key_exists('channels', $config['ginger']))                     throw new \InvalidArgumentException('Missing key channels in ginger config');
         if (! is_array($config['ginger']['channels']))                             throw new \InvalidArgumentException('Channels must be an array in ginger config');
         if (! isset($config['ginger']['channels']['local']))                       throw new \InvalidArgumentException('Missing local channel config in ginger.channels');

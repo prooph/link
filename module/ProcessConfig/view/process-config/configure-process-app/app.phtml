@@ -1,0 +1,206 @@
+<?php
+$this->headScript()->appendFile($this->basePath() . '/js/underscore.min.js');
+$this->headScript()->appendFile($this->basePath() . '/js/backbone.min.js');
+?>
+<div class="row">
+    <div class="col-md-12">
+        <h1><?php echo $this->translate('Process Configurator') ?></h1>
+        <div id="app" class="row">
+            <div id="content" class="col-md-6">
+
+            </div>
+        </div>
+    </div>
+</div>
+<script id="process-name-tpl" type="text/template">
+<% if (process.name) { %>
+    <h2><?php echo $this->translate('Change Process Name')  ?></h2>
+<% } else { %>
+    <h2><?php echo $this->translate('Step') ?> 1</h2>
+    <p class="alert alert-info"><?php echo sprintf($this->translate('Define a name for the new process.%s Use a self explaining name like Online-Shop-CRM-Sync.'), '<br>') ?></p>
+<% } %>
+
+<div class="row">
+    <div class="form-group col-md-12">
+        <input id="process-name-txt" type="text" class="form-control" value="<%= process.name %>" placeholder="<?php echo $this->translate('Process Name') ?>">
+    </div>
+    <div class="form-group col-md-12">
+        <button id="ok-btn" class="btn btn-success" disabled><% (process.name)? print('<?php echo $this->translate('save') ?>')  : print('<?php echo $this->translate('next step') ?>') %></button>
+    </div>
+</div>
+</script>
+<script id="process-start-message-tpl" type="text/template">
+<% if (process.start_message) { %>
+    <p class="alert alert-info"><?php echo $this->translate('Change Start Message') ?></h2>
+<% } else { %>
+    <h2><?php echo $this->translate('Step') ?> 2</h2>
+    <p class="alert alert-info"><?php echo sprintf($this->translate('Define the initial message that starts the process.%s A process can be started with a "collect data of -type-" command or it starts automatically when it receives a "new data of -type- was collected" message.'), '<br>') ?></p>
+<% } %>
+
+<div class="row">
+        <div class="form-group col-md-12">
+            <select id="message-type-sel" class="form-control">
+                <option value="">- <?php echo $this->translate('Select a message type') ?> -</option>
+                <option value="collect-data"><?php echo $this->translate('Collect data') ?></option>
+                <option value="new-data-collected"><?php echo $this->translate('New data collected') ?></option>
+            </select>
+        </div>
+        <div class="form-group col-md-12">
+            <select id="ginger-type-sel" class="form-control">
+                <option value="">- <?php echo $this->translate('Select a data type') ?> -</option>
+                <?php foreach ($this->possible_ginger_types as $possibleType) : ?>
+                <option><?php echo $this->escapeHtml($possibleType) ?></option>
+                <?php endforeach; ?>
+            </select>
+        </div>
+        <div class="form-group col-md-12">
+            <button id="ok-btn" class="btn btn-success" disabled><% (process.start_message)? print('<?php echo $this->translate('save') ?>')  : print('<?php echo $this->translate('next step') ?>') %></button>
+        </div>
+    </div>
+</script>
+<script id="process-tasks-tpl" type="text/template">
+    <h2><%- process.name %></h2>
+    <p class="alert alert-info"><?php echo sprintf($this->translate('The process is started by a %s message'), '<strong><%- displayMessageName(process.start_message) %></strong>') ?></p>
+</script>
+<script type="text/javascript">
+$(function() {
+    var ProcessModel = Backbone.Model.extend();
+
+    var ViewHelpers = {
+        displayMessageName : function (startMessage) {
+            if (startMessage.message_type == "collect-data") {
+                return "-collect data of " + startMessage.ginger_type + "-";
+            } else {
+                return "-new data of " + startMessage.ginger_type + " collected-";
+            }
+        }
+    }
+
+    var ProcessNameView = Backbone.View.extend({
+        template : _.template($("#process-name-tpl").html()),
+        events : {
+            "keyup #process-name-txt" : "validateInput",
+            "click #ok-btn" : "nextStep"
+        },
+        render : function () {
+
+            this.$el.html(this.template({process : this.app.process.toJSON()}));
+
+            return this;
+        },
+        setApp : function (app) {
+            this.app = app;
+        },
+        validateInput : function(e) {
+            var processName = $("#process-name-txt").val();
+
+            if (processName.length < 3) {
+                $("#process-name-txt").parent().addClass('has-error').removeClass('has-success');
+                $("#ok-btn").prop("disabled", true);
+            } else {
+                $("#process-name-txt").parent().addClass('has-success').removeClass('has-error');
+                $("#ok-btn").prop("disabled", false);
+            }
+        },
+        nextStep : function (e) {
+            var processName = $("#process-name-txt").val();
+
+            if (processName.length >= 3) {
+                this.app.process.set('name', processName);
+
+                if (this.app.process.start_message) {
+                    this.app.renderAddTasks();
+                } else {
+                    this.app.renderStartMessage();
+                }
+            }
+        }
+    });
+
+    var ProcessStartMessageView = Backbone.View.extend({
+        template : _.template($("#process-start-message-tpl").html()),
+        events : {
+            "change select" : "validateSelect",
+            "click #ok-btn" : "nextStep"
+        },
+        render : function () {
+            this.$el.html(this.template({process : this.app.process.toJSON()}));
+
+            return this;
+        },
+        setApp : function (app) {
+            this.app = app;
+        },
+        validateSelect : function (e) {
+            $("#ok-btn").prop("disabled", ! this.isValid());
+        },
+        isValid : function () {
+            return $("#message-type-sel").val() != "" && $("#ginger-type-sel").val() != "";
+        },
+        nextStep : function () {
+            if (this.isValid()) {
+                this.app.process.set("start_message", {
+                    "message_type" : $("#message-type-sel").val(),
+                    "ginger_type" : $("#ginger-type-sel").val()
+                });
+
+                console.log(this.app.process);
+
+                this.app.renderAddTasks();
+            }
+        }
+    });
+
+    var AddTasksView = Backbone.View.extend({
+        template : _.template($("#process-tasks-tpl").html()),
+        events : {},
+        render : function () {
+            this.$el.html(this.template(_.extend({process : this.app.process.toJSON()}, ViewHelpers)));
+
+            return this;
+        },
+        setApp : function (app) {
+            this.app = app;
+        }
+    });
+
+    var AppView = Backbone.View.extend({
+        initialize : function() {
+            <?php if (is_null($this->process)) : ?>
+            this.startWithNewProcess();
+            <?php endif; ?>
+        },
+        startWithNewProcess : function() {
+            this.process = new ProcessModel({
+                name : null,
+                start_message : null
+            });
+
+            var processNameView = new ProcessNameView({tagName : "div"});
+
+            this.render(processNameView);
+        },
+        render : function(childView) {
+
+            if (typeof this.currentView != "undefined") {
+                this.currentView.remove();
+            }
+
+            childView.setApp(this);
+
+            this.$el.html(childView.render().el);
+
+            this.currentView = childView;
+        },
+        renderStartMessage : function() {
+            this.render(new ProcessStartMessageView({tagName : "div"}));
+        },
+        renderAddTasks : function () {
+            this.render(new AddTasksView({tagName : "div"}));
+        }
+    });
+
+
+    var App = new AppView({el : $("#content")});
+})
+</script>
