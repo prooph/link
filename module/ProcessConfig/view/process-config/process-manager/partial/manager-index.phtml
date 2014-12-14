@@ -1,0 +1,8 @@
+<script type="text/x-handlebars" data-template-name="manager/index">
+    <h2><?php echo $this->translate('Configured Processes') ?></h2>
+    <ul>
+        {{#each process in model}}
+        <li>{{process.name}}</li>
+        {{/each}}
+    </ul>
+</script>

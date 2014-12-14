@@ -66,6 +66,7 @@ return array(
             //Command handlers
             'SystemConfig\Model\GingerConfig\CreateDefaultConfigFileHandler' => 'SystemConfig\Service\Factory\CreateDefaultConfigFileHandlerFactory',
             'SystemConfig\Model\GingerConfig\ChangeNodeNameHandler' => 'SystemConfig\Service\Factory\ChangeNodeNameHandlerFactory',
+            'SystemConfig\Model\GingerConfig\AddNewProcessToConfigHandler' => 'SystemConfig\Service\Factory\AddNewProcessToConfigHandlerFactory',
 
         ]
     ],
@@ -80,7 +81,8 @@ return array(
     'prooph.psb' => [
         'command_router_map' => [
             'SystemConfig\Command\CreateDefaultGingerConfigFile' => 'SystemConfig\Model\GingerConfig\CreateDefaultConfigFileHandler',
-            'SystemConfig\Command\ChangeNodeName' => 'SystemConfig\Model\GingerConfig\ChangeNodeNameHandler',
+            'SystemConfig\Command\ChangeNodeName'                => 'SystemConfig\Model\GingerConfig\ChangeNodeNameHandler',
+            'SystemConfig\Command\AddNewProcessToConfig'         => 'SystemConfig\Model\GingerConfig\AddNewProcessToConfigHandler',
         ]
     ],
     'zf-content-negotiation' => [
@@ -93,12 +95,5 @@ return array(
         'content_type_whitelist' => [
             'SystemConfig\Controller\Configuration' => ['application/json'],
         ],
-        /*
-        'zf-api-problem' => [
-            'render_error_controllers' => [
-                'SystemConfig\Controller\Configuration'
-            ]
-        ]
-        */
     ]
 );

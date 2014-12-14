@@ -7,6 +7,7 @@ return array(
         'ProophServiceBusModule',
         'SystemConfig',
         'ProcessConfig',
+        'AssetManager',
         'Application',
         'Dashboard',
     ),

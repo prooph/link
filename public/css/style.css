@@ -7,6 +7,10 @@ body {
 
 .text-btn-align {padding: 6px; vertical-align: middle;}
 
+.process-desc {height: 140px}
+
+.form-control-with-desc {margin-top: 20px}
+
 .btn-success {
   background-color: #269abc;
   background-image: -moz-linear-gradient(top, #269abc, #245269);

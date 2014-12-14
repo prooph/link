@@ -13,10 +13,14 @@ namespace SystemConfig\Model;
 
 use Application\Event\RecordsSystemChangedEvents;
 use Application\Event\SystemChangedEventRecorder;
+use Application\SharedKernel\DataTypeClass;
 use Ginger\Environment\Environment;
+use Ginger\Message\MessageNameUtils;
+use Ginger\Processor\Definition;
 use Ginger\Processor\NodeName;
 use SystemConfig\Event\GingerConfigFileWasCreated;
 use Application\SharedKernel\ConfigLocation;
+use SystemConfig\Event\NewProcessWasAddedToConfig;
 use SystemConfig\Event\NodeNameWasChanged;
 
 /**
@@ -49,6 +53,10 @@ final class GingerConfig implements SystemChangedEventRecorder
      */
     private static $configFileName = 'ginger.config.local.php';
 
+    /**
+     * @var \SystemConfig\Projection\GingerConfig
+     */
+    private $projection;
 
     /**
      * Uses Ginger\Environment to initialize with its defaults
@@ -153,6 +161,31 @@ final class GingerConfig implements SystemChangedEventRecorder
     }
 
     /**
+     * @param string $name
+     * @param string $type
+     * @param string $startMessage
+     * @param array $tasks
+     * @param ConfigWriter $configWriter
+     */
+    public function addProcess($name, $type, $startMessage, array $tasks, ConfigWriter $configWriter)
+    {
+        $processConfig = ["name" => $name, "process_type" => $type, "tasks" => $tasks];
+
+        $this->assertMessageName($startMessage, $this->projection()->getAllPossibleGingerTypes());
+        $this->assertStartMessageNotExists($startMessage);
+        $this->assertProcessConfig($startMessage, $processConfig);
+
+        $this->config['ginger']['processes'][$startMessage] = $processConfig;
+
+        $configWriter->replaceConfigInDirectory(
+            $this->toArray(),
+            $this->configLocation->toString() . DIRECTORY_SEPARATOR . self::$configFileName
+        );
+
+        $this->recordThat(NewProcessWasAddedToConfig::withDefinition($startMessage, $processConfig));
+    }
+
+    /**
      * Assert and set config
      *
      * @param array $config
@@ -174,7 +207,26 @@ final class GingerConfig implements SystemChangedEventRecorder
 
         $this->assertChannelConfig($config['ginger']['channels']['local'], 'local');
 
+        $projection = new \SystemConfig\Projection\GingerConfig($config, true);
+
+        foreach ($config['ginger']['processes'] as $startMessage => $processConfig) {
+            $this->assertMessageName($startMessage, $projection->getAllPossibleGingerTypes());
+            $this->assertProcessConfig($startMessage, $processConfig);
+        }
+
         $this->config = $config;
+    }
+
+    /**
+     * @return \SystemConfig\Projection\GingerConfig
+     */
+    private function projection()
+    {
+        if (is_null($this->projection)) {
+            $this->projection = new \SystemConfig\Projection\GingerConfig($this->toArray(), true);
+        }
+
+        return $this->projection;
     }
 
     /**
@@ -187,6 +239,53 @@ final class GingerConfig implements SystemChangedEventRecorder
         if (! array_key_exists('targets', $config)) throw new \InvalidArgumentException('Missing key targets in config ginger.channels.'.$channelName);
         if (! array_key_exists('utils', $config))   throw new \InvalidArgumentException('Missing key utils in config ginger.channels.'.$channelName);
         if (! is_array($config['targets']))         throw new \InvalidArgumentException(sprintf('Config ginger.channels.%s.targets must be an array', $channelName));
+    }
+
+    /**
+     * @param string $messageName
+     * @param array $possibleGingerTypes
+     * @throws \InvalidArgumentException
+     */
+    private function assertMessageName($messageName, array $possibleGingerTypes)
+    {
+        if (! is_string($messageName)) throw new \InvalidArgumentException('Message name must be a string');
+
+        if (! MessageNameUtils::isGingerMessage($messageName)) throw new \InvalidArgumentException(sprintf(
+            'Message name format -%s- is not valid',
+            $messageName
+        ));
+
+
+
+        DataTypeClass::extractFromMessageName($messageName, $possibleGingerTypes);
+    }
+
+    /**
+     * @param string $messageName
+     * @throws \InvalidArgumentException
+     */
+    private function assertStartMessageNotExists($messageName)
+    {
+        $messageNames = array_keys($this->projection()->getProcessDefinitions());
+
+        if (in_array($messageName, $messageNames)) throw new \InvalidArgumentException(sprintf(
+            "Message name %s is already defined as start message",
+            $messageName
+        ));
+    }
+
+    /**
+     * @param string $messageName
+     * @param array $processConfig
+     * @throws \InvalidArgumentException
+     */
+    private function assertProcessConfig($messageName, array $processConfig)
+    {
+        if (! array_key_exists('name', $processConfig))         throw new \InvalidArgumentException('Missing key name in config ginger.processes.'.$messageName);
+        if (! array_key_exists('process_type', $processConfig)) throw new \InvalidArgumentException('Missing key process_type in config ginger.processes.'.$messageName);
+        if (! in_array($processConfig['process_type'], Definition::getAllProcessTypes())) throw new \InvalidArgumentException('Process type is not valid in config ginger.processes.'.$messageName);
+        if (! array_key_exists('tasks', $processConfig))        throw new \InvalidArgumentException('Missing key tasks in config ginger.processes.'.$messageName);
+        if (! is_array($processConfig['tasks']))                throw new \InvalidArgumentException(sprintf('Config ginger.processes.%s.tasks must be an array', $messageName));
     }
 }
  

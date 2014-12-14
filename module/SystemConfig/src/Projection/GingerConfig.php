@@ -32,6 +32,11 @@ final class GingerConfig
     private $configured = false;
 
     /**
+     * @var array
+     */
+    private $possibleTypes;
+
+    /**
      * @param array $gingerConfig
      * @param bool  $isConfigured
      */
@@ -58,13 +63,11 @@ final class GingerConfig
     }
 
     /**
-     * @return ArrayReader[]
+     * @return array
      */
     public function getProcessDefinitions()
     {
-        $processes = $this->config->arrayValue('ginger.processes');
-
-        return array_map(function(array $processDefinition) { return new ArrayReader($processDefinition); }, $processes);
+        return $this->config->arrayValue('ginger.processes');
     }
 
     /**
@@ -72,6 +75,8 @@ final class GingerConfig
      */
     public function getAllPossibleGingerTypes()
     {
+        if (! is_null($this->possibleTypes)) return $this->possibleTypes;
+
         $possibleTypes = [];
 
         foreach ($this->config->arrayValue('ginger.connectors') as $connectorConfig) {
@@ -88,7 +93,9 @@ final class GingerConfig
             }
         }
 
-        return array_unique($possibleTypes);
+        $this->possibleTypes = array_unique($possibleTypes);
+
+        return $this->possibleTypes;
     }
 }
  

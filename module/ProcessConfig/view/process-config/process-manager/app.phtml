@@ -1,0 +1,92 @@
+<div class="row">
+    <div id="app" class="col-md-12">
+        <h1><?php echo $this->translate('Process Manager') ?></h1>
+        <script type="text/x-handlebars" data-template-name="manager">
+            <div class="row">
+                <div id="left-panel" class="col-md-6">
+                    {{outlet}}
+                </div>
+                <div id="right-panel" class="col-md-6">
+
+                </div>
+            </div>
+        </script>
+    </div>
+</div>
+<?php echo $this->partial('process-config/process-manager/partial/manager-index.phtml') ?>
+<?php echo $this->partial('process-config/process-manager/partial/create-process.phtml') ?>
+<?php
+$this->inlineScript()->appendFile($this->basePath() . '/js/handlebars.js');
+$this->inlineScript()->appendFile($this->basePath() . '/js/ember.js');
+$this->inlineScript()->appendFile($this->basePath() . '/js/ember.data.js');
+
+$linearProcessValue = \Ginger\Processor\Definition::PROCESS_LINEAR_MESSAGING;
+$foreachProcessValue = \Ginger\Processor\Definition::PROCESS_PARALLEL_FOR_EACH;
+
+//Bootstrap ember app
+$this->inlineScript()->captureStart();
+
+$apiUrl = ltrim($this->url('process_config/api'), '/');
+
+$possibleGingerTypes = json_encode($this->possible_ginger_types);
+echo <<<JS
+window.ProcessManager = Ember.Application.create({
+    rootElement : '#app'
+});
+
+DS.RESTAdapter.reopen({
+  namespace : '{$apiUrl}'
+});
+
+//Route Config
+ProcessManager.Router.map(function() {
+    this.resource('manager', { path: '/' }, function() {
+        this.route('create');
+    });
+});
+
+ProcessManager.ManagerRoute = Ember.Route.extend({
+    model: function () {
+        {$this->emberPushToStore('process', $this->processes)}
+
+        return this.store.all('process');
+    }
+});
+
+ProcessManager.ManagerIndexRoute = Ember.Route.extend({
+    model : function () {
+        return this.modelFor('manager');
+    }
+});
+
+ProcessManager.ManagerCreateRoute = Ember.Route.extend({
+    model : function () {
+        return {
+            processTypes : [
+                {
+                    value : "{$linearProcessValue}",
+                    label : "{$this->translate('Linear Process')}"
+                },
+                {
+                    value : "{$foreachProcessValue}",
+                    label : "{$this->translate('Foreach Process')}"
+                }
+            ],
+            messageTypes : [
+                {
+                    value : "collect-data",
+                    label : "{$this->translate('Collect Data Message')}"
+                },
+                {
+                    value : "data-collected",
+                    label : "{$this->translate('Data Collected Message')}"
+                }
+            ],
+            dataTypes : $possibleGingerTypes
+        }
+    }
+});
+JS;
+$this->inlineScript()->captureEnd();
+$this->inlineScript()->appendFile($this->basePath() . '/js/app/process-manager-components.js');
+?>

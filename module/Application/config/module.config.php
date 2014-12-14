@@ -59,6 +59,11 @@ return array(
             'ViewJsonStrategy',
         ),
     ),
+    'view_helpers' => array(
+        'invokables'=> array(
+            'emberPushToStore' => 'Application\View\Helper\EmberPushToStore'
+        )
+    ),
     'zf-content-negotiation' => [
         //Application wide selectors for the content negotiation module
         'selectors'   => array(

@@ -21,10 +21,31 @@ return array(
                     'configurator' => [
                         'type' => 'Literal',
                         'options' => [
-                            'route' => '/configurator',
+                            'route' => '/process-manager',
                             'defaults' => [
-                                'controller' => 'ProcessConfig\Controller\ConfigureProcessApp',
+                                'controller' => 'ProcessConfig\Controller\ProcessManager',
                                 'action' => 'start-app'
+                            ]
+                        ]
+                    ],
+                    'api' => [
+                        'type' => 'Literal',
+                        'options' => [
+                            'route' => '/api',
+                        ],
+                        'may_terminate' => true,
+                        'child_routes' => [
+                            'processes' => [
+                                'type' => 'Segment',
+                                'options' => [
+                                    'route' => '/processes[/:id]',
+                                    'constraints' => array(
+                                        'id' => '.+',
+                                    ),
+                                    'defaults' => [
+                                        'controller' => 'ProcessConfig\Api\Process',
+                                    ]
+                                ]
                             ]
                         ]
                     ]
@@ -44,12 +65,39 @@ return array(
             __DIR__ . '/../view',
         ),
     ),
+    'asset_manager' => array(
+        'resolver_configs' => array(
+            'collections' => array(
+                'js/app/process-manager-components.js' => array(
+                    'js/app/controllers/manager_controller.js',
+                    'js/app/controllers/manager_create_controller.js',
+                    'js/app/models/process.js',
+                    'js/app/views/data_type_select.js',
+                ),
+            ),
+            'paths' => array(
+                __DIR__ . '/../public',
+            ),
+        ),
+    ),
     'controllers' => array(
         'invokables' => [
-            'ProcessConfig\Controller\ConfigureProcessApp' => 'ProcessConfig\Controller\ConfigureProcessAppController',
+            'ProcessConfig\Controller\ProcessManager' => 'ProcessConfig\Controller\ProcessManagerController',
+            'ProcessConfig\Api\Process' => 'ProcessConfig\Api\Process',
         ],
         'factories' => array(
             'ProcessConfig\Controller\DashboardWidget' => 'ProcessConfig\Controller\Factory\DashboardWidgetControllerFactory'
         ),
     ),
+    'zf-content-negotiation' => [
+        'controllers' => [
+            'ProcessConfig\Api\Process' => 'Json',
+        ],
+        'accept_whitelist' => [
+            'ProcessConfig\Api\Process' => ['application/json'],
+        ],
+        'content_type_whitelist' => [
+            'ProcessConfig\Api\Process' => ['application/json'],
+        ],
+    ],
 );
