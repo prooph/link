@@ -97,5 +97,13 @@ final class GingerConfig
 
         return $this->possibleTypes;
     }
+
+    /**
+     * @return array
+     */
+    public function getConnectors()
+    {
+        return array_values($this->config->arrayValue('ginger.connectors'));
+    }
 }
  

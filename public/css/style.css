@@ -33,3 +33,40 @@ body {
 .btn-success:active, .btn-success.active {
   background-color: #245269;
 }
+
+
+/* Sidebar Styles */
+
+.sidebar-nav {
+    position: absolute;
+    top: 90px;
+    width: 70%;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.sidebar-nav li {
+    text-indent: 40px;
+    line-height: 40px;
+}
+
+.sidebar-nav li a {
+    display: block;
+    text-decoration: none;
+    color: #999999;
+}
+
+.sidebar-nav li a.active {
+    text-decoration: underline;
+}
+
+.sidebar-nav li a:hover {
+    text-decoration: none;
+    color: #269abc;
+}
+
+.sidebar-nav li a:active,
+.sidebar-nav li a:focus {
+    text-decoration: none;
+}

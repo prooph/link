@@ -1,0 +1,45 @@
+<?php
+return [
+    'ginger' => [
+        'node_name' => 'localhost',
+        'plugins' => [],
+        'processes' => [
+            'ginger-message-acmeproductcollection-collect-data' => [
+                'name' => 'Linear Collect Data Acme.ProductCollection',
+                'process_type' => 'linear_messaging',
+                'tasks' => [
+                    [
+                        "task_type" => 'collect_data',
+                        "source" => 'GingerExample\Plugin\UserDataProvider',
+                        "ginger_type" => 'Acme\ProductCollection'
+                    ],
+                    [
+                        "task_type" => 'process_data',
+                        "target" => "target-file-writer",
+                        "allowed_types" => ['Acme\ProductCollection']
+                    ]
+                ],
+            ],
+        ],
+        'channels' => [
+            'local' => [
+                'targets' => [
+                    0 => 'localhost',
+                ],
+                'utils' => [],
+            ],
+        ],
+        'connectors' => [
+            'CsvConnector' => [
+                'CsvWriter' => [
+                    'allowed_messages' => [
+                        0 => 'process-data'
+                    ],
+                    'allowed_types' => [
+                        0 => 'Acme\\ProductCollection',
+                    ],
+                ],
+            ],
+        ],
+    ],
+];

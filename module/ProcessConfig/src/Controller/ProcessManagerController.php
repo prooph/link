@@ -39,7 +39,9 @@ final class ProcessManagerController extends AbstractQueryController
                         return $this->convertToClientProcess($message, $definition, $gingerConfig->getAllPossibleGingerTypes());
                     }
                 ),
-            'possible_ginger_types' => $gingerConfig->getAllPossibleGingerTypes()
+            'possible_ginger_types' => $gingerConfig->getAllPossibleGingerTypes(),
+            'possible_task_types' => \Ginger\Processor\Definition::getAllTaskTypes(),
+            'connectors' => $gingerConfig->getConnectors()
         ]);
 
         $viewModel->setTemplate('process-config/process-manager/app');
@@ -56,6 +58,10 @@ final class ProcessManagerController extends AbstractQueryController
     private function convertToClientProcess($startMessage, array $processDefinition, array $knownDataTypes)
     {
         $messageType = MessageNameUtils::getMessageSuffix($startMessage);
+
+        foreach($processDefinition['tasks'] as $i => &$task) {
+            $task['id'] = $i+1;
+        }
 
         return [
             'id'  => $startMessage,

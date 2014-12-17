@@ -2,20 +2,17 @@
     <div id="app" class="col-md-12">
         <h1><?php echo $this->translate('Process Manager') ?></h1>
         <script type="text/x-handlebars" data-template-name="manager">
-            <div class="row">
-                <div id="left-panel" class="col-md-6">
-                    {{outlet}}
-                </div>
-                <div id="right-panel" class="col-md-6">
-
-                </div>
-            </div>
+            {{outlet}}
         </script>
     </div>
 </div>
 <?php echo $this->partial('process-config/process-manager/partial/manager-index.phtml') ?>
 <?php echo $this->partial('process-config/process-manager/partial/create-process.phtml') ?>
+<?php echo $this->partial('process-config/process-manager/partial/edit-process.phtml') ?>
 <?php
+
+$this->layout()->sidebar_left = $this->partial('process-config/process-manager/partial/sidebar-left');
+
 $this->inlineScript()->appendFile($this->basePath() . '/js/handlebars.js');
 $this->inlineScript()->appendFile($this->basePath() . '/js/ember.js');
 $this->inlineScript()->appendFile($this->basePath() . '/js/ember.data.js');
@@ -29,6 +26,8 @@ $this->inlineScript()->captureStart();
 $apiUrl = ltrim($this->url('process_config/api'), '/');
 
 $possibleGingerTypes = json_encode($this->possible_ginger_types);
+$possibleTaskTypes = json_encode($this->possible_task_types);
+$connectors = json_encode($this->connectors);
 echo <<<JS
 window.ProcessManager = Ember.Application.create({
     rootElement : '#app'
@@ -38,10 +37,18 @@ DS.RESTAdapter.reopen({
   namespace : '{$apiUrl}'
 });
 
+ProcessManager.ApplicationAdapter = DS.FixtureAdapter.extend();
+
 //Route Config
 ProcessManager.Router.map(function() {
     this.resource('manager', { path: '/' }, function() {
         this.route('create');
+        this.resource('process', {path: '/process/:process_id'}, function() {
+            this.resource('tasks', function () {
+                this.resource('task', {path: '/:task_id'})
+            });
+            this.route('edit');
+        });
     });
 });
 
@@ -84,6 +91,50 @@ ProcessManager.ManagerCreateRoute = Ember.Route.extend({
             ],
             dataTypes : $possibleGingerTypes
         }
+    }
+});
+ProcessManager.ProcessRoute = Ember.Route.extend({
+    renderTemplate : function () {
+        this.render('process');
+        this.render(
+            'process.tasks',
+            {
+                into: 'process',
+                outlet: 'leftpanel'
+            }
+        );
+    }
+});
+ProcessManager.ProcessEditRoute = Ember.Route.extend({
+    renderTemplate : function () {
+        this.render(
+            'process.edit',
+            {
+                into: 'process',
+                outlet: 'leftpanel'
+            }
+        );
+    }
+});
+
+ProcessManager.TaskRoute = Ember.Route.extend({
+    model : function(params) {
+        var process = this.modelFor('process');
+        return process.get('tasks')[parseInt(params.task_id) - 1];
+    },
+    setupController: function(controller, model) {
+        controller.set('model', model);
+        controller.set('taskTypes', {$possibleTaskTypes});
+        controller.set('connectors', []);
+    },
+    renderTemplate : function () {
+        this.render(
+            'task',
+            {
+                into : 'process',
+                outlet: 'leftpanel'
+            }
+        )
     }
 });
 JS;

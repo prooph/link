@@ -45,13 +45,23 @@
                 </div><!--/.nav-collapse -->
             </div>
         </nav>
-        <div class="container">
-            <?php echo $this->content; ?>
-            <hr>
-            <footer>
-                <p>&copy; 2014 - <?php echo date('Y') ?> by prooph software GmbH. <?php echo $this->translate('All rights reserved.') ?></p>
-            </footer>
-        </div> <!-- /container -->
+        <div class="row">
+            <div class="col-md-2">
+                <div class="sidebar-left">
+                    <?php if (isset($this->sidebar_left)) echo $this->sidebar_left; ?>
+                </div>
+            </div>
+            <div class="col-md-8">
+                <?php echo $this->content; ?>
+                <hr>
+                <footer>
+                    <p>&copy; 2014 - <?php echo date('Y') ?> by prooph software GmbH. <?php echo $this->translate('All rights reserved.') ?></p>
+                </footer>
+            </div>
+            <div class="col-md-2">
+                <?php if (isset($this->sidebar_right)) echo $this->sidebar_right; ?>
+            </div>
+        </div>
         <?php echo $this->inlineScript() ?>
     </body>
 </html>

@@ -1,0 +1,38 @@
+<script type="text/x-handlebars" data-template-name="process">
+    <h2>{{model.name}} {{#link-to 'process.edit' model class="btn btn-default pull-right"}}<?php echo $this->translate('edit') ?>{{/link-to}}</h2>
+    <hr>
+    <div class="row">
+        <div id="left-panel" class="col-md-12">
+            {{outlet leftpanel}}
+        </div>
+    </div>
+</script>
+<script type="text/x-handlebars" data-template-name="process/tasks">
+    <ul>
+        {{#each task in model.tasks}}
+        <li>
+            {{#link-to 'task' task}}{{task.id}}. {{task-desc task}}{{/link-to}}
+        </li>
+        {{/each}}
+        <li></li>
+    </ul>
+</script>
+<script type="text/x-handlebars" data-template-name="process/edit">
+    process edit {{model.name}}
+</script>
+<script type="text/x-handlebars" data-template-name="task">
+    <h3>{{task-desc model}}</h3>
+    <div {{bind-attr class=":form-group :has-feedback isAProcessSelected:has-success"}}>
+        {{view "select" class="form-control form-control-with-desc"
+        prompt="- <?php echo $this->translate('Task Type') ?> -"
+        content=taskTypes
+        value=task_type}}
+    </div>
+    {{#if isCollectDataTask}}
+        collect data
+    {{/if}}
+    {{#if isProcessDataTask}}
+        process data
+    {{/if}}
+
+</script>
