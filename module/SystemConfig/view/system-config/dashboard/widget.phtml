@@ -4,15 +4,22 @@
     </div>
     <p class="text-center"><a href="<?php echo $this->url('system_config') ?>" class="btn btn-success"><?php echo $this->translate('see what is going on') ?></a></p>
 <?php else :  ?>
-    <?php if (! $this->gingerConfig->isConfigured()) : ?>
-        <div class="alert alert-warning">
-            <span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span>&nbsp;<?php echo $this->translate('Ginger runs currently in default mode') ?>!
+    <?php if (! $this->config_is_writable) : ?>
+        <div class="alert alert-danger">
+            <span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span>&nbsp;<?php echo sprintf($this->translate('Ginger config is not writable'), $this->config_dir, $this->config_file_name) ?>!
         </div>
-        <p class="text-center"><a href="<?php echo $this->url('system_config') ?>" class="btn btn-success"><?php echo $this->translate('set up the system') ?></a></p>
+        <p class="text-center"><a href="<?php echo $this->url('system_config') ?>" class="btn btn-success"><?php echo $this->translate('fix the error') ?></a></p>
     <?php else : ?>
-        <div class="alert alert-info">
-            Node "<?php echo $this->escapeHtml($this->gingerConfig->getNodeName()) ?>"&nbsp;<?php echo $this->translate('config looks good') ?>&nbsp;<span class="glyphicon glyphicon-ok"></span>
-        </div>
-        <p class="text-center"><a href="<?php echo $this->url('system_config') ?>" class="btn btn-success"><?php echo $this->translate('change config') ?></a></p>
+        <?php if (! $this->gingerConfig->isConfigured()) : ?>
+            <div class="alert alert-warning">
+                <span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span>&nbsp;<?php echo $this->translate('Ginger runs currently in default mode') ?>!
+            </div>
+            <p class="text-center"><a href="<?php echo $this->url('system_config') ?>" class="btn btn-success"><?php echo $this->translate('set up the system') ?></a></p>
+        <?php else : ?>
+            <div class="alert alert-info">
+                Node "<?php echo $this->escapeHtml($this->gingerConfig->getNodeName()) ?>"&nbsp;<?php echo $this->translate('config looks good') ?>&nbsp;<span class="glyphicon glyphicon-ok"></span>
+            </div>
+            <p class="text-center"><a href="<?php echo $this->url('system_config') ?>" class="btn btn-success"><?php echo $this->translate('change config') ?></a></p>
+        <?php endif; ?>
     <?php endif; ?>
 <?php endif; ?>

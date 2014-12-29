@@ -30,15 +30,23 @@ return [
             ],
         ],
         'connectors' => [
-            'CsvConnector' => [
-                'CsvWriter' => [
-                    'allowed_messages' => [
-                        0 => 'process-data'
-                    ],
-                    'allowed_types' => [
-                        0 => 'Acme\\ProductCollection',
-                    ],
+            'product-csv-reader' => [
+                'allowed_messages' => [
+                    0 => 'collect-data',
                 ],
+                'allowed_types' => [
+                    0 => 'CsvProductCollection',
+                ],
+                'preferred_type' => 'CsvProductColle    ction',
+            ],
+            'product-csv-writer' => [
+                'allowed_messages' => [
+                    0 => 'process-data',
+                ],
+                'allowed_types' => [
+                    0 => 'CsvProductCollection',
+                ],
+                'preferred_type' => 'CsvProductCollection',
             ],
         ],
     ],

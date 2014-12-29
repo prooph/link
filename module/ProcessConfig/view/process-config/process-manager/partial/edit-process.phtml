@@ -14,7 +14,9 @@
             {{#link-to 'task' task}}{{task.id}}. {{task-desc task}}{{/link-to}}
         </li>
         {{/each}}
-        <li></li>
+        <li>
+            {{#link-to 'tasks.create' class='btn btn-default'}}<?php echo $this->translate('Add Task') ?>{{/link-to}}
+        </li>
     </ul>
 </script>
 <script type="text/x-handlebars" data-template-name="process/edit">
@@ -29,7 +31,7 @@
         value=task_type}}
     </div>
     {{#if isCollectDataTask}}
-        collect data
+
     {{/if}}
     {{#if isProcessDataTask}}
         process data

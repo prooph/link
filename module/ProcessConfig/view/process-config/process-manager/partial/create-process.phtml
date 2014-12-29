@@ -2,7 +2,7 @@
     <h2><?php echo $this->translate('New Process') ?></h2>
     <hr>
     <div class="row">
-        <div id="left-panel" class="col-md-6">
+        <div id="left-panel" class="col-md-8">
             <div class="row">
                 <div class="col-md-6">
                     <div {{bind-attr class=":form-group :has-feedback isAProcessSelected:has-success"}}>
@@ -57,11 +57,11 @@
                         <?php echo $this->translate('A collect-data message is useful when the first task of the process should collect data from a source system.') ?>
                         {{/if}}
                         {{#if isDataCollectedMessage}}
-                        <?php echo $this->translate('A data-collected message is useful when a process should be started automatically as soon as the workflow process receives such a workflow message.') ?>
+                        <?php echo $this->translate('A data-collected message is useful when a process should be started automatically as soon as such a message is received.') ?>
                         {{/if}}
                         {{/if}}
                         {{#if dataTypeSelectFocused}}
-                        <?php echo $this->translate('Data types are provided by system connectors or plugins. They define the data a connected system can provide or process.') ?>
+                        <?php echo $this->translate('Data types are provided by system connectors or plugins. They define the structures a connected system can provide or process.') ?>
                         {{/if}}
                     </div>
                 </div>
@@ -72,7 +72,7 @@
                 </div>
             </div>
         </div>
-        <div id="right-panel" class="col-md-6">
+        <div id="right-panel" class="col-md-4">
 
         </div>
     </div>

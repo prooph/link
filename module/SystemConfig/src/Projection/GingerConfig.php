@@ -73,7 +73,7 @@ final class GingerConfig
     /**
      * @return array
      */
-    public function getAllPossibleGingerTypes()
+    public function getAllPossibleDataTypes()
     {
         if (! is_null($this->possibleTypes)) return $this->possibleTypes;
 
@@ -82,14 +82,10 @@ final class GingerConfig
         foreach ($this->config->arrayValue('ginger.connectors') as $connectorConfig) {
             if (! is_array($connectorConfig)) continue;
 
-            foreach ($connectorConfig as $typesDefinition) {
-                if (! is_array($typesDefinition)) continue;
+            $typesDefinition = new ArrayReader($connectorConfig);
 
-                $typesDefinition = new ArrayReader($typesDefinition);
-
-                foreach($typesDefinition->arrayValue('allowed_types') as $allowedType) {
-                    $possibleTypes[] = $allowedType;
-                }
+            foreach($typesDefinition->arrayValue('allowed_types') as $allowedType) {
+                $possibleTypes[] = $allowedType;
             }
         }
 

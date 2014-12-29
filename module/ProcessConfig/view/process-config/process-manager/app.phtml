@@ -16,18 +16,46 @@ $this->layout()->sidebar_left = $this->partial('process-config/process-manager/p
 $this->inlineScript()->appendFile($this->basePath() . '/js/handlebars.js');
 $this->inlineScript()->appendFile($this->basePath() . '/js/ember.js');
 $this->inlineScript()->appendFile($this->basePath() . '/js/ember.data.js');
-
-$linearProcessValue = \Ginger\Processor\Definition::PROCESS_LINEAR_MESSAGING;
-$foreachProcessValue = \Ginger\Processor\Definition::PROCESS_PARALLEL_FOR_EACH;
+$this->inlineScript()->appendFile($this->basePath() . '/js/i18n.js');
+$this->inlineScript()->appendFile($this->basePath() . '/js/i18n-plurals.js');
 
 //Bootstrap ember app
 $this->inlineScript()->captureStart();
 
 $apiUrl = ltrim($this->url('process_config/api'), '/');
 
-$possibleGingerTypes = json_encode($this->possible_ginger_types);
+$possibleDataTypes = json_encode($this->possible_data_types);
 $possibleTaskTypes = json_encode($this->possible_task_types);
 $connectors = json_encode($this->connectors);
+$shortLocale = explode("_", $this->plugin('translate')->getTranslator()->getLocale())[0];
+$clientTranslations = json_encode([
+    'process' => [
+        'linear' => [
+            'value' => \Ginger\Processor\Definition::PROCESS_LINEAR_MESSAGING,
+            'label' => $this->translate('Linear Process'),
+        ],
+        'foreach' => [
+            'value' => \Ginger\Processor\Definition::PROCESS_PARALLEL_FOR_EACH,
+            'label' => $this->translate('Foreach Process'),
+        ]
+    ],
+    'message' => [
+        'collect_data' => [
+            'value' => 'collect-data',
+            'label' => $this->translate('Collect Data Message'),
+        ],
+        'data_collected' => [
+            'value' => 'data-collected',
+            'label' => $this->translate('Data Collected Message'),
+        ],
+    ],
+    'task' => [
+        'new' => $this->translate('New Task'),
+        'collect_data' => $this->translate('Collect {{sourceType}} from {{source}}'),
+        'process_data' => $this->translate('Process {{preferredType}} with {{target}}'),
+    ]
+]);
+
 echo <<<JS
 window.ProcessManager = Ember.Application.create({
     rootElement : '#app'
@@ -37,7 +65,13 @@ DS.RESTAdapter.reopen({
   namespace : '{$apiUrl}'
 });
 
-ProcessManager.ApplicationAdapter = DS.FixtureAdapter.extend();
+Em.I18n.locale = '{$shortLocale}';
+
+Em.I18n.translations = $clientTranslations;
+
+ProcessManager.TaskTypes   = $possibleTaskTypes;
+ProcessManager.DataTypes = $possibleDataTypes;
+ProcessManager.Connectors  = $connectors;
 
 //Route Config
 ProcessManager.Router.map(function() {
@@ -45,99 +79,20 @@ ProcessManager.Router.map(function() {
         this.route('create');
         this.resource('process', {path: '/process/:process_id'}, function() {
             this.resource('tasks', function () {
-                this.resource('task', {path: '/:task_id'})
+                this.resource('task', {path: '/:task_id'});
+                this.route('create');
             });
             this.route('edit');
         });
     });
 });
 
-ProcessManager.ManagerRoute = Ember.Route.extend({
-    model: function () {
+ProcessManager.ApplicationRoute = Ember.Route.extend({
+    model : function() {
         {$this->emberPushToStore('process', $this->processes)}
-
-        return this.store.all('process');
-    }
-});
-
-ProcessManager.ManagerIndexRoute = Ember.Route.extend({
-    model : function () {
-        return this.modelFor('manager');
-    }
-});
-
-ProcessManager.ManagerCreateRoute = Ember.Route.extend({
-    model : function () {
-        return {
-            processTypes : [
-                {
-                    value : "{$linearProcessValue}",
-                    label : "{$this->translate('Linear Process')}"
-                },
-                {
-                    value : "{$foreachProcessValue}",
-                    label : "{$this->translate('Foreach Process')}"
-                }
-            ],
-            messageTypes : [
-                {
-                    value : "collect-data",
-                    label : "{$this->translate('Collect Data Message')}"
-                },
-                {
-                    value : "data-collected",
-                    label : "{$this->translate('Data Collected Message')}"
-                }
-            ],
-            dataTypes : $possibleGingerTypes
-        }
-    }
-});
-ProcessManager.ProcessRoute = Ember.Route.extend({
-    renderTemplate : function () {
-        this.render('process');
-        this.render(
-            'process.tasks',
-            {
-                into: 'process',
-                outlet: 'leftpanel'
-            }
-        );
-    }
-});
-ProcessManager.ProcessEditRoute = Ember.Route.extend({
-    renderTemplate : function () {
-        this.render(
-            'process.edit',
-            {
-                into: 'process',
-                outlet: 'leftpanel'
-            }
-        );
-    }
-});
-
-ProcessManager.TaskRoute = Ember.Route.extend({
-    model : function(params) {
-        var process = this.modelFor('process');
-        return process.get('tasks')[parseInt(params.task_id) - 1];
-    },
-    setupController: function(controller, model) {
-        controller.set('model', model);
-        controller.set('taskTypes', {$possibleTaskTypes});
-        controller.set('connectors', []);
-    },
-    renderTemplate : function () {
-        this.render(
-            'task',
-            {
-                into : 'process',
-                outlet: 'leftpanel'
-            }
-        )
     }
 });
 JS;
 $this->inlineScript()->captureEnd();
-$this->inlineScript()->appendFile($this->basePath() . '/js/app/process-manager-components.js');
+$this->inlineScript()->appendFile($this->basePath() . '/js/process-config/app.js');
 ?>

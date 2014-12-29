@@ -19,6 +19,15 @@
                 </div>
             </div>
         <?php endif; ?>
+        <?php if (!$this->config_is_writable) : ?>
+            <div class="col-md-12">
+                <div class="alert alert-danger">
+                    <span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span>&nbsp;<?php
+                    echo sprintf($this->translate('The ginger config file: %s in %s is not writable. Please make sure the webserver has write access!'), $this->config_file_name, $this->config_dir)
+                    ?>
+                </div>
+            </div>
+        <?php endif; ?>
         <?php if (!$this->gingerConfig->isConfigured()) : ?>
             <div class="col-md-12">
                 <div class="alert alert-warning">

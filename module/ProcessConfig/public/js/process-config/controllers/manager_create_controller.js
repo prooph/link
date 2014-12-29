@@ -17,8 +17,11 @@ ProcessManager.ManagerCreateController = Ember.ObjectController.extend({
                 },
                 "tasks" : []
             });
+            var con = this;
 
-            process.save().catch($.failNotify);
+            process.save().then(function () {
+                con.transitionToRoute('manager');
+            }).catch($.failNotify);
         }
     },
     processType : null,
@@ -29,10 +32,10 @@ ProcessManager.ManagerCreateController = Ember.ObjectController.extend({
         return this.get("processType") != null;
     }.property("processType"),
     isLinearProcess : function () {
-        return this.get("processType") == "linear_messaging";
+        return this.get("processType") == Em.I18n.t('process.linear.value');
     }.property("processType"),
     isForeachProcess : function () {
-        return this.get("processType") == "parallel_for_each";
+        return this.get("processType") == Em.I18n.t('process.foreach.value');
     }.property("processType"),
 
     messageType : null,
@@ -43,10 +46,10 @@ ProcessManager.ManagerCreateController = Ember.ObjectController.extend({
         return this.get("messageType") != null;
     }.property("messageType"),
     isCollectDataMessage : function () {
-        return this.get("messageType") == "collect-data"
+        return this.get("messageType") == Em.I18n.t('message.collect_data.value')
     }.property("messageType"),
     isDataCollectedMessage : function () {
-        return this.get("messageType") == "data-collected"
+        return this.get("messageType") == Em.I18n.t('message.data_collected.value')
     }.property("messageType"),
 
     dataType : null,
@@ -68,12 +71,40 @@ ProcessManager.ManagerCreateController = Ember.ObjectController.extend({
     processName : function () {
         var name = "";
 
-        if (this.get("processType") == "linear_messaging") name = name + "Linear ";
-        if (this.get("processType") == "parallel_for_each") name = name + "Foreach ";
-        if (this.get("messageType") == "collect-data") name = name + "Collect Data ";
-        if (this.get("messageType") == "data-collected") name = name + "Process Data ";
-        if (this.get("dataType") != null) name = name + this.get("dataType").split("\\").join(".");
+        if (this.get("processType") == Em.I18n.t('process.linear.value')) name = name + "Linear ";
+        if (this.get("processType") == Em.I18n.t('process.foreach.value')) name = name + "Foreach ";
+        if (this.get("messageType") == Em.I18n.t('message.collect_data.value')) name = name + "Collect ";
+        if (this.get("messageType") == Em.I18n.t('message.data_collected.value')) name = name + "Process ";
+        if (this.get("dataType") != null) name = name + this.get("dataType").split("\\").pop() + " ";
 
         return name;
     }.property("processType", "messageType", "dataType")
+});
+
+ProcessManager.ManagerCreateRoute = Ember.Route.extend({
+    model : function () {
+        return {
+            processTypes : [
+                {
+                    value : Em.I18n.t('process.linear.value'),
+                    label : Em.I18n.t('process.linear.label')
+                },
+                {
+                    value : Em.I18n.t('process.foreach.value'),
+                    label : Em.I18n.t('process.foreach.label')
+                }
+            ],
+            messageTypes : [
+                {
+                    value : Em.I18n.t('message.collect_data.value'),
+                    label : Em.I18n.t('message.collect_data.label')
+                },
+                {
+                    value : Em.I18n.t('message.data_collected.value'),
+                    label : Em.I18n.t('message.data_collected.label')
+                }
+            ],
+            dataTypes : ProcessManager.DataTypes
+        }
+    }
 });

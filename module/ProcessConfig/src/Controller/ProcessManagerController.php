@@ -36,10 +36,10 @@ final class ProcessManagerController extends AbstractQueryController
             'processes' => Func::map(
                     $gingerConfig->getProcessDefinitions(),
                     function($definition, $message) use ($gingerConfig) {
-                        return $this->convertToClientProcess($message, $definition, $gingerConfig->getAllPossibleGingerTypes());
+                        return $this->convertToClientProcess($message, $definition, $gingerConfig->getAllPossibleDataTypes());
                     }
                 ),
-            'possible_ginger_types' => $gingerConfig->getAllPossibleGingerTypes(),
+            'possible_data_types' => $gingerConfig->getAllPossibleDataTypes(),
             'possible_task_types' => \Ginger\Processor\Definition::getAllTaskTypes(),
             'connectors' => $gingerConfig->getConnectors()
         ]);
@@ -50,7 +50,7 @@ final class ProcessManagerController extends AbstractQueryController
     }
 
     /**
-     * @param $startMessage
+     * @param string $startMessage
      * @param array $processDefinition
      * @param array $knownDataTypes
      * @return array
@@ -66,10 +66,10 @@ final class ProcessManagerController extends AbstractQueryController
         return [
             'id'  => $startMessage,
             'name' => $processDefinition['name'],
-            'process_type' => $processDefinition['process_type'],
-            'start_message' => [
-                'message_type' => $messageType,
-                'data_type' => DataTypeClass::extractFromMessageName($startMessage, $knownDataTypes)
+            'processType' => $processDefinition['process_type'],
+            'startMessage' => [
+                'messageType' => $messageType,
+                'dataType' => DataTypeClass::extractFromMessageName($startMessage, $knownDataTypes)
             ],
             'tasks' => $processDefinition['tasks']
         ];

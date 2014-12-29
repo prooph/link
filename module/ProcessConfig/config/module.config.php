@@ -68,13 +68,14 @@ return array(
     'asset_manager' => array(
         'resolver_configs' => array(
             'collections' => array(
-                'js/app/process-manager-components.js' => array(
-                    'js/app/controllers/manager_controller.js',
-                    'js/app/controllers/manager_create_controller.js',
-                    'js/app/controllers/task_controller.js',
-                    'js/app/models/process.js',
-                    'js/app/views/data_type_select.js',
-                    'js/app/views/helpers.js',
+                'js/process-config/app.js' => array(
+                    'js/process-config/controllers/manager_controller.js',
+                    'js/process-config/controllers/manager_create_controller.js',
+                    'js/process-config/controllers/process_controller.js',
+                    'js/process-config/controllers/task_controller.js',
+                    'js/process-config/models/process.js',
+                    'js/process-config/views/data_type_select.js',
+                    'js/process-config/views/helpers.js',
                 ),
             ),
             'paths' => array(

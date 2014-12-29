@@ -171,7 +171,7 @@ final class GingerConfig implements SystemChangedEventRecorder
     {
         $processConfig = ["name" => $name, "process_type" => $type, "tasks" => $tasks];
 
-        $this->assertMessageName($startMessage, $this->projection()->getAllPossibleGingerTypes());
+        $this->assertMessageName($startMessage, $this->projection()->getAllPossibleDataTypes());
         $this->assertStartMessageNotExists($startMessage);
         $this->assertProcessConfig($startMessage, $processConfig);
 
@@ -210,7 +210,7 @@ final class GingerConfig implements SystemChangedEventRecorder
         $projection = new \SystemConfig\Projection\GingerConfig($config, true);
 
         foreach ($config['ginger']['processes'] as $startMessage => $processConfig) {
-            $this->assertMessageName($startMessage, $projection->getAllPossibleGingerTypes());
+            $this->assertMessageName($startMessage, $projection->getAllPossibleDataTypes());
             $this->assertProcessConfig($startMessage, $processConfig);
         }
 

@@ -41,6 +41,11 @@ class DashboardWidgetController extends AbstractWidgetController
             $params['error'] = $ex->getMessage();
         }
 
+        $params['config_dir_is_writable'] = is_writable(Definition::SYSTEM_CONFIG_DIR);
+        $params['config_is_writable'] = is_writable(Definition::SYSTEM_CONFIG_DIR . DIRECTORY_SEPARATOR . GingerConfig::configFileName());
+        $params['config_dir'] = Definition::SYSTEM_CONFIG_DIR;
+        $params['config_file_name'] = GingerConfig::configFileName();
+
         return DashboardWidget::initialize('system-config/dashboard/widget', 'System Configuration', 4, $params);
     }
 }
