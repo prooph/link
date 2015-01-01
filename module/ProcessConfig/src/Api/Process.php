@@ -12,7 +12,9 @@ namespace ProcessConfig\Api;
 
 use Application\Service\AbstractRestController;
 use Application\Service\ActionController;
+use Application\SharedKernel\ScriptLocation;
 use Ginger\Message\MessageNameUtils;
+use Ginger\Processor\Definition;
 use Prooph\ServiceBus\CommandBus;
 use SystemConfig\Command\AddNewProcessToConfig;
 use SystemConfig\Command\ChangeProcessConfig;
@@ -38,6 +40,11 @@ final class Process extends AbstractRestController implements ActionController, 
      * @var GingerConfig
      */
     private $systemConfig;
+
+    /**
+     * @var ScriptLocation
+     */
+    private $scriptLocation;
 
     public function create($data)
     {
@@ -157,7 +164,26 @@ final class Process extends AbstractRestController implements ActionController, 
         return [
             'name' => $data["name"],
             'process_type' => $data["processType"],
-            'tasks' => array_map(function($task) {unset($task['id']); return $task;}, $data['tasks']),
+            'tasks' => array_map(
+                function($task) {
+                    if ($task['task_type'] === Definition::TASK_MANIPULATE_PAYLOAD) {
+                        if (isset($task['manipulation_script'])) {
+                            $task['manipulation_script'] = $this->scriptLocation->toString() . DIRECTORY_SEPARATOR
+                                . $task['manipulation_script'];
+                        }
+                    }
+                    unset($task['id']); return $task;
+                },
+                $data['tasks']
+            ),
         ];
+    }
+
+    /**
+     * @param ScriptLocation $scriptLocation
+     */
+    public function setScriptLocation(ScriptLocation $scriptLocation)
+    {
+        $this->scriptLocation = $scriptLocation;
     }
 }

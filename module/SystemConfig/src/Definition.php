@@ -19,7 +19,20 @@ namespace SystemConfig;
  */
 final class Definition
 {
-    const SYSTEM_CONFIG_DIR  = 'config/autoload';
-    const SYSTEM_SCRIPTS_DIR = 'scripts';
+    /**
+     * @return string
+     */
+    public static function getSystemConfigDir()
+    {
+        return getcwd() . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'autoload';
+    }
+
+    /**
+     * @return string
+     */
+    public static function getScriptsDir()
+    {
+        return getcwd() . DIRECTORY_SEPARATOR . 'scripts';
+    }
 }
  

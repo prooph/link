@@ -11,13 +11,10 @@
 
 namespace SystemConfig\Controller;
 
-use Application\Service\TranslatorAwareController;
-use Application\SharedKernel\ConfigLocation;
 use Dashboard\Controller\AbstractWidgetController;
 use Dashboard\View\DashboardWidget;
-use SystemConfig\Definition;
-use SystemConfig\Model\GingerConfig;
-use Zend\Mvc\I18n\Translator;
+use SystemConfig\Projection\GingerConfig;
+use SystemConfig\Service\NeedsSystemConfig;
 
 /**
  * Class DashboardWidgetController
@@ -25,8 +22,13 @@ use Zend\Mvc\I18n\Translator;
  * @package SystemConfig\src\Controller
  * @author Alexander Miertsch <kontakt@codeliner.ws>
  */
-class DashboardWidgetController extends AbstractWidgetController
+class DashboardWidgetController extends AbstractWidgetController implements NeedsSystemConfig
 {
+    /**
+     * @var GingerConfig
+     */
+    private $systemConfig;
+
     /**
      * @return DashboardWidget
      */
@@ -34,19 +36,28 @@ class DashboardWidgetController extends AbstractWidgetController
     {
         $params = [];
         try {
-            $params['gingerConfig'] = GingerConfig::asProjectionFrom(ConfigLocation::fromPath(Definition::SYSTEM_CONFIG_DIR));
+            $params['gingerConfig'] = $this->systemConfig;
             $params['error'] = false;
         } catch (\Exception $ex) {
             $params['gingerConfig'] = null;
             $params['error'] = $ex->getMessage();
         }
 
-        $params['config_dir_is_writable'] = is_writable(Definition::SYSTEM_CONFIG_DIR);
-        $params['config_is_writable'] = is_writable(Definition::SYSTEM_CONFIG_DIR . DIRECTORY_SEPARATOR . GingerConfig::configFileName());
-        $params['config_dir'] = Definition::SYSTEM_CONFIG_DIR;
-        $params['config_file_name'] = GingerConfig::configFileName();
+        $params['config_dir_is_writable'] = is_writable($this->systemConfig->getConfigLocation()->toString());
+        $params['config_is_writable'] = is_writable($this->systemConfig->getConfigLocation()->toString() . DIRECTORY_SEPARATOR . GingerConfig::configFileName());
+        $params['config_dir'] = $this->systemConfig->getConfigLocation()->toString();
+        $params['config_file_name'] = \SystemConfig\Model\GingerConfig::configFileName();
 
         return DashboardWidget::initialize('system-config/dashboard/widget', 'System Configuration', 4, $params);
+    }
+
+    /**
+     * @param GingerConfig $systemConfig
+     * @return void
+     */
+    public function setSystemConfig(GingerConfig $systemConfig)
+    {
+        $this->systemConfig = $systemConfig;
     }
 }
  

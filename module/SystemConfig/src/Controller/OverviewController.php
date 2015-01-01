@@ -12,9 +12,8 @@
 namespace SystemConfig\Controller;
 
 use Application\Service\AbstractQueryController;
-use Application\SharedKernel\ConfigLocation;
-use SystemConfig\Definition;
-use SystemConfig\Model\GingerConfig;
+use SystemConfig\Projection\GingerConfig;
+use SystemConfig\Service\NeedsSystemConfig;
 use Zend\View\Model\ViewModel;
 
 /**
@@ -23,8 +22,12 @@ use Zend\View\Model\ViewModel;
  * @package SystemConfig\Controller
  * @author Alexander Miertsch <kontakt@codeliner.ws>
  */
-class OverviewController extends AbstractQueryController
+class OverviewController extends AbstractQueryController implements NeedsSystemConfig
 {
+    /**
+     * @var GingerConfig
+     */
+    private $systemConfig;
     /**
      * @return ViewModel
      */
@@ -32,19 +35,28 @@ class OverviewController extends AbstractQueryController
     {
         $params = [];
         try {
-            $params['gingerConfig'] = GingerConfig::asProjectionFrom(ConfigLocation::fromPath(Definition::SYSTEM_CONFIG_DIR));
+            $params['gingerConfig'] = $this->systemConfig;
             $params['error'] = false;
         } catch (\Exception $ex) {
             $params['gingerConfig'] = null;
             $params['error'] = $ex->getMessage();
         }
 
-        $params['config_dir_is_writable'] = is_writable(Definition::SYSTEM_CONFIG_DIR);
-        $params['config_is_writable'] = is_writable(Definition::SYSTEM_CONFIG_DIR . DIRECTORY_SEPARATOR . GingerConfig::configFileName());
-        $params['config_dir'] = Definition::SYSTEM_CONFIG_DIR;
-        $params['config_file_name'] = GingerConfig::configFileName();
+        $params['config_dir_is_writable'] = is_writable($this->systemConfig->getConfigLocation()->toString());
+        $params['config_is_writable'] = is_writable($this->systemConfig->getConfigLocation()->toString() . DIRECTORY_SEPARATOR . GingerConfig::configFileName());
+        $params['config_dir'] = $this->systemConfig->getConfigLocation()->toString();
+        $params['config_file_name'] = \SystemConfig\Model\GingerConfig::configFileName();
 
         return new ViewModel($params);
+    }
+
+    /**
+     * @param GingerConfig $systemConfig
+     * @return void
+     */
+    public function setSystemConfig(GingerConfig $systemConfig)
+    {
+        $this->systemConfig = $systemConfig;
     }
 }
  

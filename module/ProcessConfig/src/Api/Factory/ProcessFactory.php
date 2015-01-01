@@ -6,38 +6,39 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  * 
- * Date: 01.01.15 - 17:59
+ * Date: 01.01.15 - 18:29
  */
 
-namespace ProcessConfig\Controller\Factory;
+namespace ProcessConfig\Api\Factory;
 
 use Application\SharedKernel\ScriptLocation;
-use ProcessConfig\Controller\ProcessManagerController;
+use ProcessConfig\Api\Process;
 use SystemConfig\Definition;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
 /**
- * Class ProcessManagerControllerFactory
+ * Class ProcessFactory
  *
- * @package ProcessConfig\Controller\Factory
+ * @package ProcessConfig\Api\Factory
  * @author Alexander Miertsch <kontakt@codeliner.ws>
  */
-final class ProcessManagerControllerFactory implements FactoryInterface
+final class ProcessFactory implements FactoryInterface
 {
 
     /**
      * Create service
      *
      * @param ServiceLocatorInterface $serviceLocator
-     * @return ProcessManagerController
+     * @return mixed
      */
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
-        $con = new ProcessManagerController();
-        $con->setScriptLocation(ScriptLocation::fromPath(Definition::getScriptsDir()));
+        $process = new Process();
 
-        return $con;
+        $process->setScriptLocation(ScriptLocation::fromPath(Definition::getScriptsDir()));
+
+        return $process;
     }
 }
  

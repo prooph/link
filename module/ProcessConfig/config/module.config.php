@@ -85,12 +85,10 @@ return array(
         ),
     ),
     'controllers' => array(
-        'invokables' => [
-            'ProcessConfig\Api\Process' => 'ProcessConfig\Api\Process',
-        ],
         'factories' => array(
             'ProcessConfig\Controller\DashboardWidget' => 'ProcessConfig\Controller\Factory\DashboardWidgetControllerFactory',
             'ProcessConfig\Controller\ProcessManager' => 'ProcessConfig\Controller\Factory\ProcessManagerControllerFactory',
+            'ProcessConfig\Api\Process' => 'ProcessConfig\Api\Factory\ProcessFactory',
         ),
     ),
     'zf-content-negotiation' => [

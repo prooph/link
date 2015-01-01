@@ -29,7 +29,7 @@ final class GingerSetUpController extends AbstractActionController
      */
     public function runAction()
     {
-        $this->commandBus->dispatch(CreateDefaultGingerConfigFile::in(ConfigLocation::fromPath(Definition::SYSTEM_CONFIG_DIR)));
+        $this->commandBus->dispatch(CreateDefaultGingerConfigFile::in(ConfigLocation::fromPath(Definition::getSystemConfigDir())));
 
         return $this->redirect()->toRoute('system_config');
     }

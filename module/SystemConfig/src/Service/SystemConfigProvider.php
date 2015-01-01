@@ -50,7 +50,7 @@ final class SystemConfigProvider implements InitializerInterface
     public function getSystemConfig()
     {
         if (is_null($this->systemConfig)) {
-            $this->systemConfig = \SystemConfig\Model\GingerConfig::asProjectionFrom(ConfigLocation::fromPath(Definition::SYSTEM_CONFIG_DIR));
+            $this->systemConfig = \SystemConfig\Model\GingerConfig::asProjectionFrom(ConfigLocation::fromPath(Definition::getSystemConfigDir()));
         }
 
         return $this->systemConfig;

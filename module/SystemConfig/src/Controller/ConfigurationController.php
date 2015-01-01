@@ -43,7 +43,7 @@ final class ConfigurationController extends AbstractActionController
 
         $this->commandBus->dispatch(ChangeNodeName::to(
             NodeName::fromString($nodeName),
-            ConfigLocation::fromPath(Definition::SYSTEM_CONFIG_DIR)
+            ConfigLocation::fromPath(Definition::getSystemConfigDir())
         ));
 
         return ['success' => true];
