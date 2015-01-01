@@ -14,6 +14,8 @@ namespace Application\SharedKernel;
 /**
  * Class ConfigLocation
  *
+ * This class represents the directory where the proophessor config file is located.
+ *
  * @package SystemConfig\Model\GingerConfig
  * @author Alexander Miertsch <kontakt@codeliner.ws>
  */

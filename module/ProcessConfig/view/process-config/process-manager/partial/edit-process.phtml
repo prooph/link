@@ -65,7 +65,14 @@
             value=preferred_type}}
         </div>
     {{/if}}
-    {{#if isProcessDataTask}}
+    {{#if isManipulatePayloadTask}}
+        <div {{bind-attr class=":form-group :has-feedback isManipulationScriptSelected:has-success"}}>
+            {{view "select" class="form-control form-control-with-desc"
+            prompt="- <?php echo $this->translate('Payload Manipulation Script') ?> -"
+            content=manipulationScripts
+            value=manipulation_script}}
+        </div>
+    {{/if}}
     <div class="pull-right">
         {{#link-to "tasks.index" class="btn btn-default" activeClass=""}}<?php echo $this->translate('cancel') ?>{{/link-to}}
         <button class="btn btn-success" {{action saveTask}} {{bind-attr disabled=isNotValid}}><?php echo $this->translate('save') ?></button>

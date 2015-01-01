@@ -32,25 +32,26 @@ ProcessManager.TaskController = Ember.ObjectController.extend({
         }
     },
 
-    taskTypes   : [],
-    connectors  : {},
-    process     : null,
-    saveTask    : false,
-    oldTask     : {},
+    taskTypes           : [],
+    manipulationScripts : [],
+    connectors          : {},
+    process             : null,
+    saveTask            : false,
+    oldTask             : {},
 
-    isCollectDataTask           : Ember.computed.equal("task_type", Em.I18n.t('task.collect_data.value')),
-    isProcessDataTask           : Ember.computed.equal("task_type", Em.I18n.t('task.process_data.value')),
-    isManipulatePayloadTask     : Ember.computed.equal("task_type", Em.I18n.t('task.manipulate_payload.value')),
-    isATaskTypeSelected         : Ember.computed.notEmpty("task_type"),
-    isASourceSelected           : Ember.computed.notEmpty("source"),
+    isCollectDataTask            : Ember.computed.equal("task_type", Em.I18n.t('task.collect_data.value')),
+    isProcessDataTask            : Ember.computed.equal("task_type", Em.I18n.t('task.process_data.value')),
+    isManipulatePayloadTask      : Ember.computed.equal("task_type", Em.I18n.t('task.manipulate_payload.value')),
+    isATaskTypeSelected          : Ember.computed.notEmpty("task_type"),
+    isASourceSelected            : Ember.computed.notEmpty("source"),
+    isATargetSelected            : Ember.computed.notEmpty("model.target"),
+    isManipulationScriptSelected : Ember.computed.notEmpty("manipulation_script"),
 
     isADataTypeSelected : function () {
         if (! Em.isEmpty(this.get("data_type"))) return true;
         if (! Em.isEmpty(this.get("preferred_type"))) return true;
         return false;
     }.property("data_type", "preferred_type"),
-
-    isATargetSelected   : Ember.computed.notEmpty("model.target"),
 
     isNotValid : function () {
         if (! this.get("isATaskTypeSelected")) return true;
@@ -64,10 +65,13 @@ ProcessManager.TaskController = Ember.ObjectController.extend({
                 if (! this.get("isATargetSelected")) return true;
                 if (! this.get("isADataTypeSelected")) return true;
                 break;
+            case Em.I18n.t("task.manipulate_payload.value"):
+                if (! this.get("isManipulationScriptSelected")) return true;
+                break;
         }
 
         return false;
-    }.property("task_type", "source", "model.target", "data_type", "preferred_type"),
+    }.property("task_type", "source", "model.target", "data_type", "preferred_type", "manipulation_script"),
 
     possibleTaskTypes : function () {
         var process = this.get("process"),
@@ -263,6 +267,7 @@ ProcessManager.TaskRoute = Ember.Route.extend({
         var oldTask = ProcessManager.Object.create(model.serialize());
 
         controller.set("taskTypes", ProcessManager.TaskTypes);
+        controller.set("manipulationScripts", ProcessManager.ManipulationScrits);
         controller.set("connectors", ProcessManager.Connectors);
         controller.set("process", this.modelFor('process'));
         controller.set("oldTask", oldTask);

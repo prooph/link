@@ -26,6 +26,7 @@ $apiUrl = ltrim($this->url('process_config/api'), '/');
 
 $possibleDataTypes = json_encode($this->possible_data_types);
 $possibleTaskTypes = json_encode($this->possible_task_types);
+$possibleManipulationScripts = json_encode($this->possible_manipulation_scripts);
 $connectors = json_encode($this->connectors);
 $shortLocale = explode("_", $this->plugin('translate')->getTranslator()->getLocale())[0];
 $clientTranslations = json_encode([
@@ -87,9 +88,10 @@ Em.I18n.locale = '{$shortLocale}';
 
 Em.I18n.translations = $clientTranslations;
 
-ProcessManager.TaskTypes   = $possibleTaskTypes;
-ProcessManager.DataTypes = $possibleDataTypes;
-ProcessManager.Connectors  = $connectors;
+ProcessManager.TaskTypes          = $possibleTaskTypes;
+ProcessManager.ManipulationScrits = $possibleManipulationScripts;
+ProcessManager.DataTypes          = $possibleDataTypes;
+ProcessManager.Connectors         = $connectors;
 
 //Route Config
 ProcessManager.Router.map(function() {

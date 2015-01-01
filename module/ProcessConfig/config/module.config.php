@@ -86,11 +86,11 @@ return array(
     ),
     'controllers' => array(
         'invokables' => [
-            'ProcessConfig\Controller\ProcessManager' => 'ProcessConfig\Controller\ProcessManagerController',
             'ProcessConfig\Api\Process' => 'ProcessConfig\Api\Process',
         ],
         'factories' => array(
-            'ProcessConfig\Controller\DashboardWidget' => 'ProcessConfig\Controller\Factory\DashboardWidgetControllerFactory'
+            'ProcessConfig\Controller\DashboardWidget' => 'ProcessConfig\Controller\Factory\DashboardWidgetControllerFactory',
+            'ProcessConfig\Controller\ProcessManager' => 'ProcessConfig\Controller\Factory\ProcessManagerControllerFactory',
         ),
     ),
     'zf-content-negotiation' => [

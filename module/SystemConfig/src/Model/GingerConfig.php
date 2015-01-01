@@ -321,12 +321,15 @@ final class GingerConfig implements SystemChangedEventRecorder
 
         switch ($taskConfig['task_type']) {
             case Definition::TASK_COLLECT_DATA:
-                if (! array_key_exists('source', $taskConfig))          throw new \InvalidArgumentException('Missing source in config '. $configPath);
-                if (! array_key_exists('data_type', $taskConfig))       throw new \InvalidArgumentException('Missing data type in config '. $configPath);
+                if (! array_key_exists('source', $taskConfig))              throw new \InvalidArgumentException('Missing source in config '. $configPath);
+                if (! array_key_exists('data_type', $taskConfig))           throw new \InvalidArgumentException('Missing data type in config '. $configPath);
                 break;
             case Definition::TASK_PROCESS_DATA:
-                if (! array_key_exists('target', $taskConfig))          throw new \InvalidArgumentException('Missing target in config '. $configPath);
-                if (! array_key_exists('allowed_types', $taskConfig))   throw new \InvalidArgumentException('Missing allowed types in config '. $configPath);
+                if (! array_key_exists('target', $taskConfig))              throw new \InvalidArgumentException('Missing target in config '. $configPath);
+                if (! array_key_exists('allowed_types', $taskConfig))       throw new \InvalidArgumentException('Missing allowed types in config '. $configPath);
+                break;
+            case Definition::TASK_MANIPULATE_PAYLOAD:
+                if (! array_key_exists('manipulation_script', $taskConfig)) throw new \InvalidArgumentException('Missing manipulation script in config '. $configPath);
                 break;
             default:
                 throw new \InvalidArgumentException(sprintf('Invalid task type %s in config %s', $taskConfig['task_type'], $configPath));

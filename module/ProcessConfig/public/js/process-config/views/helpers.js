@@ -20,9 +20,13 @@ Ember.Handlebars.helper('task-desc', function(task) {
         return  prefix + Em.I18n.t('task.process_data.name', {preferredType : preferredType, target : target});
     }
 
+    if (task.task_type === Em.I18n.t("task.manipulate_payload.value")) {
+        return prefix + Em.I18n.t("task.manipulate_payload.name", {manipulation_script : task.get("manipulation_script")})
+    }
+
     if (Em.isEmpty(task.task_type)) {
         return prefix + Em.I18n.t('task.new');
     }
 
     return prefix + Handlebars.Utils.escapeExpression(task.task_type);
-}, "task_type", "source", "target", "data_type", "allowed_types", "preferred_type");
+}, "task_type", "source", "target", "data_type", "allowed_types", "preferred_type", "manipulation_script");

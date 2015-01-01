@@ -13,6 +13,7 @@ namespace ProcessConfig\Controller;
 
 use Application\Service\AbstractQueryController;
 use Application\SharedKernel\DataTypeClass;
+use Application\SharedKernel\ScriptLocation;
 use Ginger\Functional\Func;
 use Ginger\Message\MessageNameUtils;
 use SystemConfig\Projection\GingerConfig;
@@ -32,6 +33,11 @@ final class ProcessManagerController extends AbstractQueryController implements 
      */
     private $systemConfig;
 
+    /**
+     * @var ScriptLocation
+     */
+    private $scriptLocation;
+
     public function startAppAction()
     {
         $viewModel = new ViewModel([
@@ -43,7 +49,8 @@ final class ProcessManagerController extends AbstractQueryController implements 
                 ),
             'possible_data_types' => $this->systemConfig->getAllPossibleDataTypes(),
             'possible_task_types' => \Ginger\Processor\Definition::getAllTaskTypes(),
-            'connectors' => $this->systemConfig->getConnectors()
+            'possible_manipulation_scripts' => $this->scriptLocation->getScriptNames(),
+            'connectors' => $this->systemConfig->getConnectors(),
         ]);
 
         $viewModel->setTemplate('process-config/process-manager/app');
@@ -84,6 +91,14 @@ final class ProcessManagerController extends AbstractQueryController implements 
     public function setSystemConfig(GingerConfig $systemConfig)
     {
         $this->systemConfig = $systemConfig;
+    }
+
+    /**
+     * @param ScriptLocation $scriptLocation
+     */
+    public function setScriptLocation(ScriptLocation $scriptLocation)
+    {
+        $this->scriptLocation = $scriptLocation;
     }
 }
  
