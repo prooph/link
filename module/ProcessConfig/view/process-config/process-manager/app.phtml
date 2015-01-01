@@ -1,4 +1,4 @@
-<div class="row">
+<div class="row text-center">
     <div id="app" class="col-md-12">
         <h1><?php echo $this->translate('Process Manager') ?></h1>
         <script type="text/x-handlebars" data-template-name="manager">
@@ -48,11 +48,29 @@ $clientTranslations = json_encode([
             'value' => 'data-collected',
             'label' => $this->translate('Data Collected Message'),
         ],
+        'process_data' => [
+            'value' => 'process-data',
+            'label' => $this->translate('Process Data Message'),
+        ]
     ],
     'task' => [
+        'task' => $this->translate('Task'),
         'new' => $this->translate('New Task'),
-        'collect_data' => $this->translate('Collect {{sourceType}} from {{source}}'),
-        'process_data' => $this->translate('Process {{preferredType}} with {{target}}'),
+        'collect_data' => [
+            'name' => $this->translate('Collect {{sourceType}} from {{source}}'),
+            'value' => \Ginger\Processor\Definition::TASK_COLLECT_DATA,
+            'label' => $this->translate('Collect Data'),
+        ],
+        'process_data' => [
+            'name' => $this->translate('Process {{preferredType}} with {{target}}'),
+            'value' => \Ginger\Processor\Definition::TASK_PROCESS_DATA,
+            'label' => $this->translate('Process Data'),
+        ],
+        'manipulate_payload' => [
+            'name' => $this->translate('Run script {{manipulation_script}}'),
+            'value' => \Ginger\Processor\Definition::TASK_MANIPULATE_PAYLOAD,
+            'label' => $this->translate('Run Manipulation Script'),
+        ]
     ]
 ]);
 
@@ -79,7 +97,9 @@ ProcessManager.Router.map(function() {
         this.route('create');
         this.resource('process', {path: '/process/:process_id'}, function() {
             this.resource('tasks', function () {
-                this.resource('task', {path: '/:task_id'});
+                this.resource('task', {path: '/:task_id'}, function() {
+                    this.route('delete');
+                });
                 this.route('create');
             });
             this.route('edit');
@@ -90,6 +110,14 @@ ProcessManager.Router.map(function() {
 ProcessManager.ApplicationRoute = Ember.Route.extend({
     model : function() {
         {$this->emberPushToStore('process', $this->processes)}
+
+        this.store.all("process").forEach(function(process) {
+            var tasks = process.get("tasks").map(function (task) {
+                return ProcessManager.Object.create(task);
+            });
+
+            process.set("tasks", tasks);
+        });
     }
 });
 JS;

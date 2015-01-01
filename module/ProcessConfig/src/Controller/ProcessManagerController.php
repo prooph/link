@@ -12,12 +12,11 @@
 namespace ProcessConfig\Controller;
 
 use Application\Service\AbstractQueryController;
-use Application\SharedKernel\ConfigLocation;
 use Application\SharedKernel\DataTypeClass;
 use Ginger\Functional\Func;
 use Ginger\Message\MessageNameUtils;
-use SystemConfig\Definition;
-use SystemConfig\Model\GingerConfig;
+use SystemConfig\Projection\GingerConfig;
+use SystemConfig\Service\NeedsSystemConfig;
 use ZF\ContentNegotiation\ViewModel;
 
 /**
@@ -26,22 +25,25 @@ use ZF\ContentNegotiation\ViewModel;
  * @package ProcessConfig\Controller
  * @author Alexander Miertsch <kontakt@codeliner.ws>
  */
-final class ProcessManagerController extends AbstractQueryController
+final class ProcessManagerController extends AbstractQueryController implements NeedsSystemConfig
 {
+    /**
+     * @var GingerConfig
+     */
+    private $systemConfig;
+
     public function startAppAction()
     {
-        $gingerConfig = GingerConfig::asProjectionFrom(ConfigLocation::fromPath(Definition::SYSTEM_CONFIG_DIR));
-
         $viewModel = new ViewModel([
             'processes' => Func::map(
-                    $gingerConfig->getProcessDefinitions(),
-                    function($definition, $message) use ($gingerConfig) {
-                        return $this->convertToClientProcess($message, $definition, $gingerConfig->getAllPossibleDataTypes());
+                    $this->systemConfig->getProcessDefinitions(),
+                    function($definition, $message) {
+                        return $this->convertToClientProcess($message, $definition, $this->systemConfig->getAllPossibleDataTypes());
                     }
                 ),
-            'possible_data_types' => $gingerConfig->getAllPossibleDataTypes(),
+            'possible_data_types' => $this->systemConfig->getAllPossibleDataTypes(),
             'possible_task_types' => \Ginger\Processor\Definition::getAllTaskTypes(),
-            'connectors' => $gingerConfig->getConnectors()
+            'connectors' => $this->systemConfig->getConnectors()
         ]);
 
         $viewModel->setTemplate('process-config/process-manager/app');
@@ -73,6 +75,15 @@ final class ProcessManagerController extends AbstractQueryController
             ],
             'tasks' => $processDefinition['tasks']
         ];
+    }
+
+    /**
+     * @param GingerConfig $systemConfig
+     * @return void
+     */
+    public function setSystemConfig(GingerConfig $systemConfig)
+    {
+        $this->systemConfig = $systemConfig;
     }
 }
  

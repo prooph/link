@@ -11,6 +11,7 @@
 
 namespace SystemConfig\Projection;
 
+use Application\SharedKernel\ConfigLocation;
 use Codeliner\ArrayReader\ArrayReader;
 
 /**
@@ -27,6 +28,11 @@ final class GingerConfig
     private $config;
 
     /**
+     * @var ConfigLocation
+     */
+    private $configLocation;
+
+    /**
      * @var bool
      */
     private $configured = false;
@@ -38,11 +44,13 @@ final class GingerConfig
 
     /**
      * @param array $gingerConfig
-     * @param bool  $isConfigured
+     * @param ConfigLocation $configLocation
+     * @param bool $isConfigured
      */
-    public function __construct(array $gingerConfig, $isConfigured = false)
+    public function __construct(array $gingerConfig, ConfigLocation $configLocation, $isConfigured = false)
     {
         $this->configured = $isConfigured;
+        $this->configLocation = $configLocation;
         $this->config = new ArrayReader($gingerConfig);
     }
 
@@ -99,7 +107,15 @@ final class GingerConfig
      */
     public function getConnectors()
     {
-        return array_values($this->config->arrayValue('ginger.connectors'));
+        return $this->config->arrayValue('ginger.connectors');
+    }
+
+    /**
+     * @return ConfigLocation
+     */
+    public function getConfigLocation()
+    {
+        return $this->configLocation;
     }
 }
  

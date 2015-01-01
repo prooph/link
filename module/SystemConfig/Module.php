@@ -11,11 +11,20 @@
 
 namespace SystemConfig;
 
-use Zend\Mvc\ModuleRouteListener;
+use SystemConfig\Service\SystemConfigProvider;
 use Zend\Mvc\MvcEvent;
 
 class Module
 {
+    public function onBootstrap(MvcEvent $e)
+    {
+        $sm = $e->getApplication()->getServiceManager();
+        $cm = $sm->get('ControllerLoader');
+        $configProvider = new SystemConfigProvider();
+        $sm->addInitializer($configProvider);
+        $cm->addInitializer($configProvider);
+    }
+
     public function getConfig()
     {
         return include __DIR__ . '/config/module.config.php';

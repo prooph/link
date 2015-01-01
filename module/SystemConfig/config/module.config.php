@@ -67,6 +67,7 @@ return array(
             'SystemConfig\Model\GingerConfig\CreateDefaultConfigFileHandler' => 'SystemConfig\Service\Factory\CreateDefaultConfigFileHandlerFactory',
             'SystemConfig\Model\GingerConfig\ChangeNodeNameHandler' => 'SystemConfig\Service\Factory\ChangeNodeNameHandlerFactory',
             'SystemConfig\Model\GingerConfig\AddNewProcessToConfigHandler' => 'SystemConfig\Service\Factory\AddNewProcessToConfigHandlerFactory',
+            'SystemConfig\Model\GingerConfig\ChangeProcessConfigHandler' => 'SystemConfig\Service\Factory\ChangeProcessConfigHandlerFactory',
 
         ]
     ],
@@ -83,6 +84,7 @@ return array(
             'SystemConfig\Command\CreateDefaultGingerConfigFile' => 'SystemConfig\Model\GingerConfig\CreateDefaultConfigFileHandler',
             'SystemConfig\Command\ChangeNodeName'                => 'SystemConfig\Model\GingerConfig\ChangeNodeNameHandler',
             'SystemConfig\Command\AddNewProcessToConfig'         => 'SystemConfig\Model\GingerConfig\AddNewProcessToConfigHandler',
+            'SystemConfig\Command\ChangeProcessConfig'           => 'SystemConfig\Model\GingerConfig\ChangeProcessConfigHandler',
         ]
     ],
     'zf-content-negotiation' => [

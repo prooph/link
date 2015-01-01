@@ -24,38 +24,22 @@ ProcessManager.ManagerCreateController = Ember.ObjectController.extend({
             }).catch($.failNotify);
         }
     },
+
     processType : null,
-    isNonProcessSelected : function () {
-        return this.get("processType") == null;
-    }.property("processType"),
-    isAProcessSelected : function () {
-        return this.get("processType") != null;
-    }.property("processType"),
-    isLinearProcess : function () {
-        return this.get("processType") == Em.I18n.t('process.linear.value');
-    }.property("processType"),
-    isForeachProcess : function () {
-        return this.get("processType") == Em.I18n.t('process.foreach.value');
-    }.property("processType"),
-
     messageType : null,
-    isNonMessageSelected : function () {
-        return this.get("messageType") == null;
-    }.property("messageType"),
-    isAMessageTypeSelected : function () {
-        return this.get("messageType") != null;
-    }.property("messageType"),
-    isCollectDataMessage : function () {
-        return this.get("messageType") == Em.I18n.t('message.collect_data.value')
-    }.property("messageType"),
-    isDataCollectedMessage : function () {
-        return this.get("messageType") == Em.I18n.t('message.data_collected.value')
-    }.property("messageType"),
+    dataType    : null,
 
-    dataType : null,
-    isDataTypeSelected : function () {
-        return this.get("dataType") != null;
-    }.property("dataType"),
+    isNonProcessSelected    : Ember.computed.empty("processType"),
+    isAProcessSelected      : Ember.computed.notEmpty("processType"),
+    isLinearProcess         : Ember.computed.equal("processType", Em.I18n.t('process.linear.value')),
+    isForeachProcess        : Ember.computed.equal("processType", Em.I18n.t('process.foreach.value')),
+
+    isNonMessageSelected    : Ember.computed.empty("messageType"),
+    isAMessageTypeSelected  : Ember.computed.notEmpty("messageType"),
+    isCollectDataMessage    : Ember.computed.equal("messageType", Em.I18n.t('message.collect_data.value')),
+    isDataCollectedMessage  : Ember.computed.equal("messageType", Em.I18n.t('message.data_collected.value')),
+
+    isDataTypeSelected      : Ember.computed.notEmpty("dataType"),
 
     dataTypeSelectFocused : false,
     isNotDataTypeSelectFocused : function () {

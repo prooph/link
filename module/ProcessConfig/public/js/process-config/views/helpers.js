@@ -1,13 +1,14 @@
 Ember.Handlebars.helper('task-desc', function(task) {
-    if (task.task_type === "collect_data") {
+    var prefix = Em.I18n.t('task.task') + " " +task.id + ": ";
+    if (task.task_type === Em.I18n.t("task.collect_data.value")) {
 
-        var source = (typeof task.source === "undefined")? "source" : task.source;
-        var sourceType = (typeof task.ginger_type === "undefined")? "data" : task.ginger_type;
-        return Ember.I18n.t('task.collect_data', {sourceType : sourceType, source : source});
+        var source = (Em.isEmpty(task.source))? "source" : task.source;
+        var sourceType = (typeof task.data_type === "undefined")? "data" : task.data_type;
+        return prefix + Em.I18n.t('task.collect_data.name', {sourceType : sourceType, source : source});
     }
 
-    if (task.task_type === "process_data") {
-        var target = (typeof task.target === "undefined")? "target" : task.target;
+    if (task.task_type === Em.I18n.t("task.process_data.value")) {
+        var target = (Em.isEmpty(task.target))? "target" : task.target;
         var preferredType = 'data';
 
         if (typeof task.preferred_type != "undefined") {
@@ -16,12 +17,12 @@ Ember.Handlebars.helper('task-desc', function(task) {
             preferredType = task.allowed_types[0];
         }
 
-        return Ember.I18n.t('task.process_data', {preferredType : preferredType, target : target});
+        return  prefix + Em.I18n.t('task.process_data.name', {preferredType : preferredType, target : target});
     }
 
-    if (Ember.isEmpty(task.task_type)) {
-        return Ember.I18n.t('task.new');
+    if (Em.isEmpty(task.task_type)) {
+        return prefix + Em.I18n.t('task.new');
     }
 
-    return Handlebars.Utils.escapeExpression(task.task_type);
-}, "task_type", "source", "target", "ginger_type", "allowed_types", "preferred_type");
+    return prefix + Handlebars.Utils.escapeExpression(task.task_type);
+}, "task_type", "source", "target", "data_type", "allowed_types", "preferred_type");

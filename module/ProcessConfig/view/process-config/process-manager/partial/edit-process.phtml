@@ -1,5 +1,5 @@
 <script type="text/x-handlebars" data-template-name="process">
-    <h2>{{model.name}} {{#link-to 'process.edit' model class="btn btn-default pull-right"}}<?php echo $this->translate('edit') ?>{{/link-to}}</h2>
+    <h3>{{model.name}} {{#link-to 'process.edit' model class="btn btn-default pull-right"}}<?php echo $this->translate('edit') ?>{{/link-to}}</h3>
     <hr>
     <div class="row">
         <div id="left-panel" class="col-md-12">
@@ -8,33 +8,67 @@
     </div>
 </script>
 <script type="text/x-handlebars" data-template-name="process/tasks">
-    <ul>
+    <div class="list-group">
         {{#each task in model.tasks}}
-        <li>
-            {{#link-to 'task' task}}{{task.id}}. {{task-desc task}}{{/link-to}}
-        </li>
+        <div class="list-group-item">
+            {{task-desc task}}
+            <div class="pull-right">
+                {{#link-to 'task' task class="btn btn-default btn-sm"}}<span class="glyphicon glyphicon-edit"></span>{{/link-to}}&nbsp;&nbsp;
+                {{#link-to 'task.delete' task class="btn btn-danger btn-sm"}}<span class="glyphicon glyphicon-remove"></span>{{/link-to}}
+            </div>
+        </div>
         {{/each}}
-        <li>
-            {{#link-to 'tasks.create' class='btn btn-default'}}<?php echo $this->translate('Add Task') ?>{{/link-to}}
-        </li>
-    </ul>
+        {{#link-to 'tasks.create' class="list-group-item list-group-item-success text-center text-uppercase"}}<strong><?php echo $this->translate('Add Task') ?></strong>{{/link-to}}
+    </div>
 </script>
 <script type="text/x-handlebars" data-template-name="process/edit">
     process edit {{model.name}}
 </script>
 <script type="text/x-handlebars" data-template-name="task">
-    <h3>{{task-desc model}}</h3>
-    <div {{bind-attr class=":form-group :has-feedback isAProcessSelected:has-success"}}>
+    <h4>{{task-desc model}}</h4>
+    <div class="alert-block text-info">
+        <i><?php echo $this->translate('Note') ?>:&nbsp;<?php echo $this->translate('The process manager only suggests valid combinations.') ?></i>
+    </div>
+    <div {{bind-attr class=":form-group :has-feedback isATaskTypeSelected:has-success"}}>
         {{view "select" class="form-control form-control-with-desc"
         prompt="- <?php echo $this->translate('Task Type') ?> -"
-        content=taskTypes
+        content=possibleTaskTypes
+        optionValuePath="content.value"
+        optionLabelPath="content.label"
         value=task_type}}
     </div>
     {{#if isCollectDataTask}}
-
+        <div {{bind-attr class=":form-group :has-feedback isASourceSelected:has-success"}}>
+            {{view "select" class="form-control form-control-with-desc"
+            prompt="- <?php echo $this->translate('Source') ?> -"
+            content=possibleSources
+            value=source}}
+        </div>
+        <div {{bind-attr class=":form-group :has-feedback isADataTypeSelected:has-success"}}>
+            {{view "select" class="form-control form-control-with-desc"
+            prompt="- <?php echo $this->translate('Data Type') ?> -"
+            content=possibleDataTypes
+            value=data_type}}
+        </div>
     {{/if}}
     {{#if isProcessDataTask}}
-        process data
+        <div {{bind-attr class=":form-group :has-feedback isATargetSelected:has-success"}}>
+            {{view "select" class="form-control form-control-with-desc"
+            prompt="- <?php echo $this->translate('Target') ?> -"
+            content=possibleTargets
+            value=model.target}}
+        </div>
+        <div {{bind-attr class=":form-group :has-feedback isADataTypeSelected:has-success"}}>
+            {{view "select" class="form-control form-control-with-desc"
+            prompt="- <?php echo $this->translate('Data Type') ?> -"
+            content=possibleDataTypes
+            value=preferred_type}}
+        </div>
     {{/if}}
+    {{#if isProcessDataTask}}
+    <div class="pull-right">
+        {{#link-to "tasks.index" class="btn btn-default" activeClass=""}}<?php echo $this->translate('cancel') ?>{{/link-to}}
+        <button class="btn btn-success" {{action saveTask}} {{bind-attr disabled=isNotValid}}><?php echo $this->translate('save') ?></button>
+    </div>
 
 </script>

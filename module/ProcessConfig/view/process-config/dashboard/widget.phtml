@@ -17,13 +17,11 @@
     <?php else : ?>
         <?php
         $numberOfProcesses = count($this->gingerConfig->getProcessDefinitions());
-        $message = ($numberOfProcesses == 1)?
-            $this->translate('You have %s process defined')
-            : $this->translate('You have %s processes defined');
+        $message = $this->translatePlural('You have one process defined', 'You have %s processes defined', $numberOfProcesses);
         ?>
-        <div class="alert alert-info">
-            <?php echo sprintf($message, $numberOfProcesses) ?>&nbsp;<span class="glyphicon glyphicon-ok"></span>
-        </div>
-        <p class="text-center"><a href="<?php echo $this->url('process_config/configurator') ?>" class="btn btn-success"><?php echo $this->translate('see details') ?></a></p>
+        <ul class="list-group">
+            <li class="list-group-item list-group-item-success"><?php echo sprintf($message, $numberOfProcesses) ?>&nbsp;<span class="glyphicon glyphicon-ok pull-right"></span></li>
+        </ul>
+        <p class="text-center"><a href="<?php echo $this->url('process_config/configurator') ?>" class="btn btn-success"><?php echo $this->translate('view processes') ?></a></p>
     <?php endif; ?>
 <?php endif; ?>

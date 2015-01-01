@@ -11,7 +11,7 @@ return [
                     [
                         "task_type" => 'collect_data',
                         "source" => 'GingerExample\Plugin\UserDataProvider',
-                        "ginger_type" => 'Acme\ProductCollection'
+                        "data_type" => 'Acme\ProductCollection'
                     ],
                     [
                         "task_type" => 'process_data',
@@ -37,7 +37,7 @@ return [
                 'allowed_types' => [
                     0 => 'CsvProductCollection',
                 ],
-                'preferred_type' => 'CsvProductColle    ction',
+                'preferred_type' => 'CsvProductCollection',
             ],
             'product-csv-writer' => [
                 'allowed_messages' => [

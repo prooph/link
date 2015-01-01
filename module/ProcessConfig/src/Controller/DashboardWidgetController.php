@@ -11,11 +11,11 @@
 
 namespace ProcessConfig\Controller;
 
-use Application\SharedKernel\ConfigLocation;
 use Dashboard\Controller\AbstractWidgetController;
 use Dashboard\View\DashboardWidget;
 use SystemConfig\Definition;
-use SystemConfig\Model\GingerConfig;
+use SystemConfig\Projection\GingerConfig;
+use SystemConfig\Service\NeedsSystemConfig;
 
 /**
  * Class DashboardWidgetController
@@ -23,8 +23,12 @@ use SystemConfig\Model\GingerConfig;
  * @package SystemConfig\src\Controller
  * @author Alexander Miertsch <kontakt@codeliner.ws>
  */
-class DashboardWidgetController extends AbstractWidgetController
+class DashboardWidgetController extends AbstractWidgetController implements NeedsSystemConfig
 {
+    /**
+     * @var GingerConfig
+     */
+    private $systemConfig;
     /**
      * @return DashboardWidget
      */
@@ -33,14 +37,23 @@ class DashboardWidgetController extends AbstractWidgetController
         $params = [];
 
         try {
-            $params['gingerConfig'] = GingerConfig::asProjectionFrom(ConfigLocation::fromPath(Definition::SYSTEM_CONFIG_DIR));
+            $params['gingerConfig'] = $this->systemConfig;
             $params['error'] = false;
         } catch (\Exception $ex) {
             $params['gingerConfig'] = null;
             $params['error'] = $ex->getMessage();
         }
 
-        return DashboardWidget::initialize('process-config/dashboard/widget', 'Process Configuration', 4, $params);
+        return DashboardWidget::initialize('process-config/dashboard/widget', 'Process Manager', 4, $params);
+    }
+
+    /**
+     * @param GingerConfig $systemConfig
+     * @return void
+     */
+    public function setSystemConfig(GingerConfig $systemConfig)
+    {
+        $this->systemConfig = $systemConfig;
     }
 }
  

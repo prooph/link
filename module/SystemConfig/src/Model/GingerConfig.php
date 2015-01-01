@@ -100,11 +100,11 @@ final class GingerConfig implements SystemChangedEventRecorder
     {
         if (file_exists($configLocation->toString() . DIRECTORY_SEPARATOR . self::$configFileName)) {
             $instance = self::initializeFromConfigLocation($configLocation);
-            return new \SystemConfig\Projection\GingerConfig($instance->toArray(), true);
+            return new \SystemConfig\Projection\GingerConfig($instance->toArray(), $configLocation, true);
         } else {
             $env = Environment::setUp();
 
-            return new \SystemConfig\Projection\GingerConfig(['ginger' => $env->getConfig()]);
+            return new \SystemConfig\Projection\GingerConfig(['ginger' => $env->getConfig()], $configLocation);
         }
     }
 
@@ -114,8 +114,8 @@ final class GingerConfig implements SystemChangedEventRecorder
      */
     private function __construct(array $config, ConfigLocation $configLocation)
     {
-        $this->setConfig($config);
         $this->configLocation = $configLocation;
+        $this->setConfig($config);
     }
 
     /**
@@ -186,6 +186,29 @@ final class GingerConfig implements SystemChangedEventRecorder
     }
 
     /**
+     * @param string $startMessage
+     * @param array $processConfig
+     * @param ConfigWriter $configWriter
+     * @throws \InvalidArgumentException
+     */
+    public function replaceProcessTriggeredBy($startMessage, array $processConfig, ConfigWriter $configWriter)
+    {
+        $this->assertMessageName($startMessage, $this->projection()->getAllPossibleDataTypes());
+        $this->assertProcessConfig($startMessage, $processConfig);
+
+        if (! isset($this->config['ginger']['processes'][$startMessage])) throw new \InvalidArgumentException(sprintf('Can not find a process that is triggered by message %s', $startMessage));
+
+        $oldProcessConfig = $this->config['ginger']['processes'][$startMessage];
+
+        $this->config['ginger']['processes'][$startMessage] = $processConfig;
+
+        $configWriter->replaceConfigInDirectory(
+            $this->toArray(),
+            $this->configLocation->toString() . DIRECTORY_SEPARATOR . self::$configFileName
+        );
+    }
+
+    /**
      * Assert and set config
      *
      * @param array $config
@@ -207,7 +230,7 @@ final class GingerConfig implements SystemChangedEventRecorder
 
         $this->assertChannelConfig($config['ginger']['channels']['local'], 'local');
 
-        $projection = new \SystemConfig\Projection\GingerConfig($config, true);
+        $projection = new \SystemConfig\Projection\GingerConfig($config, $this->configLocation, true);
 
         foreach ($config['ginger']['processes'] as $startMessage => $processConfig) {
             $this->assertMessageName($startMessage, $projection->getAllPossibleDataTypes());
@@ -223,7 +246,7 @@ final class GingerConfig implements SystemChangedEventRecorder
     private function projection()
     {
         if (is_null($this->projection)) {
-            $this->projection = new \SystemConfig\Projection\GingerConfig($this->toArray(), true);
+            $this->projection = new \SystemConfig\Projection\GingerConfig($this->toArray(), $this->configLocation,  true);
         }
 
         return $this->projection;
@@ -286,6 +309,28 @@ final class GingerConfig implements SystemChangedEventRecorder
         if (! in_array($processConfig['process_type'], Definition::getAllProcessTypes())) throw new \InvalidArgumentException('Process type is not valid in config ginger.processes.'.$messageName);
         if (! array_key_exists('tasks', $processConfig))        throw new \InvalidArgumentException('Missing key tasks in config ginger.processes.'.$messageName);
         if (! is_array($processConfig['tasks']))                throw new \InvalidArgumentException(sprintf('Config ginger.processes.%s.tasks must be an array', $messageName));
+
+        foreach ($processConfig['tasks'] as $i => $task) $this->assertTaskConfig($messageName, $i, $task);
+    }
+
+    private function assertTaskConfig($messageName, $taskIndex, array $taskConfig)
+    {
+        $configPath = 'ginger.processes.' . $messageName . '.tasks.' .$taskIndex;
+
+        if (! array_key_exists('task_type', $taskConfig))       throw new \InvalidArgumentException('Missing task type in config ' . $configPath);
+
+        switch ($taskConfig['task_type']) {
+            case Definition::TASK_COLLECT_DATA:
+                if (! array_key_exists('source', $taskConfig))          throw new \InvalidArgumentException('Missing source in config '. $configPath);
+                if (! array_key_exists('data_type', $taskConfig))       throw new \InvalidArgumentException('Missing data type in config '. $configPath);
+                break;
+            case Definition::TASK_PROCESS_DATA:
+                if (! array_key_exists('target', $taskConfig))          throw new \InvalidArgumentException('Missing target in config '. $configPath);
+                if (! array_key_exists('allowed_types', $taskConfig))   throw new \InvalidArgumentException('Missing allowed types in config '. $configPath);
+                break;
+            default:
+                throw new \InvalidArgumentException(sprintf('Invalid task type %s in config %s', $taskConfig['task_type'], $configPath));
+        }
     }
 }
  

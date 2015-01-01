@@ -1,10 +1,9 @@
 <script type="text/x-handlebars" data-template-name="manager/index">
-    <h2><?php echo $this->translate('Defined Processes') ?></h2>
     <div class="row">
-        <div class="col-md-6">
+        <div class="col-md-12">
             <div class="list-group">
                 {{#each process in model}}
-                {{#link-to 'process' process class="list-group-item"}}{{process.name}}{{/link-to}}
+                {{#link-to 'process' process class="list-group-item text-center"}}<strong>{{process.name}}</strong>{{/link-to}}
                 {{/each}}
             </div>
         </div>

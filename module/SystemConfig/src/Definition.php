@@ -19,6 +19,7 @@ namespace SystemConfig;
  */
 final class Definition
 {
-    const SYSTEM_CONFIG_DIR = 'config/autoload';
+    const SYSTEM_CONFIG_DIR  = 'config/autoload';
+    const SYSTEM_SCRIPTS_DIR = 'scripts';
 }
  

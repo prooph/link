@@ -31,7 +31,7 @@ class DashboardHelper extends AbstractHelper
      * @var string
      */
     private $widgetTemplate = '<div class="col-md-%d">
-        <div class="panel panel-default">
+        <div class="panel panel-primary">
             <div class="panel-heading">
                 <h3 class="panel-title">%s</h3>
             </div>
