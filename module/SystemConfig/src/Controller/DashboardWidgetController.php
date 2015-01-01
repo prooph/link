@@ -44,7 +44,7 @@ class DashboardWidgetController extends AbstractWidgetController implements Need
         }
 
         $params['config_dir_is_writable'] = is_writable($this->systemConfig->getConfigLocation()->toString());
-        $params['config_is_writable'] = is_writable($this->systemConfig->getConfigLocation()->toString() . DIRECTORY_SEPARATOR . GingerConfig::configFileName());
+        $params['config_is_writable'] = is_writable($this->systemConfig->getConfigLocation()->toString() . DIRECTORY_SEPARATOR . \SystemConfig\Model\GingerConfig::configFileName());
         $params['config_dir'] = $this->systemConfig->getConfigLocation()->toString();
         $params['config_file_name'] = \SystemConfig\Model\GingerConfig::configFileName();
 

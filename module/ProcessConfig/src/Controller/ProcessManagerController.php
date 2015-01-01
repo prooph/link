@@ -16,6 +16,7 @@ use Application\SharedKernel\DataTypeClass;
 use Application\SharedKernel\ScriptLocation;
 use Ginger\Functional\Func;
 use Ginger\Message\MessageNameUtils;
+use Ginger\Processor\Definition;
 use SystemConfig\Projection\GingerConfig;
 use SystemConfig\Service\NeedsSystemConfig;
 use ZF\ContentNegotiation\ViewModel;
@@ -72,6 +73,7 @@ final class ProcessManagerController extends AbstractQueryController implements 
             $task['id'] = $i+1;
         }
 
+
         return [
             'id'  => $startMessage,
             'name' => $processDefinition['name'],
@@ -80,7 +82,16 @@ final class ProcessManagerController extends AbstractQueryController implements 
                 'messageType' => $messageType,
                 'dataType' => DataTypeClass::extractFromMessageName($startMessage, $knownDataTypes)
             ],
-            'tasks' => $processDefinition['tasks']
+            'tasks' => array_map(
+                function ($task) {
+                    if ($task['task_type'] === Definition::TASK_MANIPULATE_PAYLOAD) {
+                        $task['manipulation_script'] = str_replace($this->scriptLocation->toString() . DIRECTORY_SEPARATOR, "", $task['manipulation_script']);
+                    }
+
+                    return $task;
+                },
+                $processDefinition['tasks']
+            )
         ];
     }
 
