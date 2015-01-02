@@ -35,18 +35,21 @@ class DashboardWidgetController extends AbstractWidgetController implements Need
     public function widgetAction()
     {
         $params = [];
-        try {
-            $params['gingerConfig'] = $this->systemConfig;
-            $params['error'] = false;
-        } catch (\Exception $ex) {
-            $params['gingerConfig'] = null;
-            $params['error'] = $ex->getMessage();
-        }
+
+        $params['gingerConfig'] = $this->systemConfig;
 
         $params['config_dir_is_writable'] = is_writable($this->systemConfig->getConfigLocation()->toString());
-        $params['config_is_writable'] = is_writable($this->systemConfig->getConfigLocation()->toString() . DIRECTORY_SEPARATOR . \SystemConfig\Model\GingerConfig::configFileName());
+
+        if ($this->systemConfig->isConfigured()) {
+            $params['config_is_writable'] = is_writable($this->systemConfig->getConfigLocation()->toString() . DIRECTORY_SEPARATOR . \SystemConfig\Model\GingerConfig::configFileName());
+        } else {
+            $params['config_is_writable'] = true;
+        }
+
         $params['config_dir'] = $this->systemConfig->getConfigLocation()->toString();
         $params['config_file_name'] = \SystemConfig\Model\GingerConfig::configFileName();
+
+
 
         return DashboardWidget::initialize('system-config/dashboard/widget', 'System Configuration', 4, $params);
     }

@@ -30,7 +30,7 @@ class IndexController extends AbstractQueryController
     {
         $viewModel = new ViewModel();
 
-        $viewModel->setTemplate('dashboard/index/index');
+        $viewModel->setTemplate('application/index/index');
 
         return $viewModel;
     }

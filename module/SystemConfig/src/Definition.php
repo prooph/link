@@ -34,5 +34,13 @@ final class Definition
     {
         return getcwd() . DIRECTORY_SEPARATOR . 'scripts';
     }
+
+    /**
+     * @return string
+     */
+    public static function getSqliteDbDir()
+    {
+        return getcwd() . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR . 'sqlite';
+    }
 }
  

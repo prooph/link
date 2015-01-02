@@ -1,61 +1,61 @@
 <h1><?php echo $this->translate('System Configuration') ?></h1>
 <div class="row">
-    <?php if ($this->error) : //Display config errors ?>
+    <?php if (!$this->config_dir_is_writable) : ?>
         <div class="col-md-12">
             <div class="alert alert-danger">
-                <p></p><span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span>&nbsp;<?php
-                echo sprintf($this->translate('The system has encountered an error in the configuration! Please fix it manually or contact a developer.'), $this->config_dir)
-                ?></p>
-                <p><?php echo $this->translate('System error message: ') . $this->error ?></p>
+                <span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span>&nbsp;<?php
+                echo sprintf($this->translate('The directory %s is not writable. Please make sure the webserver has write access!'), $this->config_dir)
+                ?>
             </div>
         </div>
-    <?php else : //No errors detected whether the system is not configured yet or everything is fine ?>
-        <?php if (!$this->config_dir_is_writable) : ?>
-            <div class="col-md-12">
-                <div class="alert alert-danger">
-                    <span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span>&nbsp;<?php
-                    echo sprintf($this->translate('The directory %s is not writable. Please make sure the webserver has write access!'), $this->config_dir)
-                    ?>
-                </div>
+    <?php endif; ?>
+    <?php if (!$this->config_is_writable) : ?>
+        <div class="col-md-12">
+            <div class="alert alert-danger">
+                <span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span>&nbsp;<?php
+                echo sprintf($this->translate('The ginger config file: %s in %s is not writable. Please make sure the webserver has write access!'), $this->config_file_name, $this->config_dir)
+                ?>
             </div>
-        <?php endif; ?>
-        <?php if (!$this->config_is_writable) : ?>
-            <div class="col-md-12">
-                <div class="alert alert-danger">
-                    <span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span>&nbsp;<?php
-                    echo sprintf($this->translate('The ginger config file: %s in %s is not writable. Please make sure the webserver has write access!'), $this->config_file_name, $this->config_dir)
-                    ?>
-                </div>
+        </div>
+    <?php endif; ?>
+    <?php if (!$this->gingerConfig->isConfigured()) : ?>
+        <div class="col-md-12">
+            <div class="alert alert-warning">
+                <span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span>&nbsp;<?php echo sprintf(
+                    $this->translate('No configuration found for Ginger. Would you like to %screate one%s?'),
+                    '<a href="'.$this->url('system_config/ginger_set_up').'">', '</a>') ?>
             </div>
-        <?php endif; ?>
-        <?php if (!$this->gingerConfig->isConfigured()) : ?>
-            <div class="col-md-12">
-                <div class="alert alert-warning">
-                    <span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span>&nbsp;<?php echo sprintf(
-                        $this->translate('No configuration found for Ginger. Would you like to %screate one%s?'),
-                        '<a href="'.$this->url('system_config/ginger_set_up').'">', '</a>') ?>
-                </div>
+        </div>
+    <?php else : ?>
+        <div class="col-md-8">
+            <div class="row">
+                <table class="table table-hover">
+                    <tr>
+                        <td>
+                            <p class="text-info text-btn-align"><strong>Ginger Node Name</strong></p>
+                        </td>
+                        <td>
+                            <p id="config-node-name" class="text-btn-align"><strong><?php echo $this->gingerConfig->getNodeName() ?></strong></p>
+                        </td>
+                        <td>
+                            <a id="btn-node-name" href="#" class="btn btn-default edit"><?php echo $this->translate('edit') ?></a>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <p class="text-info text-btn-align"><strong>Event Store</strong></p>
+                        </td>
+                        <td>
+                            <p id="config-node-name" class="text-btn-align"><strong><?php echo $this->gingerConfig->getNodeName() ?></strong></p>
+                        </td>
+                        <td>
+                            <a id="btn-node-name" href="#" class="btn btn-default edit"><?php echo $this->translate('edit') ?></a>
+                        </td>
+                    </tr>
+                </table>
             </div>
-        <?php else : ?>
-            <div class="col-md-8">
-                <div class="row">
-                    <table class="table table-hover">
-                        <tr>
-                            <td>
-                                <p class="text-info text-btn-align"><strong>Ginger Node Name</strong></p>
-                            </td>
-                            <td>
-                                <p id="config-node-name" class="text-btn-align"><strong><?php echo $this->gingerConfig->getNodeName() ?></strong></p>
-                            </td>
-                            <td>
-                                <a id="btn-node-name" href="#" class="btn btn-default edit"><?php echo $this->translate('edit') ?></a>
-                            </td>
-                        </tr>
-                    </table>
-                </div>
-            </div>
-        <?php endif; //if is configured end ?>
-    <?php endif; // if error end ?>
+        </div>
+    <?php endif; //if is configured end ?>
 </div>
 <script type="text/javascript">
     var toggleBtn = function($btn) {

@@ -13,12 +13,6 @@
 
 $this->layout()->sidebar_left = $this->partial('process-config/process-manager/partial/sidebar-left');
 
-$this->inlineScript()->appendFile($this->basePath() . '/js/handlebars.js');
-$this->inlineScript()->appendFile($this->basePath() . '/js/ember.js');
-$this->inlineScript()->appendFile($this->basePath() . '/js/ember.data.js');
-$this->inlineScript()->appendFile($this->basePath() . '/js/i18n.js');
-$this->inlineScript()->appendFile($this->basePath() . '/js/i18n-plurals.js');
-
 //Bootstrap ember app
 $this->inlineScript()->captureStart();
 

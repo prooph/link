@@ -34,15 +34,10 @@ class DashboardWidgetController extends AbstractWidgetController implements Need
      */
     public function widgetAction()
     {
-        $params = [];
+        if (! $this->systemConfig->isConfigured()) return false;
 
-        try {
-            $params['gingerConfig'] = $this->systemConfig;
-            $params['error'] = false;
-        } catch (\Exception $ex) {
-            $params['gingerConfig'] = null;
-            $params['error'] = $ex->getMessage();
-        }
+        $params = [];
+        $params['gingerConfig'] = $this->systemConfig;
 
         return DashboardWidget::initialize('process-config/dashboard/widget', 'Process Manager', 4, $params);
     }

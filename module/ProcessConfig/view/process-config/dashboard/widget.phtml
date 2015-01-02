@@ -1,27 +1,15 @@
-<?php if ($this->error) : ?>
-    <div class="alert alert-danger">
-        <span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span>&nbsp;<?php echo $this->translate('Configuration error detected') ?>!
+<?php if (count($this->gingerConfig->getProcessDefinitions()) === 0) : ?>
+    <div class="alert alert-warning">
+        <span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span>&nbsp;<?php echo $this->translate('No processes configured yet') ?>!
     </div>
-    <p class="text-center"><a href="<?php echo $this->url('system_config') ?>" class="btn btn-success"><?php echo $this->translate('see what is going on') ?></a></p>
-<?php else :  ?>
-    <?php if (! $this->gingerConfig->isConfigured()) : ?>
-        <div class="alert alert-warning">
-            <span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span>&nbsp;<?php echo $this->translate('No processes configured yet') ?>!
-        </div>
-        <p class="text-center"><a href="<?php echo $this->url('system_config') ?>" class="btn btn-success"><?php echo $this->translate('set up the system') ?></a></p>
-    <?php elseif (count($this->gingerConfig->getProcessDefinitions()) === 0) : ?>
-        <div class="alert alert-warning">
-            <span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span>&nbsp;<?php echo $this->translate('No processes configured yet') ?>!
-        </div>
-        <p class="text-center"><a href="<?php echo $this->url('process_config/configurator') ?>#/create" class="btn btn-success"><?php echo $this->translate('create your first process') ?></a></p>
-    <?php else : ?>
-        <?php
-        $numberOfProcesses = count($this->gingerConfig->getProcessDefinitions());
-        $message = $this->translatePlural('You have one process defined', 'You have %s processes defined', $numberOfProcesses);
-        ?>
-        <ul class="list-group">
-            <li class="list-group-item list-group-item-success"><?php echo sprintf($message, $numberOfProcesses) ?>&nbsp;<span class="glyphicon glyphicon-ok pull-right"></span></li>
-        </ul>
-        <p class="text-center"><a href="<?php echo $this->url('process_config/configurator') ?>" class="btn btn-success"><?php echo $this->translate('view processes') ?></a></p>
-    <?php endif; ?>
+    <p class="text-center"><a href="<?php echo $this->url('process_config/configurator') ?>#/create" class="btn btn-success"><?php echo $this->translate('create your first process') ?></a></p>
+<?php else : ?>
+    <?php
+    $numberOfProcesses = count($this->gingerConfig->getProcessDefinitions());
+    $message = $this->translatePlural('You have one process defined', 'You have %s processes defined', $numberOfProcesses);
+    ?>
+    <ul class="list-group">
+        <li class="list-group-item list-group-item-success"><?php echo sprintf($message, $numberOfProcesses) ?>&nbsp;<span class="glyphicon glyphicon-ok pull-right"></span></li>
+    </ul>
+    <p class="text-center"><a href="<?php echo $this->url('process_config/configurator') ?>" class="btn btn-success"><?php echo $this->translate('view processes') ?></a></p>
 <?php endif; ?>

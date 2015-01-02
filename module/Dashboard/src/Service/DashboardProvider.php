@@ -40,7 +40,7 @@ class DashboardProvider
      */
     public function provideWidgets()
     {
-        return array_map(function (AbstractWidgetController $controller) { return $controller->widgetAction(); }, $this->widgetControllers);
+        return array_filter(array_map(function (AbstractWidgetController $controller) { return $controller->widgetAction(); }, $this->widgetControllers));
     }
 }
  

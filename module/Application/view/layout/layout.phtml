@@ -24,7 +24,6 @@
             ->prependFile($this->basePath() . '/js/respond.min.js', 'text/javascript', array('conditional' => 'lt IE 9',))
             ->prependFile($this->basePath() . '/js/html5shiv.js',   'text/javascript', array('conditional' => 'lt IE 9',))
         ; ?>
-
     </head>
     <body>
         <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
@@ -61,6 +60,12 @@
                 <?php if (isset($this->sidebar_right)) echo $this->sidebar_right; ?>
             </div>
         </div>
-        <?php echo $this->inlineScript() ?>
+        <?php echo $this->inlineScript()
+            ->prependFile($this->basePath() . '/js/i18n-plurals.js')
+            ->prependFile($this->basePath() . '/js/i18n.js')
+            ->prependFile($this->basePath() . '/js/ember.data.js')
+            ->prependFile($this->basePath() . '/js/ember.js')
+            ->prependFile($this->basePath() . '/js/handlebars.js')
+        ?>
     </body>
 </html>

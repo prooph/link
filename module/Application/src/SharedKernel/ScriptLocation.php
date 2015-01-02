@@ -28,7 +28,7 @@ final class ScriptLocation
 
     /**
      * @param string $path
-     * @return ConfigLocation
+     * @return ScriptLocation
      */
     public static function fromPath($path)
     {

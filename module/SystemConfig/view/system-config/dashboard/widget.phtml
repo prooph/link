@@ -1,25 +1,18 @@
-<?php if ($this->error) : ?>
+<?php if (! $this->config_is_writable) : ?>
     <div class="alert alert-danger">
-        <span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span>&nbsp;<?php echo $this->translate('Configuration error detected') ?>!
+        <span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span>&nbsp;<?php echo sprintf($this->translate('Ginger config is not writable'), $this->config_dir, $this->config_file_name) ?>!
     </div>
-    <p class="text-center"><a href="<?php echo $this->url('system_config') ?>" class="btn btn-success"><?php echo $this->translate('see what is going on') ?></a></p>
-<?php else :  ?>
-    <?php if (! $this->config_is_writable) : ?>
-        <div class="alert alert-danger">
-            <span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span>&nbsp;<?php echo sprintf($this->translate('Ginger config is not writable'), $this->config_dir, $this->config_file_name) ?>!
+    <p class="text-center"><a href="<?php echo $this->url('system_config') ?>" class="btn btn-success"><?php echo $this->translate('fix the error') ?></a></p>
+<?php else : ?>
+    <?php if (! $this->gingerConfig->isConfigured()) : ?>
+        <div class="alert alert-warning">
+            <span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span>&nbsp;<?php echo $this->translate('Ginger runs in default mode') ?>!
         </div>
-        <p class="text-center"><a href="<?php echo $this->url('system_config') ?>" class="btn btn-success"><?php echo $this->translate('fix the error') ?></a></p>
+        <p class="text-center"><a href="<?php echo $this->url('system_config') ?>" class="btn btn-success"><?php echo $this->translate('set up the system') ?></a></p>
     <?php else : ?>
-        <?php if (! $this->gingerConfig->isConfigured()) : ?>
-            <div class="alert alert-warning">
-                <span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span>&nbsp;<?php echo $this->translate('Ginger runs currently in default mode') ?>!
-            </div>
-            <p class="text-center"><a href="<?php echo $this->url('system_config') ?>" class="btn btn-success"><?php echo $this->translate('set up the system') ?></a></p>
-        <?php else : ?>
-            <ul class="list-group">
-                <li class="list-group-item list-group-item-success"><?php echo $this->translate('Config looks good') ?>&nbsp;<span class="glyphicon glyphicon-ok pull-right"></span></li>
-            </ul>
-            <p class="text-center"><a href="<?php echo $this->url('system_config') ?>" class="btn btn-success"><?php echo $this->translate('change config') ?></a></p>
-        <?php endif; ?>
+        <ul class="list-group">
+            <li class="list-group-item list-group-item-success"><?php echo $this->translate('Config looks good') ?>&nbsp;<span class="glyphicon glyphicon-ok pull-right"></span></li>
+        </ul>
+        <p class="text-center"><a href="<?php echo $this->url('system_config') ?>" class="btn btn-success"><?php echo $this->translate('change config') ?></a></p>
     <?php endif; ?>
 <?php endif; ?>
