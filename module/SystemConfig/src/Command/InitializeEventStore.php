@@ -41,9 +41,20 @@ final class InitializeEventStore extends SystemCommand
         );
     }
 
+    /**
+     * @return ConfigLocation
+     */
     public function eventStoreConfigLocation()
     {
+        return ConfigLocation::fromPath($this->payload['es_config_location']);
+    }
 
+    /**
+     * @return SqliteDbFile
+     */
+    public function sqliteDbFile()
+    {
+        return SqliteDbFile::fromFilename($this->payload['sqlite_db_file']);
     }
 
     protected function assertPayload($aPayload = null)

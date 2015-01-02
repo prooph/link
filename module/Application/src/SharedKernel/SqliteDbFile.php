@@ -70,27 +70,9 @@ final class SqliteDbFile
         if (! file_exists($fileName)) throw new \InvalidArgumentException(sprintf('File %s does not exist', $fileName));
 
         $this->file = $fileName;
-        $this->path = realpath($fileName);
+        $path = realpath($fileName);
 
-        if (!is_writable($this->path)) throw new \InvalidArgumentException(sprintf('Sqlite db location %s must be writable', $this->path));
-
-        $this->path .= DIRECTORY_SEPARATOR;
-    }
-
-    /**
-     * @return string
-     */
-    public function path()
-    {
-        return $this->path;
-    }
-
-    /**
-     * @return string
-     */
-    public function file()
-    {
-        return $this->file;
+        if (!is_writable($path)) throw new \InvalidArgumentException(sprintf('Sqlite db location %s must be writable', $path));
     }
 
     /**
@@ -98,7 +80,7 @@ final class SqliteDbFile
      */
     public function toString()
     {
-        return $this->path() . $this->file();
+        return $this->file;
     }
 }
  

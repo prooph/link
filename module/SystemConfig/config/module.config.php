@@ -65,9 +65,11 @@ return array(
 
             //Command handlers
             'SystemConfig\Model\GingerConfig\CreateDefaultConfigFileHandler' => 'SystemConfig\Service\Factory\CreateDefaultConfigFileHandlerFactory',
-            'SystemConfig\Model\GingerConfig\ChangeNodeNameHandler' => 'SystemConfig\Service\Factory\ChangeNodeNameHandlerFactory',
-            'SystemConfig\Model\GingerConfig\AddNewProcessToConfigHandler' => 'SystemConfig\Service\Factory\AddNewProcessToConfigHandlerFactory',
-            'SystemConfig\Model\GingerConfig\ChangeProcessConfigHandler' => 'SystemConfig\Service\Factory\ChangeProcessConfigHandlerFactory',
+            'SystemConfig\Model\GingerConfig\InitializeEventStoreHandler'    => 'SystemConfig\Service\Factory\InitializeEventStoreHandlerFactory',
+            'SystemConfig\Model\GingerConfig\ChangeNodeNameHandler'          => 'SystemConfig\Service\Factory\ChangeNodeNameHandlerFactory',
+            'SystemConfig\Model\GingerConfig\AddNewProcessToConfigHandler'   => 'SystemConfig\Service\Factory\AddNewProcessToConfigHandlerFactory',
+            'SystemConfig\Model\GingerConfig\ChangeProcessConfigHandler'     => 'SystemConfig\Service\Factory\ChangeProcessConfigHandlerFactory',
+            'SystemConfig\Model\GingerConfig\UndoSystemSetUpHandler'         => 'SystemConfig\Service\Factory\UndoSystemSetUpHandlerFactory',
 
         ]
     ],
@@ -82,9 +84,11 @@ return array(
     'prooph.psb' => [
         'command_router_map' => [
             'SystemConfig\Command\CreateDefaultGingerConfigFile' => 'SystemConfig\Model\GingerConfig\CreateDefaultConfigFileHandler',
+            'SystemConfig\Command\InitializeEventStore'          => 'SystemConfig\Model\GingerConfig\InitializeEventStoreHandler',
             'SystemConfig\Command\ChangeNodeName'                => 'SystemConfig\Model\GingerConfig\ChangeNodeNameHandler',
             'SystemConfig\Command\AddNewProcessToConfig'         => 'SystemConfig\Model\GingerConfig\AddNewProcessToConfigHandler',
             'SystemConfig\Command\ChangeProcessConfig'           => 'SystemConfig\Model\GingerConfig\ChangeProcessConfigHandler',
+            'SystemConfig\Command\UndoSystemSetUp'               => 'SystemConfig\Model\GingerConfig\UndoSystemSetUpHandler',
         ]
     ],
     'zf-content-negotiation' => [

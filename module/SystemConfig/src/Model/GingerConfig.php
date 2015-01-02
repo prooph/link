@@ -20,8 +20,10 @@ use Ginger\Processor\Definition;
 use Ginger\Processor\NodeName;
 use SystemConfig\Event\GingerConfigFileWasCreated;
 use Application\SharedKernel\ConfigLocation;
+use SystemConfig\Event\GingerConfigFileWasRemoved;
 use SystemConfig\Event\NewProcessWasAddedToConfig;
 use SystemConfig\Event\NodeNameWasChanged;
+use Zend\Stdlib\ErrorHandler;
 
 /**
  * Class GingerConfig
@@ -75,8 +77,6 @@ final class GingerConfig implements SystemChangedEventRecorder
 
         $configWriter->writeNewConfigToDirectory($instance->toArray(), $configFilePath);
 
-        $instance->configLocation = $configLocation;
-
         $instance->recordThat(GingerConfigFileWasCreated::in($configLocation, self::$configFileName));
 
         return $instance;
@@ -106,6 +106,22 @@ final class GingerConfig implements SystemChangedEventRecorder
 
             return new \SystemConfig\Projection\GingerConfig(['ginger' => $env->getConfig()], $configLocation);
         }
+    }
+
+    /**
+     * @param string $configLocation
+     * @return GingerConfigFileWasRemoved
+     */
+    public static function removeConfig($configLocation)
+    {
+        ErrorHandler::start();
+
+        if (file_exists($configLocation . DIRECTORY_SEPARATOR . self::$configFileName))
+            unlink($configLocation . DIRECTORY_SEPARATOR . self::$configFileName);
+
+        ErrorHandler::stop();
+
+        return GingerConfigFileWasRemoved::in($configLocation . DIRECTORY_SEPARATOR . self::$configFileName);
     }
 
     /**

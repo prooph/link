@@ -5,6 +5,7 @@ return array(
         'ZF\ContentNegotiation',
         'ZF\ApiProblem',
         'ProophServiceBusModule',
+        'ProophEventStoreModule',
         'SystemConfig',
         'ProcessConfig',
         'AssetManager',

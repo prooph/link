@@ -38,9 +38,9 @@ final class Definition
     /**
      * @return string
      */
-    public static function getSqliteDbDir()
+    public static function getEventStoreSqliteDbFile()
     {
-        return getcwd() . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR . 'sqlite';
+        return getcwd() . DIRECTORY_SEPARATOR . 'data' . DIRECTORY_SEPARATOR . 'sqlite' . DIRECTORY_SEPARATOR . 'eventstore.db';
     }
 }
  
