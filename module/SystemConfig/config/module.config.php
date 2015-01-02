@@ -12,7 +12,7 @@ return array(
     'dashboard' => [
         'system_config_widget' => [
             'controller' => 'SystemConfig\Controller\DashboardWidget',
-            'order' => 11 //10 - 20 config order range
+            'order' => 101 //100 - 200 config order range
         ]
     ],
     'router' => [

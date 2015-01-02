@@ -56,7 +56,7 @@ return array(
     'dashboard' => [
         'process_config_widget' => [
             'controller' => 'ProcessConfig\Controller\DashboardWidget',
-            'order' => 10 //10 - 20 config order range
+            'order' => 100 //100 - 200 config order range
         ]
 
     ],
