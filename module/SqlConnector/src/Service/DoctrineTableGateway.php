@@ -19,11 +19,8 @@ use Ginger\Message\WorkflowMessage;
 use Ginger\Message\WorkflowMessageHandler;
 use Ginger\Type\Description\Description;
 use Ginger\Type\Description\NativeType;
-use Ginger\Type\Prototype;
-use Ginger\Type\Type;
 use Prooph\ServiceBus\CommandBus;
 use Prooph\ServiceBus\EventBus;
-use SqlConnector\GingerType\TableRow;
 use Zend\Stdlib\ErrorHandler;
 use Zend\XmlRpc\Value\AbstractCollection;
 
@@ -83,6 +80,7 @@ final class DoctrineTableGateway implements WorkflowMessageHandler
                     $this->eventBus->dispatch(LogMessage::logUnsupportedMessageReceived($aWorkflowMessage, 'sqlconnector-' . $this->table));
             }
         } catch (\Exception $ex) {
+            ErrorHandler::stop();
             $this->eventBus->dispatch(LogMessage::logException($ex, $aWorkflowMessage->getProcessTaskListPosition()));
         }
     }

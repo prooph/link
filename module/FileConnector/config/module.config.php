@@ -9,6 +9,17 @@
  * Date: 06.12.14 - 22:26
  */
 return array(
+    'fileconnector' => [
+        //The FileConnector module uses an own plugin manager to resolve file handlers for file types
+        //You can configure the file handler manager like a normal service manager
+        //The file type is the alias that resolves to a FileConnector\Service\FileHandler
+        'file_types' => [
+            'invokables' => [
+                'csv' => 'FileConnector\Service\FileHandler\LeagueCsvHandler'
+            ]
+
+        ]
+    ],
     'dashboard' => [
         'fileconnector_config_widget' => [
             'controller' => 'FileConnector\Controller\DashboardWidget',
@@ -27,8 +38,7 @@ return array(
     ),
     'service_manager' => [
         'factories' => [
-
-
+            'fileconnector.file_handler_manager' => 'FileConnector\Service\FileHandlerManagerFactory',
         ]
     ],
     'controllers' => array(
@@ -41,13 +51,13 @@ return array(
     ],
     'zf-content-negotiation' => [
         'controllers' => [
-            'SqlConnector\Controller\Configuration' => 'Json',
+            'FileConnector\Controller\Configuration' => 'Json',
         ],
         'accept_whitelist' => [
-            'SqlConnector\Controller\Configuration' => ['application/json'],
+            'FileConnector\Controller\Configuration' => ['application/json'],
         ],
         'content_type_whitelist' => [
-            'SqlConnector\Controller\Configuration' => ['application/json'],
+            'FileConnector\Controller\Configuration' => ['application/json'],
         ],
-    ]
+    ],
 );

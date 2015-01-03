@@ -36,7 +36,7 @@ return [
             ],
         ],
         'connectors' => [
-            'product-csv-writer' => [
+            'fileconnector:::productcollection-csv-writer' => [
                 'allowed_messages' => [
                     0 => 'process-data',
                 ],
@@ -44,6 +44,10 @@ return [
                     0 => 'Acme\ProductCollection',
                 ],
                 'preferred_type' => 'Acme\ProductCollection',
+                'metadata' => [
+                    'file_type' => 'csv',
+                    'filename'  => 'data/fileconnector/productcollection-{{$NOW::Y-m-d}}.csv',
+                ]
             ],
             'sqlconnector:::ginger_test_source' => [
                 'allowed_messages' => [
