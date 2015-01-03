@@ -140,7 +140,7 @@ final class DoctrineTableGateway implements WorkflowMessageHandler
         /** @var $collectionType AbstractCollection */
         $collectionType = $workflowMessage->getPayload()->getTypeClass();
 
-        $itemType = $collectionType::prototype()->propertiesOfType()['item']->typePrototype()->of();
+        $itemType = $collectionType::prototype()->typeProperties()['item']->typePrototype()->of();
 
         if (! method_exists($itemType, 'fromDatabaseRow')) throw new \InvalidArgumentException(sprintf("Item type %s does not provide a static fromDatabaseRow factory method", $itemType));
         if (! method_exists($itemType, 'toDbColumnName')) throw new \InvalidArgumentException(sprintf("Item type %s does not provide a static toDbColumnName method", $itemType));

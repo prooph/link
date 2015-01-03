@@ -61,7 +61,7 @@ abstract class TableRow extends AbstractDictionary
 
     public static function toNativeValue($property, $value)
     {
-        $typeProperties = static::prototype()->propertiesOfType();
+        $typeProperties = static::prototype()->typeProperties();
 
         if (! isset($typeProperties[$property])) throw new \InvalidArgumentException(sprintf("Column %s can not be mapped to a property of ginger type %s", $property, __CLASS__));
 

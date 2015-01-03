@@ -41,9 +41,9 @@ class LeagueCsvHandler implements FileHandler
     {
         if ($prototype->typeDescription()->nativeType() !== NativeType::COLLECTION) throw new \InvalidArgumentException('The CsvReader can only handle collections');
 
-        $itemPrototype = $prototype->propertiesOfType()['item']->typePrototype();
+        $itemPrototype = $prototype->typeProperties()['item']->typePrototype();
 
-        $propertyNames = array_keys($itemPrototype->propertiesOfType());
+        $propertyNames = array_keys($itemPrototype->typeProperties());
 
         $reader = Reader::createFromPath($filename);
 
@@ -94,7 +94,7 @@ class LeagueCsvHandler implements FileHandler
      */
     protected function convertToItemData(array $csvRow, Prototype $itemPrototype)
     {
-        $itemProperties = $itemPrototype->propertiesOfType();
+        $itemProperties = $itemPrototype->typeProperties();
 
         foreach ($csvRow as $propertyName => $propertyValue) {
 
