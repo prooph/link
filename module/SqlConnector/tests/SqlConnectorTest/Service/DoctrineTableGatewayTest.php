@@ -318,5 +318,84 @@ final class DoctrineTableGatewayTest extends TestCase
             $this->assertEquals(array_shift($expectedOrderedNames), $user->property('name')->value());
         }
     }
+
+    /**
+     * @test
+     */
+    public function it_collects_the_first_row_if_a_table_row_type_is_requested_and_no_filter_is_given()
+    {
+        $taskListPosition = TaskListPosition::at(TaskListId::linkWith(NodeName::defaultName(), ProcessId::generate()), 1);
+
+        $message = WorkflowMessage::collectDataOf(TestUser::prototype());
+
+        $message->connectToProcessTask($taskListPosition);
+
+        $this->tableGateway->handleWorkflowMessage($message);
+
+        $this->assertInstanceOf('Ginger\Message\WorkflowMessage', $this->messageReceiver->getLastReceivedMessage());
+
+        /** @var $wfMessage WorkflowMessage */
+        $wfMessage = $this->messageReceiver->getLastReceivedMessage();
+
+        $user = $wfMessage->getPayload()->toType();
+
+        $this->assertInstanceOf('SqlConnectorTest\DataType\TestUser', $user);
+
+        $this->assertEquals('John Doe', $user->property('name')->value());
+    }
+
+    /**
+     * @test
+     */
+    public function it_collects_user_identified_by_its_id_when_identifier_is_given_in_metadata()
+    {
+        $taskListPosition = TaskListPosition::at(TaskListId::linkWith(NodeName::defaultName(), ProcessId::generate()), 1);
+
+        $metadata = ['identifier' => 2];
+
+        $message = WorkflowMessage::collectDataOf(TestUser::prototype(), $metadata);
+
+        $message->connectToProcessTask($taskListPosition);
+
+        $this->tableGateway->handleWorkflowMessage($message);
+
+        $this->assertInstanceOf('Ginger\Message\WorkflowMessage', $this->messageReceiver->getLastReceivedMessage());
+
+        /** @var $wfMessage WorkflowMessage */
+        $wfMessage = $this->messageReceiver->getLastReceivedMessage();
+
+        $user = $wfMessage->getPayload()->toType();
+
+        $this->assertInstanceOf('SqlConnectorTest\DataType\TestUser', $user);
+
+        $this->assertEquals('Max Mustermann', $user->property('name')->value());
+    }
+
+    /**
+     * @test
+     */
+    public function it_collects_the_oldest_user_by_using_order_by_age()
+    {
+        $taskListPosition = TaskListPosition::at(TaskListId::linkWith(NodeName::defaultName(), ProcessId::generate()), 1);
+
+        $metadata = ['order_by' => 'age DESC'];
+
+        $message = WorkflowMessage::collectDataOf(TestUser::prototype(), $metadata);
+
+        $message->connectToProcessTask($taskListPosition);
+
+        $this->tableGateway->handleWorkflowMessage($message);
+
+        $this->assertInstanceOf('Ginger\Message\WorkflowMessage', $this->messageReceiver->getLastReceivedMessage());
+
+        /** @var $wfMessage WorkflowMessage */
+        $wfMessage = $this->messageReceiver->getLastReceivedMessage();
+
+        $user = $wfMessage->getPayload()->toType();
+
+        $this->assertInstanceOf('SqlConnectorTest\DataType\TestUser', $user);
+
+        $this->assertEquals('Donald Duck', $user->property('name')->value());
+    }
 }
  

@@ -19,8 +19,11 @@ use Ginger\Message\WorkflowMessage;
 use Ginger\Message\WorkflowMessageHandler;
 use Ginger\Type\Description\Description;
 use Ginger\Type\Description\NativeType;
+use Ginger\Type\Prototype;
+use Ginger\Type\Type;
 use Prooph\ServiceBus\CommandBus;
 use Prooph\ServiceBus\EventBus;
+use SqlConnector\GingerType\TableRow;
 use Zend\Stdlib\ErrorHandler;
 use Zend\XmlRpc\Value\AbstractCollection;
 
@@ -74,8 +77,8 @@ final class DoctrineTableGateway implements WorkflowMessageHandler
                     $this->collectData($aWorkflowMessage);
                     break;
                 case MessageNameUtils::PROCESS_DATA:
-
-                    break;
+                    //@TODO: add handling of process_data messages
+                    //break;
                 default:
                     $this->eventBus->dispatch(LogMessage::logUnsupportedMessageReceived($aWorkflowMessage, 'sqlconnector-' . $this->table));
             }
@@ -108,23 +111,48 @@ final class DoctrineTableGateway implements WorkflowMessageHandler
 
     private function collectSingleResult(WorkflowMessage $workflowMessage)
     {
+        $itemType = $workflowMessage->getPayload()->getTypeClass();
 
+        $metadata = $workflowMessage->getMetadata();
+
+        if (! method_exists($itemType, 'fromDatabaseRow')) throw new \InvalidArgumentException(sprintf("Item type %s does not provide a static fromDatabaseRow factory method", $itemType));
+        if (! method_exists($itemType, 'toDbColumnName')) throw new \InvalidArgumentException(sprintf("Item type %s does not provide a static toDbColumnName method", $itemType));
+
+        $query = $this->buildQueryFromMetadata($itemType, $metadata);
+
+        if (isset($metadata['identifier'])) {
+            if (! $itemType::prototype()->typeDescription()->hasIdentifier()) throw new \InvalidArgumentException(sprintf("Item type %s has no identifier", $itemType));
+
+            $identifierName = $itemType::prototype()->typeDescription()->identifierName();
+
+            $this->addFilter($query, $itemType::toDbColumnName($identifierName), '=', $metadata['identifier'], 1000);
+        }
+
+        $itemData = $query->execute()->fetch();
+
+        if (is_null($itemData)) {
+            throw new \RuntimeException(sprintf("No %s found using metadata %s", $itemType, json_encode($workflowMessage->getMetadata())));
+        }
+
+        $this->eventBus->dispatch($workflowMessage->answerWith($itemType::fromDatabaseRow($itemData)));
     }
 
     private function collectResultSet(WorkflowMessage $workflowMessage)
     {
-        $count = $this->countRows($workflowMessage->getMetadata());
-
-        $query = $this->buildQueryFromMetadata($workflowMessage->getMetadata());
-
-        $resultSet = $query->execute()->fetchAll();
-
         /** @var $collectionType AbstractCollection */
         $collectionType = $workflowMessage->getPayload()->getTypeClass();
 
         $itemType = $collectionType::prototype()->propertiesOfType()['item']->typePrototype()->of();
 
         if (! method_exists($itemType, 'fromDatabaseRow')) throw new \InvalidArgumentException(sprintf("Item type %s does not provide a static fromDatabaseRow factory method", $itemType));
+        if (! method_exists($itemType, 'toDbColumnName')) throw new \InvalidArgumentException(sprintf("Item type %s does not provide a static toDbColumnName method", $itemType));
+
+        $count = $this->countRows($itemType, $workflowMessage->getMetadata());
+
+        $query = $this->buildQueryFromMetadata($itemType, $workflowMessage->getMetadata());
+
+        $resultSet = $query->execute()->fetchAll();
+
 
         $items = [];
 
@@ -138,23 +166,25 @@ final class DoctrineTableGateway implements WorkflowMessageHandler
     }
 
     /**
+     * @param string $itemType
      * @param array $metadata
      * @return int
      */
-    private function countRows(array $metadata)
+    private function countRows($itemType, array $metadata)
     {
-        $query = $this->buildQueryFromMetadata($metadata, true);
+        $query = $this->buildQueryFromMetadata($itemType, $metadata, true);
 
         return $query->execute()->fetchColumn();
     }
 
     /**
+     * @param string $itemType
      * @param array $metadata
      * @param bool $countMode
      * @throws \InvalidArgumentException
      * @return \Doctrine\DBAL\Query\QueryBuilder
      */
-    private function buildQueryFromMetadata(array $metadata, $countMode = false)
+    private function buildQueryFromMetadata($itemType, array $metadata, $countMode = false)
     {
         ErrorHandler::start();
 
@@ -181,6 +211,8 @@ final class DoctrineTableGateway implements WorkflowMessageHandler
                     if (isset($value['column'])) {
                         $column = $value['column'];
                     }
+
+                    $column = $itemType::toDbColumnName($column);
 
                     $this->addFilter($query, $column, $value['operand'], $value['value'], $filterCount);
                 } else {

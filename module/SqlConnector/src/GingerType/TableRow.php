@@ -50,6 +50,15 @@ abstract class TableRow extends AbstractDictionary
         return $property;
     }
 
+    /**
+     * @param string $property
+     * @return string
+     */
+    public static function toDbColumnName($property)
+    {
+        return $property;
+    }
+
     public static function toNativeValue($property, $value)
     {
         $typeProperties = static::prototype()->propertiesOfType();
