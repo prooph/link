@@ -10,8 +10,12 @@ return [
                 'tasks' => [
                     [
                         "task_type" => 'collect_data',
-                        "source" => 'GingerExample\Plugin\UserDataProvider',
-                        "data_type" => 'Acme\ProductCollection'
+                        "source" => 'sqlconnector:::ginger_test_source',
+                        "data_type" => 'SqlConnector\DataType\GingerTestSource\ProductCollection'
+                    ],
+                    [
+                        "task_type" => 'manipulate_payload',
+                        'manipulation_script' => 'scripts/translate-product-collection.php',
                     ],
                     [
                         "task_type" => 'process_data',
@@ -25,29 +29,38 @@ return [
             'local' => [
                 'targets' => [
                     0 => 'localhost',
+                    1 => 'product-csv-writer',
+                    2 => 'sqlconnector:::ginger_test_source'
                 ],
                 'utils' => [],
             ],
         ],
         'connectors' => [
-            'product-csv-reader' => [
-                'allowed_messages' => [
-                    0 => 'collect-data',
-                ],
-                'allowed_types' => [
-                    0 => 'CsvProductCollection',
-                ],
-                'preferred_type' => 'CsvProductCollection',
-            ],
             'product-csv-writer' => [
                 'allowed_messages' => [
                     0 => 'process-data',
                 ],
                 'allowed_types' => [
-                    0 => 'CsvProductCollection',
+                    0 => 'Acme\ProductCollection',
                 ],
-                'preferred_type' => 'CsvProductCollection',
+                'preferred_type' => 'Acme\ProductCollection',
             ],
+            'sqlconnector:::ginger_test_source' => [
+                'allowed_messages' => [
+                    0 => 'collect-data',
+                ],
+                'allowed_types' => [
+                    0 => 'SqlConnector\DataType\GingerTestSource\Product',
+                    1 => 'SqlConnector\DataType\GingerTestSource\ProductCollection',
+                ],
+                'dbal_connection' => [
+                    'dbname' => 'ginger_test_source',
+                    'user' => 'root',
+                    'password' => '',
+                    'host' => 'localhost',
+                    'driver' => 'pdo_mysql',
+                ]
+            ]
         ],
     ],
 ];
