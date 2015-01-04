@@ -24,6 +24,7 @@ use Ginger\Processor\ProophPlugin\SingleTargetMessageRouter;
 use Ginger\Processor\ProophPlugin\WorkflowProcessorInvokeStrategy;
 use Ginger\Processor\Task\TaskListId;
 use Ginger\Processor\Task\TaskListPosition;
+use Ginger\Type\StringCollection;
 use Prooph\ServiceBus\CommandBus;
 use Prooph\ServiceBus\EventBus;
 
@@ -49,6 +50,12 @@ final class FileGatewayTest extends TestCase
      */
     private $messageReceiver;
 
+    private $tempPath;
+
+    /**
+     * @var array
+     */
+    private $tempFiles = array();
 
     protected function setUp()
     {
@@ -66,16 +73,28 @@ final class FileGatewayTest extends TestCase
 
         $this->eventBus->utilize(new WorkflowProcessorInvokeStrategy());
 
-        $this->fileGateway = new FileGateway(Bootstrap::getServiceManager()->get('fileconnector.file_type_adapter_manager'));
+        $this->fileGateway = new FileGateway(
+            Bootstrap::getServiceManager()->get('fileconnector.file_type_adapter_manager'),
+            Bootstrap::getServiceManager()->get('fileconnector.filename_renderer')
+        );
 
         $this->fileGateway->useCommandBus($this->commandBus);
 
         $this->fileGateway->useEventBus($this->eventBus);
+
+        $this->tempPath = sys_get_temp_dir() . DIRECTORY_SEPARATOR;
     }
 
     protected function tearDown()
     {
         $this->messageReceiver->reset();
+
+        foreach($this->tempFiles as $tempFile) {
+            $tempFile = $this->tempPath . $tempFile;
+            if (file_exists($tempFile)) unlink($tempFile);
+        }
+
+        $this->tempFiles = [];
     }
 
     /**
@@ -125,7 +144,7 @@ final class FileGatewayTest extends TestCase
             'filename_pattern' => '/^testuser_.+\.json$/',
             'path' => $this->getTestDataPath(),
             'file_type' => 'json',
-            'fetch_mode' => FileGateway::FETCH_MODE_MULTI_FILES,
+            'fetch_mode' => FileGateway::META_FETCH_MODE_MULTI_FILES,
             'file_data_type' => TestUser::prototype()->of(),
         ];
 
@@ -164,7 +183,7 @@ final class FileGatewayTest extends TestCase
             'filename_pattern' => '/^testuser_.+\.json$/',
             'path' => $this->getTestDataPath(),
             'file_type' => 'json',
-            'fetch_mode' => FileGateway::FETCH_MODE_MULTI_FILES,
+            'fetch_mode' => FileGateway::META_FETCH_MODE_MULTI_FILES,
             'merge_files' => true
         ];
 
@@ -187,6 +206,188 @@ final class FileGatewayTest extends TestCase
         //testuser_max_mustermann.json should be handled before testuser_john_doe.json.
         //When merging the data of both users John Doe overrides Max Mustermann.
         $this->assertEquals('John Doe', $user->property('name')->value());
+    }
+
+    /**
+     * @test
+     */
+    public function it_writes_users_to_file()
+    {
+        $taskListPosition = TaskListPosition::at(TaskListId::linkWith(NodeName::defaultName(), ProcessId::generate()), 1);
+
+        $testUsers = TestUserCollection::fromNativeValue([
+            [
+                "id" => 1,
+                "name" => "John Doe",
+                "age" => 34
+            ],
+            [
+                "id" => 2,
+                "name" => "Max Mustermann",
+                "age" => 41
+            ],
+        ]);
+
+        $metadata = [
+            FileGateway::META_FILE_TYPE         => 'csv',
+            FileGateway::META_PATH              => $this->tempPath,
+            FileGateway::META_FILENAME_TEMPLATE => 'users-{{#now}}{{/now}}.csv',
+        ];
+
+        $this->tempFiles[] = 'users-' . date('Y-m-d') . '.csv';
+
+        $workflowMessage = WorkflowMessage::newDataCollected($testUsers);
+
+        $workflowMessage->connectToProcessTask($taskListPosition);
+
+        $workflowMessage = $workflowMessage->prepareDataProcessing($taskListPosition, $metadata);
+
+        $this->fileGateway->handleWorkflowMessage($workflowMessage);
+
+        $this->assertInstanceOf('Ginger\Message\WorkflowMessage', $this->messageReceiver->getLastReceivedMessage());
+
+        $this->assertTrue(file_exists($this->tempPath . $this->tempFiles[0]));
+    }
+
+    /**
+     * @test
+     */
+    public function it_writes_each_user_to_a_single_file_and_the_user_data_is_available_to_create_unique_file_names()
+    {
+        $taskListPosition = TaskListPosition::at(TaskListId::linkWith(NodeName::defaultName(), ProcessId::generate()), 1);
+
+        $testUsers = TestUserCollection::fromNativeValue([
+            [
+                "id" => 1,
+                "name" => "John Doe",
+                "age" => 34
+            ],
+            [
+                "id" => 2,
+                "name" => "Max Mustermann",
+                "age" => 41
+            ],
+        ]);
+
+        $metadata = [
+            FileGateway::META_FILE_TYPE         => 'json',
+            FileGateway::META_PATH              => $this->tempPath,
+            FileGateway::META_FILENAME_TEMPLATE => 'user-{{data.id}}.json',
+            FileGateway::META_WRITE_MULTI_FILES => true,
+        ];
+
+        $this->tempFiles[] = 'user-1.json';
+        $this->tempFiles[] = 'user-2.json';
+
+        $workflowMessage = WorkflowMessage::newDataCollected($testUsers);
+
+        $workflowMessage->connectToProcessTask($taskListPosition);
+
+        $workflowMessage = $workflowMessage->prepareDataProcessing($taskListPosition, $metadata);
+
+        $this->fileGateway->handleWorkflowMessage($workflowMessage);
+
+        $this->assertInstanceOf('Ginger\Message\WorkflowMessage', $this->messageReceiver->getLastReceivedMessage());
+
+        $this->assertTrue(file_exists($this->tempPath . $this->tempFiles[0]));
+        $this->assertTrue(file_exists($this->tempPath . $this->tempFiles[1]));
+
+        $userData = json_decode(file_get_contents($this->tempPath . $this->tempFiles[0]), true);
+        $user = TestUser::fromJsonDecodedData($userData);
+
+        $this->assertEquals('John Doe', $user->property('name')->value());
+    }
+
+    /**
+     * @test
+     */
+    public function it_writes_each_user_to_a_single_file_and_the_item_index_is_available_to_create_unique_file_names()
+    {
+        $taskListPosition = TaskListPosition::at(TaskListId::linkWith(NodeName::defaultName(), ProcessId::generate()), 1);
+
+        $testUsers = TestUserCollection::fromNativeValue([
+            [
+                "id" => 1,
+                "name" => "John Doe",
+                "age" => 34
+            ],
+            [
+                "id" => 2,
+                "name" => "Max Mustermann",
+                "age" => 41
+            ],
+        ]);
+
+        $metadata = [
+            FileGateway::META_FILE_TYPE         => 'json',
+            FileGateway::META_PATH              => $this->tempPath,
+            FileGateway::META_FILENAME_TEMPLATE => 'user-{{item_index}}.json',
+            FileGateway::META_WRITE_MULTI_FILES => true,
+        ];
+
+        $this->tempFiles[] = 'user-0.json';
+        $this->tempFiles[] = 'user-1.json';
+
+        $workflowMessage = WorkflowMessage::newDataCollected($testUsers);
+
+        $workflowMessage->connectToProcessTask($taskListPosition);
+
+        $workflowMessage = $workflowMessage->prepareDataProcessing($taskListPosition, $metadata);
+
+        $this->fileGateway->handleWorkflowMessage($workflowMessage);
+
+        $this->assertInstanceOf('Ginger\Message\WorkflowMessage', $this->messageReceiver->getLastReceivedMessage());
+
+        $this->assertTrue(file_exists($this->tempPath . $this->tempFiles[0]));
+        $this->assertTrue(file_exists($this->tempPath . $this->tempFiles[1]));
+
+        $userData = json_decode(file_get_contents($this->tempPath . $this->tempFiles[0]), true);
+        $user = TestUser::fromJsonDecodedData($userData);
+
+        $this->assertEquals('John Doe', $user->property('name')->value());
+    }
+
+    /**
+     * @test
+     */
+    public function it_writes_each_string_of_the_collection_to_a_separate_file_and_the_value_is_available_in_the_filename_template_to_create_unique_file_names()
+    {
+        $taskListPosition = TaskListPosition::at(TaskListId::linkWith(NodeName::defaultName(), ProcessId::generate()), 1);
+
+        $strings = StringCollection::fromNativeValue([
+            "first",
+            "second",
+            "third"
+        ]);
+
+        $metadata = [
+            FileGateway::META_FILE_TYPE         => 'json',
+            FileGateway::META_PATH              => $this->tempPath,
+            FileGateway::META_FILENAME_TEMPLATE => 'string-{{value}}.json',
+            FileGateway::META_WRITE_MULTI_FILES => true,
+        ];
+
+        $this->tempFiles[] = 'string-first.json';
+        $this->tempFiles[] = 'string-second.json';
+        $this->tempFiles[] = 'string-third.json';
+
+        $workflowMessage = WorkflowMessage::newDataCollected($strings);
+
+        $workflowMessage->connectToProcessTask($taskListPosition);
+
+        $workflowMessage = $workflowMessage->prepareDataProcessing($taskListPosition, $metadata);
+
+        $this->fileGateway->handleWorkflowMessage($workflowMessage);
+
+        $this->assertInstanceOf('Ginger\Message\WorkflowMessage', $this->messageReceiver->getLastReceivedMessage());
+
+        $this->assertTrue(file_exists($this->tempPath . $this->tempFiles[0]));
+        $this->assertTrue(file_exists($this->tempPath . $this->tempFiles[1]));
+        $this->assertTrue(file_exists($this->tempPath . $this->tempFiles[2]));
+
+        $second = json_decode(file_get_contents($this->tempPath . $this->tempFiles[1]));
+
+        $this->assertEquals('second', $second);
     }
 }
  

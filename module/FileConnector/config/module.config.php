@@ -10,8 +10,8 @@
  */
 return array(
     'fileconnector' => [
-        //The FileConnector module uses an own plugin manager to resolve file handlers for file types
-        //You can configure the file handler manager like a normal service manager
+        //The FileConnector module uses an own plugin manager to resolve file type adapters for file types
+        //You can configure the file type adapter manager like a normal service manager
         //The file type is the alias that resolves to a FileConnector\Service\FileTypeAdapter
         'file_types' => [
             'invokables' => [
@@ -19,6 +19,15 @@ return array(
                 'json' => 'FileConnector\Service\FileTypeAdapter\JsonTypeAdapter',
             ]
 
+        ],
+        //Filename templates are rendered with a mustache template engine. Mixins extend mustache with additional functions
+        //A MixinManager is used to resolve mixins.
+        //A Mixin should implement the __invoke() method to be used as a callable.
+        //The alias of the mixin should also be used in the template.
+        'filename_mixins' => [
+            'invokables' => [
+                'now' => 'FileConnector\Service\FileNameRenderer\Mixin\NowMixin',
+            ]
         ]
     ],
     'dashboard' => [
@@ -40,6 +49,8 @@ return array(
     'service_manager' => [
         'factories' => [
             'fileconnector.file_type_adapter_manager' => 'FileConnector\Service\FileTypeAdapter\FileTypeAdapterManagerFactory',
+            'fileconnector.filename_mixin_manager'    => 'FileConnector\Service\FileNameRenderer\MixinManagerFactory',
+            'fileconnector.filename_renderer'         => 'FileConnector\Service\FileNameRenderer\FileNameRendererFactory',
         ]
     ],
     'controllers' => array(
