@@ -9,18 +9,19 @@
  * Date: 03.01.15 - 19:59
  */
 
-namespace FileConnector\Service;
+namespace FileConnector\Service\FileTypeAdapter;
 
+use FileConnector\Service\FileTypeAdapter;
 use Zend\ServiceManager\AbstractPluginManager;
 use Zend\ServiceManager\Exception;
 
 /**
- * Class FileHandlerManager
+ * Class FileTypeAdapterManager
  *
  * @package FileConnector\Service
  * @author Alexander Miertsch <kontakt@codeliner.ws>
  */
-final class FileHandlerManager extends AbstractPluginManager
+final class FileTypeAdapterManager extends AbstractPluginManager
 {
     /**
      * Validate the plugin
@@ -34,7 +35,7 @@ final class FileHandlerManager extends AbstractPluginManager
      */
     public function validatePlugin($plugin)
     {
-        if (! $plugin instanceof FileHandler) throw new \RuntimeException(sprintf("FileHandler %s does not implement FileConnector\Service\FileHandler", get_class($plugin)));
+        if (! $plugin instanceof FileTypeAdapter) throw new \RuntimeException(sprintf("FileTypeAdapter %s does not implement FileConnector\Service\FileTypeAdapter", get_class($plugin)));
     }
 }
  

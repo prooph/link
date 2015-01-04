@@ -15,27 +15,27 @@ use Ginger\Type\Prototype;
 use Ginger\Type\Type;
 
 /**
- * Interface FileHandler
+ * Interface FileTypeAdapter
  *
  * @package FileConnector\Service
  * @author Alexander Miertsch <kontakt@codeliner.ws>
  */
-interface FileHandler 
+interface FileTypeAdapter
 {
     /**
      * @param string $filename
      * @param Prototype $prototype
+     * @param array $metadata
      * @return mixed
-     * @throws \Exception
      */
-    public function readDataForType($filename, Prototype $prototype);
+    public function readDataForType($filename, Prototype $prototype, array &$metadata = []);
 
     /**
      * @param string $filename
      * @param Type $type
+     * @param array $metadata
      * @return void
-     * @throws \Exception
      */
-    public function writeDataOfType($filename, Type $type);
+    public function writeDataOfType($filename, Type $type, array &$metadata = []);
 }
  
