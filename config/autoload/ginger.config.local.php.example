@@ -19,7 +19,7 @@ return [
                     ],
                     [
                         "task_type" => 'process_data',
-                        "target" => "fileconnector:::productcollection-csv-writer",
+                        "target" => "filegateway:::productcollection-csv-writer",
                         "allowed_types" => ['Acme\ProductCollection'],
                         'metadata' => [
                             'file_type' => 'csv',
@@ -34,14 +34,14 @@ return [
             'local' => [
                 'targets' => [
                     0 => 'localhost',
-                    1 => 'fileconnector:::productcollection-csv-writer',
+                    1 => 'filegateway:::productcollection-csv-writer',
                     2 => 'sqlconnector:::ginger_test_source'
                 ],
                 'utils' => [],
             ],
         ],
         'connectors' => [
-            'fileconnector:::productcollection-csv-writer' => [
+            'filegateway:::productcollection-csv-writer' => [
                 'allowed_messages' => [
                     0 => 'process-data',
                 ],

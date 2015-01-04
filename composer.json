@@ -4,15 +4,17 @@
     "license": "BSD-3-Clause",
     "keywords": [
         "gingerframework",
+        "workflow",
+        "prooph",
         "zf2"
     ],
     "homepage": "https://github.com/gingerframework",
     "require": {
         "php": ">=5.4.8",
+        "gingerframework/gingerframework" : "dev-master",
         "zendframework/zendframework": "~2.3",
         "zfcampus/zf-api-problem": "~1.0",
         "zfcampus/zf-content-negotiation": "~1.0",
-        "gingerframework/gingerframework" : "dev-master",
         "prooph/prooph-service-bus-module": "~1.0",
         "prooph/prooph-event-store-module": "~1.0",
         "prooph/event-store-doctrine-adapter": "~0.3",

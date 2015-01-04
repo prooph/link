@@ -51,6 +51,10 @@ return array(
             'fileconnector.file_type_adapter_manager' => 'FileConnector\Service\FileTypeAdapter\FileTypeAdapterManagerFactory',
             'fileconnector.filename_mixin_manager'    => 'FileConnector\Service\FileNameRenderer\MixinManagerFactory',
             'fileconnector.filename_renderer'         => 'FileConnector\Service\FileNameRenderer\FileNameRendererFactory',
+        ],
+        'abstract_factories' => [
+            //Resolves a alias starting with "filegateway:::" to a FileConnector\Service\FileGateway
+            'FileConnector\Service\FileGateway\AbstractFileGatewayFactory',
         ]
     ],
     'controllers' => array(
