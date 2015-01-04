@@ -20,7 +20,12 @@ return [
                     [
                         "task_type" => 'process_data',
                         "target" => "fileconnector:::productcollection-csv-writer",
-                        "allowed_types" => ['Acme\ProductCollection']
+                        "allowed_types" => ['Acme\ProductCollection'],
+                        'metadata' => [
+                            'file_type' => 'csv',
+                            'path' => 'data/fileconnector',
+                            'filename_template'  => 'productcollection-{{#now}}Y-m-d{{/now}}.csv',
+                        ]
                     ]
                 ],
             ],
