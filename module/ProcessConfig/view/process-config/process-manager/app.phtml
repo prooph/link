@@ -6,12 +6,10 @@
         </script>
     </div>
 </div>
-<?php echo $this->partial('process-config/process-manager/partial/manager-index') ?>
-<?php echo $this->partial('process-config/process-manager/partial/create-process') ?>
-<?php echo $this->partial('process-config/process-manager/partial/edit-process') ?>
 <?php
-
-$this->layout()->sidebar_left = $this->partial('process-config/process-manager/partial/sidebar-left');
+foreach ($this->view_addons as $viewAddon) {
+    echo $this->partial($viewAddon);
+}
 
 //Bootstrap ember app
 $this->inlineScript()->captureStart();

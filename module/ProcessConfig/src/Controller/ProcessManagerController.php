@@ -39,6 +39,11 @@ final class ProcessManagerController extends AbstractQueryController implements 
      */
     private $scriptLocation;
 
+    /**
+     * @var array
+     */
+    private $viewAddons;
+
     public function startAppAction()
     {
         $viewModel = new ViewModel([
@@ -52,6 +57,7 @@ final class ProcessManagerController extends AbstractQueryController implements 
             'possible_task_types' => \Ginger\Processor\Definition::getAllTaskTypes(),
             'possible_manipulation_scripts' => $this->scriptLocation->getScriptNames(),
             'connectors' => $this->systemConfig->getConnectors(),
+            'view_addons' => $this->viewAddons
         ]);
 
         $viewModel->setTemplate('process-config/process-manager/app');
@@ -128,6 +134,14 @@ final class ProcessManagerController extends AbstractQueryController implements 
     public function setScriptLocation(ScriptLocation $scriptLocation)
     {
         $this->scriptLocation = $scriptLocation;
+    }
+
+    /**
+     * @param array $viewAddons
+     */
+    public function setViewAddons(array $viewAddons)
+    {
+        $this->viewAddons = $viewAddons;
     }
 }
  

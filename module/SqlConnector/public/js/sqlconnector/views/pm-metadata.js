@@ -1,5 +1,5 @@
 ProcessManager.SqlconnectorMetadataView = Ember.View.extend({
-    template : Ember.Handlebars.compile("Sqlconnector Metadata {{controller.data_type}}")
+    templateName : 'sqlconnector/pm-metadata-config'
 });
 
 Ember.Logger.debug("DEBUG: SqlconnectorMetadataView loaded");

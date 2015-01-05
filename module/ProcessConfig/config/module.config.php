@@ -14,7 +14,10 @@ return array(
     //see the fileconnector and sqlconnector view add ons for examples
     'process_manager' => [
         'view_addons' => [
-
+            'process-config/process-manager/partial/manager-index',
+            'process-config/process-manager/partial/create-process',
+            'process-config/process-manager/partial/edit-process',
+            'process-config/process-manager/partial/sidebar-left'
         ]
     ],
     'router' => [

@@ -24,13 +24,19 @@ return array(
     ],
     'view_manager' => array(
         'template_map' => [
-
+            'sqlconnector/partials/pm-metadata-config' => __DIR__ . '/../view/sqlconnector/partials/pm-metadata-config.phtml'
         ]
     ),
+    'process_manager' => [
+        'view_addons' => [
+            'sqlconnector/partials/pm-metadata-config'
+        ]
+    ],
     'asset_manager' => array(
         'resolver_configs' => array(
             'collections' => array(
                 'js/process-config/app.js' => [
+                    'js/sqlconnector/controllers/pm-metadata.js',
                     'js/sqlconnector/views/pm-metadata.js',
                 ]
             ),

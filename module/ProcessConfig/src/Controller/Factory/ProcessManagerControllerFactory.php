@@ -37,6 +37,10 @@ final class ProcessManagerControllerFactory implements FactoryInterface
         $con = new ProcessManagerController();
         $con->setScriptLocation(ScriptLocation::fromPath(Definition::getScriptsDir()));
 
+        $config = $serviceLocator->getServiceLocator()->get('config');
+
+        $con->setViewAddons($config['process_manager']['view_addons']);
+
         return $con;
     }
 }

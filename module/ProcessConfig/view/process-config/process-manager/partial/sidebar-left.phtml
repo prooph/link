@@ -1,11 +1,16 @@
+<?php
+$this->layout()->sidebar_left = <<<SIDEBAR
+
 <ul class="sidebar-nav">
     <li>
-        <a href="<?php echo $this->url('home') ?>"><?php echo $this->translate('Dashboard') ?></a>
+        <a href="{$this->url('home')}">{$this->translate('Dashboard')}</a>
     </li>
     <li>
-        <a href="#/"><?php echo $this->translate('Overview') ?></a>
+        <a href="#/">{$this->translate('Overview')}</a>
     </li>
     <li>
-        <a href="#/create"><?php echo $this->translate('Add New Process') ?></a>
+        <a href="#/create">{$this->translate('Add New Process')}</a>
     </li>
 </ul>
+
+SIDEBAR;
