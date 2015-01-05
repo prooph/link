@@ -9,6 +9,14 @@
  * Date: 06.12.14 - 22:26
  */
 return array(
+    //Placeholder for view partials which are loaded during the process manager app bootstrap
+    //You can use a partial to inject custom js and handlebar templates
+    //see the fileconnector and sqlconnector view add ons for examples
+    'process_manager' => [
+        'view_addons' => [
+
+        ]
+    ],
     'router' => [
         'routes' => [
             'process_config' => [
@@ -81,6 +89,7 @@ return array(
                     'js/process-config/controllers/task_controller.js',
                     'js/process-config/models/process.js',
                     'js/process-config/models/helpers.js',
+                    'js/process-config/views/metadata.js',
                     'js/process-config/views/data_type_select.js',
                     'js/process-config/views/helpers.js',
                 ),

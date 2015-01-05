@@ -77,9 +77,20 @@
             value=manipulation_script}}
         </div>
     {{/if}}
-    <div class="pull-right">
-        {{#link-to "tasks.index" class="btn btn-default" activeClass=""}}<?php echo $this->translate('cancel') ?>{{/link-to}}
-        <button class="btn btn-success" {{action saveTask}} {{bind-attr disabled=isNotValid}}><?php echo $this->translate('save') ?></button>
+    {{#if showMetadata}}
+        <div class="row metadata-block">
+            <div class="col-md-12">
+                <h4 class="text-left"><?php echo $this->translate('Metadata Configuration') ?></h4>
+                {{view "metadata"}}
+            </div>
+        </div>
+    {{/if}}
+    <div class="row metadata-block">
+        <div class="col-md-12">
+            <div class="pull-right">
+                {{#link-to "tasks.index" class="btn btn-default" activeClass=""}}<?php echo $this->translate('cancel') ?>{{/link-to}}
+                <button class="btn btn-success" {{action saveTask}} {{bind-attr disabled=isNotValid}}><?php echo $this->translate('save') ?></button>
+            </div>
+        </div>
     </div>
-
 </script>

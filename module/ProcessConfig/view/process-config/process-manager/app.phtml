@@ -66,7 +66,8 @@ $clientTranslations = json_encode([
             'value' => \Ginger\Processor\Definition::TASK_MANIPULATE_PAYLOAD,
             'label' => $this->translate('Run Manipulation Script'),
         ]
-    ]
+    ],
+    'metadata_not_available' => $this->translate('Metadata configuration is not available for the selected connector')
 ]);
 
 echo <<<JS

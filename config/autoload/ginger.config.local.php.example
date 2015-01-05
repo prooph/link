@@ -63,13 +63,7 @@ return [
                     0 => 'SqlConnector\DataType\GingerTestSource\Product',
                     1 => 'SqlConnector\DataType\GingerTestSource\ProductCollection',
                 ],
-                'dbal_connection' => [
-                    'dbname' => 'ginger_test_source',
-                    'user' => 'root',
-                    'password' => '',
-                    'host' => 'localhost',
-                    'driver' => 'pdo_mysql',
-                ]
+                'dbal_connection' => 'ginger_test_source'
             ]
         ],
     ],

@@ -255,7 +255,26 @@ ProcessManager.TaskController = Ember.ObjectController.extend({
         });
 
         return targets;
-    }
+    },
+    uiMetadataKey : function () {
+        switch (this.get("task_type")) {
+            case Em.I18n.t('task.collect_data.value'):
+                connectorName = this.get("source");
+                break;
+            case Em.I18n.t('task.process_data.value'):
+                connectorName = this.get("model.target");
+                break;
+            default:
+                return false;
+        }
+
+        var connector = this.get("connectors")[connectorName];
+
+        if (Ember.isEmpty(connector)) return null;
+
+        return connector.ui_metadata_key;
+    }.property("source", "model.target"),
+    showMetadata : Ember.computed.notEmpty("uiMetadataKey")
 });
 
 ProcessManager.TaskRoute = Ember.Route.extend({

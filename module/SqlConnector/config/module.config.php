@@ -27,6 +27,18 @@ return array(
 
         ]
     ),
+    'asset_manager' => array(
+        'resolver_configs' => array(
+            'collections' => array(
+                'js/process-config/app.js' => [
+                    'js/sqlconnector/views/pm-metadata.js',
+                ]
+            ),
+            'paths' => array(
+                __DIR__ . '/../public',
+            ),
+        ),
+    ),
     'service_manager' => [
         'factories' => [
 

@@ -6,13 +6,13 @@ return array(
         'ZF\ApiProblem',
         'ProophServiceBusModule',
         'ProophEventStoreModule',
+        'AssetManager',
         'SystemConfig',
         'ProcessConfig',
         'FileConnector',
         'SqlConnector',
-        'AssetManager',
-        'Application',
         'Dashboard',
+        'Application',
     ),
 
     // These are various options for the listeners attached to the ModuleManager
