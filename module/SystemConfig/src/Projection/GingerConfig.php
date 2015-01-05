@@ -63,6 +63,14 @@ final class GingerConfig
     }
 
     /**
+     * @return bool
+     */
+    public function isWritable()
+    {
+        return is_writable($this->configLocation->toString() . DIRECTORY_SEPARATOR . \SystemConfig\Model\GingerConfig::configFileName());
+    }
+
+    /**
      * @return string
      */
     public function getNodeName()

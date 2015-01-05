@@ -35,6 +35,7 @@ class DashboardWidgetController extends AbstractWidgetController implements Need
     public function widgetAction()
     {
         if (! $this->systemConfig->isConfigured()) return false;
+        if (! $this->systemConfig->isWritable())   return false;
 
         $params = [];
         $params['gingerConfig'] = $this->systemConfig;
