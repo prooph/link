@@ -210,8 +210,11 @@ ProcessManager.TaskController = Ember.ObjectController.extend({
         }
 
         if (dataTypes.length == 1) this.set(setter, dataTypes[0]);
+        var labeledDataTypes = dataTypes.map(function(dataType) {
+            return ProcessManager.DataTypes.findBy('value', dataType);
+        });
 
-        return dataTypes;
+        return labeledDataTypes;
     }.property("task_type", "source", "model.target"),
 
     possibleTargets : function () {

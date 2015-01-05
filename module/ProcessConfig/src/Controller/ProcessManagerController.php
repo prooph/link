@@ -48,7 +48,7 @@ final class ProcessManagerController extends AbstractQueryController implements 
                         return $this->convertToClientProcess($message, $definition, $this->systemConfig->getAllPossibleDataTypes());
                     }
                 ),
-            'possible_data_types' => $this->systemConfig->getAllPossibleDataTypes(),
+            'possible_data_types' => $this->prepareDataTypesSelect($this->systemConfig->getAllPossibleDataTypes()),
             'possible_task_types' => \Ginger\Processor\Definition::getAllTaskTypes(),
             'possible_manipulation_scripts' => $this->scriptLocation->getScriptNames(),
             'connectors' => $this->systemConfig->getConnectors(),
@@ -93,6 +93,24 @@ final class ProcessManagerController extends AbstractQueryController implements 
                 $processDefinition['tasks']
             )
         ];
+    }
+
+    /**
+     * @param array $dataTypes
+     * @return array
+     */
+    private function prepareDataTypesSelect(array $dataTypes)
+    {
+        $preparedDataTypes = [];
+
+        foreach ($dataTypes as $dataTypeClass) {
+            $preparedDataTypes[] = [
+                'value' => $dataTypeClass,
+                'label' => $dataTypeClass::prototype()->typeDescription()->label()
+            ];
+        }
+
+        return $preparedDataTypes;
     }
 
     /**

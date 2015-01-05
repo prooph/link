@@ -59,7 +59,7 @@ ProcessManager.ManagerCreateController = Ember.ObjectController.extend({
         if (this.get("processType") == Em.I18n.t('process.foreach.value')) name = name + "Foreach ";
         if (this.get("messageType") == Em.I18n.t('message.collect_data.value')) name = name + "Collect ";
         if (this.get("messageType") == Em.I18n.t('message.data_collected.value')) name = name + "Process ";
-        if (this.get("dataType") != null) name = name + this.get("dataType").split("\\").pop() + " ";
+        if (this.get("dataType") != null) name = name + ProcessManager.dataTypeName(this.get("dataType")) + " ";
 
         return name;
     }.property("processType", "messageType", "dataType")

@@ -9,6 +9,7 @@ return array(
         'SystemConfig',
         'ProcessConfig',
         'FileConnector',
+        'SqlConnector',
         'AssetManager',
         'Application',
         'Dashboard',

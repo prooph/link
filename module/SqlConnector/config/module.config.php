@@ -10,10 +10,12 @@
  */
 return array(
     'dashboard' => [
+        /*
         'sqlconnector_config_widget' => [
             'controller' => 'SqlConnector\Controller\DashboardWidget',
             'order' => 90 //50 - 99 connectors range
         ]
+        */
     ],
     'router' => [
         'routes' => [
@@ -21,9 +23,9 @@ return array(
         ]
     ],
     'view_manager' => array(
-        'template_path_stack' => array(
-            __DIR__ . '/../view',
-        ),
+        'template_map' => [
+
+        ]
     ),
     'service_manager' => [
         'factories' => [

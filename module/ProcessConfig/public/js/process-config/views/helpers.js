@@ -1,9 +1,11 @@
 Ember.Handlebars.helper('task-desc', function(task) {
     var prefix = Em.I18n.t('task.task') + " " +task.id + ": ";
+    var dataTypeName = ProcessManager.dataTypeName;
+
     if (task.task_type === Em.I18n.t("task.collect_data.value")) {
 
         var source = (Em.isEmpty(task.source))? "source" : task.source;
-        var sourceType = (typeof task.data_type === "undefined")? "data" : task.data_type;
+        var sourceType = (typeof task.data_type === "undefined")? "data" : dataTypeName(task.data_type);
         return prefix + Em.I18n.t('task.collect_data.name', {sourceType : sourceType, source : source});
     }
 
@@ -16,6 +18,8 @@ Ember.Handlebars.helper('task-desc', function(task) {
         } else if (typeof  task.allowed_types != "undefined") {
             preferredType = task.allowed_types[0];
         }
+
+        preferredType = dataTypeName(preferredType);
 
         return  prefix + Em.I18n.t('task.process_data.name', {preferredType : preferredType, target : target});
     }
@@ -30,3 +34,10 @@ Ember.Handlebars.helper('task-desc', function(task) {
 
     return prefix + Handlebars.Utils.escapeExpression(task.task_type);
 }, "task_type", "source", "target", "data_type", "allowed_types", "preferred_type", "manipulation_script");
+
+
+ProcessManager.dataTypeName = function (dataType) {
+    var dataTypeObj = ProcessManager.DataTypes.findBy('value', dataType);
+
+    return (typeof dataTypeObj !== "undefined")? dataTypeObj.label : dataType;
+};

@@ -48,6 +48,8 @@
             {{view "select" class="form-control form-control-with-desc"
             prompt="- <?php echo $this->translate('Data Type') ?> -"
             content=possibleDataTypes
+            optionValuePath="content.value"
+            optionLabelPath="content.label"
             value=data_type}}
         </div>
     {{/if}}
@@ -62,6 +64,8 @@
             {{view "select" class="form-control form-control-with-desc"
             prompt="- <?php echo $this->translate('Data Type') ?> -"
             content=possibleDataTypes
+            optionValuePath="content.value"
+            optionLabelPath="content.label"
             value=preferred_type}}
         </div>
     {{/if}}

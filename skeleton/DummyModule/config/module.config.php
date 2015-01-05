@@ -21,8 +21,9 @@ return array(
         ]
     ],
     'view_manager' => [
-        'template_path_stack' => [
-            __DIR__ . '/../view',
+        //We only use the template_map option, to increase performance when resolving templates
+        'template_map' => [
+            'dummy-view/dashboard/widget' => 'dummy-view/dashboard/widget.phtml'
         ],
     ],
     'service_manager' => [
