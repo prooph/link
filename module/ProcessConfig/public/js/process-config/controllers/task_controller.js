@@ -47,11 +47,19 @@ ProcessManager.TaskController = Ember.ObjectController.extend({
     isATargetSelected            : Ember.computed.notEmpty("model.target"),
     isManipulationScriptSelected : Ember.computed.notEmpty("manipulation_script"),
 
-    isADataTypeSelected : function () {
-        if (! Em.isEmpty(this.get("data_type"))) return true;
-        if (! Em.isEmpty(this.get("preferred_type"))) return true;
-        return false;
+    selectedDataType : function () {
+        switch (this.get("task_type")) {
+            case Em.I18n.t("task.collect_data.value"):
+                return this.get("data_type");
+                break;
+            case Em.I18n.t("task.process_data.value"):
+                return this.get("preferred_type");
+                break;
+        }
+        return null;
     }.property("data_type", "preferred_type"),
+
+    isADataTypeSelected : Ember.computed.notEmpty("selectedDataType"),
 
     isNotValid : function () {
         if (! this.get("isATaskTypeSelected")) return true;
@@ -265,12 +273,14 @@ ProcessManager.TaskController = Ember.ObjectController.extend({
                 connectorName = this.get("model.target");
                 break;
             default:
-                return false;
+                return null;
         }
 
         var connector = this.get("connectors")[connectorName];
 
         if (Ember.isEmpty(connector)) return null;
+
+        if (Ember.isEmpty(this.get("metadata"))) this.set("metadata", Ember.Object.create({}));
 
         return connector.ui_metadata_key;
     }.property("source", "model.target"),
@@ -286,7 +296,7 @@ ProcessManager.TaskRoute = Ember.Route.extend({
         else return task;
     },
     setupController: function(controller, model) {
-        var oldTask = ProcessManager.Object.create(model.serialize());
+        var oldTask = Em.hashToObject(model.serialize(), ProcessManager.Object);
 
         controller.set("taskTypes", ProcessManager.TaskTypes);
         controller.set("manipulationScripts", ProcessManager.ManipulationScrits);

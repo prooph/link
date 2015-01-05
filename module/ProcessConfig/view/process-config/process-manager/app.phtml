@@ -86,6 +86,8 @@ ProcessManager.ManipulationScrits = $possibleManipulationScripts;
 ProcessManager.DataTypes          = $possibleDataTypes;
 ProcessManager.Connectors         = $connectors;
 
+ProcessManager.Object = Ember.Object.extend(Em.Serializable);
+
 //Route Config
 ProcessManager.Router.map(function() {
     this.resource('manager', { path: '/' }, function() {
@@ -107,11 +109,7 @@ ProcessManager.ApplicationRoute = Ember.Route.extend({
         {$this->emberPushToStore('process', $this->processes)}
 
         this.store.all("process").forEach(function(process) {
-            var tasks = process.get("tasks").map(function (task) {
-                return ProcessManager.Object.create(task);
-            });
-
-            process.set("tasks", tasks);
+            process.set("tasks", Em.hashToObject(process.get("tasks"), ProcessManager.Object));
         });
     }
 });

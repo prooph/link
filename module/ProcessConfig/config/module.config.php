@@ -91,7 +91,6 @@ return array(
                     'js/process-config/controllers/process_controller.js',
                     'js/process-config/controllers/task_controller.js',
                     'js/process-config/models/process.js',
-                    'js/process-config/models/helpers.js',
                     'js/process-config/views/metadata.js',
                     'js/process-config/views/data_type_select.js',
                     'js/process-config/views/helpers.js',

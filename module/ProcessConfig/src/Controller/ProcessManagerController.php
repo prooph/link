@@ -17,6 +17,9 @@ use Application\SharedKernel\ScriptLocation;
 use Ginger\Functional\Func;
 use Ginger\Message\MessageNameUtils;
 use Ginger\Processor\Definition;
+use Ginger\Type\Description\Description;
+use Ginger\Type\Prototype;
+use Ginger\Type\PrototypeProperty;
 use SystemConfig\Projection\GingerConfig;
 use SystemConfig\Service\NeedsSystemConfig;
 use ZF\ContentNegotiation\ViewModel;
@@ -53,7 +56,7 @@ final class ProcessManagerController extends AbstractQueryController implements 
                         return $this->convertToClientProcess($message, $definition, $this->systemConfig->getAllPossibleDataTypes());
                     }
                 ),
-            'possible_data_types' => $this->prepareDataTypesSelect($this->systemConfig->getAllPossibleDataTypes()),
+            'possible_data_types' => $this->prepareDataTypes($this->systemConfig->getAllPossibleDataTypes()),
             'possible_task_types' => \Ginger\Processor\Definition::getAllTaskTypes(),
             'possible_manipulation_scripts' => $this->scriptLocation->getScriptNames(),
             'connectors' => $this->systemConfig->getConnectors(),
@@ -105,18 +108,29 @@ final class ProcessManagerController extends AbstractQueryController implements 
      * @param array $dataTypes
      * @return array
      */
-    private function prepareDataTypesSelect(array $dataTypes)
+    private function prepareDataTypes(array $dataTypes)
     {
-        $preparedDataTypes = [];
+        return array_map(function($dataTypeClass) { return $this->prepareDataType($dataTypeClass); }, $dataTypes);
+    }
 
-        foreach ($dataTypes as $dataTypeClass) {
-            $preparedDataTypes[] = [
-                'value' => $dataTypeClass,
-                'label' => $dataTypeClass::prototype()->typeDescription()->label()
-            ];
+    private function prepareDataType($dataTypeClass)
+    {
+        $properties = [];
+
+        /** @var $typeProperty PrototypeProperty */
+        foreach ($dataTypeClass::prototype()->typeProperties() as $typeProperty) {
+            $properties[$typeProperty->propertyName()] = $this->prepareDataType($typeProperty->typePrototype()->of());
         }
 
-        return $preparedDataTypes;
+        /** @var $description Description */
+        $description = $dataTypeClass::prototype()->typeDescription();
+
+        return [
+            'value' => $dataTypeClass,
+            'label' => $description->label(),
+            'properties' => $properties,
+            'native_type' => $description->nativeType()
+        ];
     }
 
     /**

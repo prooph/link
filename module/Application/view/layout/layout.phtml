@@ -61,6 +61,7 @@
             </div>
         </div>
         <?php echo $this->inlineScript()
+            ->prependFile($this->basePath() . '/js/ember.helpers.js')
             ->prependFile($this->basePath() . '/js/i18n-plurals.js')
             ->prependFile($this->basePath() . '/js/i18n.js')
             ->prependFile($this->basePath() . '/js/ember.data.js')

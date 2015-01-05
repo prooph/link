@@ -1,3 +1,9 @@
 <script type="text/x-handlebars" data-template-name="sqlconnector/pm-metadata-config">
-    Sqlconnector - {{parentController.model.task_type}}
+<h5><?php echo $this->translate('Filter') ?></h5>
+{{#if isSingleResultType}}
+    <div class="form-group">
+        <label for="filter_identifier"><?php echo $this->translate('Filter By Identifier') ?>?</label>
+        {{input type="checkbox" name="filter_identifier" checked=metadata.identifier}}
+    </div>
+{{/if}}
 </script>
