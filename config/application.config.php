@@ -8,6 +8,7 @@ return array(
         'ProophEventStoreModule',
         'SystemConfig',
         'ProcessConfig',
+        'FileConnector',
         'AssetManager',
         'Application',
         'Dashboard',

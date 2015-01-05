@@ -38,12 +38,73 @@ return array(
     ],
     'router' => [
         'routes' => [
-
+            'file_connector' => [
+                'type' => 'Literal',
+                'options' => [
+                    'route' => '/file-connector',
+                ],
+                'may_terminate' => false,
+                'child_routes' => [
+                    'configurator' => [
+                        'type' => 'Literal',
+                        'options' => [
+                            'route' => '/file-manager',
+                            'defaults' => [
+                                'controller' => 'FileConnector\Controller\FileManager',
+                                'action' => 'start-app'
+                            ]
+                        ]
+                    ],
+                    'api' => [
+                        'type' => 'Literal',
+                        'options' => [
+                            'route' => '/api',
+                        ],
+                        'may_terminate' => true,
+                        'child_routes' => [
+                            'connectors' => [
+                                'type' => 'Segment',
+                                'options' => [
+                                    'route' => '/connectors[/:id]',
+                                    'constraints' => array(
+                                        'id' => '.+',
+                                    ),
+                                    'defaults' => [
+                                        'controller' => 'FileConnector\Api\Connector',
+                                    ]
+                                ]
+                            ]
+                        ]
+                    ]
+                ],
+            ]
         ]
     ],
     'view_manager' => array(
-        'template_path_stack' => array(
-            __DIR__ . '/../view',
+        'template_map' => [
+            'file-connector/dashboard/widget' => __DIR__ . '/../view/file-connector/dashboard/widget.phtml',
+            'file-connector/file-manager/app' => __DIR__ . '/../view/file-connector/file-manager/app.phtml',
+            //Partials for FileConnectorManager
+            'file-connector/file-manager/partial/manager-index' => __DIR__ . '/../view/file-connector/file-manager/partial/manager-index.phtml',
+        ],
+    ),
+    'asset_manager' => array(
+        'resolver_configs' => array(
+            'collections' => array(
+                'js/file-connector/file-manager/app.js' => array(
+                    'js/process-config/controllers/manager_controller.js',
+                    'js/process-config/controllers/manager_create_controller.js',
+                    'js/process-config/controllers/process_controller.js',
+                    'js/process-config/controllers/task_controller.js',
+                    'js/process-config/models/process.js',
+                    'js/process-config/models/helpers.js',
+                    'js/process-config/views/data_type_select.js',
+                    'js/process-config/views/helpers.js',
+                ),
+            ),
+            'paths' => array(
+                __DIR__ . '/../public',
+            ),
         ),
     ),
     'service_manager' => [
@@ -58,7 +119,9 @@ return array(
         ]
     ],
     'controllers' => array(
-
+        'invokables' => [
+            'FileConnector\Controller\DashboardWidget' => 'FileConnector\Controller\DashboardWidgetController'
+        ]
     ),
     'prooph.psb' => [
         'command_router_map' => [

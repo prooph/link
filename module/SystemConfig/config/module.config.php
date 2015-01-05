@@ -53,9 +53,10 @@ return array(
         ]
     ],
     'view_manager' => array(
-        'template_path_stack' => array(
-            __DIR__ . '/../view',
-        ),
+        'template_map' => [
+            'system-config/dashboard/widget' => __DIR__ . '/../view/system-config/dashboard/widget.phtml',
+            'system-config/overview/show' => __DIR__ . '/../view/system-config/overview/show.phtml',
+        ],
     ),
     'service_manager' => [
         'factories' => [

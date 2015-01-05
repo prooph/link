@@ -1,0 +1,11 @@
+<?php
+$numberOfConnectors = count($this->fileConnectors);
+$message = $this->translatePlural('You have one connector defined', 'You have %s connectors defined', $numberOfConnectors);
+
+if ($numberOfConnectors === 0) $numberOfConnectors = 'no';
+?>
+<ul class="list-group">
+    <li class="list-group-item list-group-item-success"><?php echo sprintf($message, $numberOfConnectors) ?></li>
+</ul>
+<p class="text-center"><a href="<?php echo $this->url('file_connector/configurator') ?>" class="btn btn-success"><?php echo $this->translate('configure connectors') ?></a></p>
+

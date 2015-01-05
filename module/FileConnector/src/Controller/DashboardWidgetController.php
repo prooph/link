@@ -6,43 +6,48 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  * 
- * Date: 06.12.14 - 22:32
+ * Date: 05.01.15 - 13:15
  */
 
-namespace ProcessConfig\Controller;
+namespace FileConnector\Controller;
 
 use Dashboard\Controller\AbstractWidgetController;
 use Dashboard\View\DashboardWidget;
-use SystemConfig\Definition;
 use SystemConfig\Projection\GingerConfig;
 use SystemConfig\Service\NeedsSystemConfig;
 
 /**
  * Class DashboardWidgetController
  *
- * @package SystemConfig\src\Controller
+ * @package FileConnector\Controller
  * @author Alexander Miertsch <kontakt@codeliner.ws>
  */
-class DashboardWidgetController extends AbstractWidgetController implements NeedsSystemConfig
+final class DashboardWidgetController extends AbstractWidgetController implements NeedsSystemConfig
 {
     /**
      * @var GingerConfig
      */
     private $systemConfig;
+
     /**
      * @return DashboardWidget
      */
     public function widgetAction()
     {
         if (! $this->systemConfig->isConfigured()) return false;
-        if (! $this->systemConfig->isWritable())   return false;
-        if (count($this->systemConfig->getConnectors()) === 0) return false;
+
+        $connectors = array_filter(
+            $this->systemConfig->getConnectors(),
+            function ($connector, $connectorName) {
+                return strpos($connectorName, 'fileconnector:::') !== false;
+            }
+        );
 
         return DashboardWidget::initialize(
-            'process-config/dashboard/widget',
-            'Process Manager',
+            'file-connector/dashboard/widget',
+            'File Connector',
             4,
-            ['gingerConfig' => $this->systemConfig]
+            ['gingerConfig' => $this->systemConfig, 'fileConnectors' => $connectors]
         );
     }
 

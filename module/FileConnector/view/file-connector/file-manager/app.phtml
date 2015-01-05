@@ -1,0 +1,25 @@
+<div class="row text-center">
+    <div id="app" class="col-md-12">
+        <h1><?php echo $this->translate('File Connector Manager') ?></h1>
+        <script type="text/x-handlebars" data-template-name="file-manager">
+            {{outlet}}
+        </script>
+    </div>
+</div>
+<?php
+
+echo $this->partial('file-connector/file-manager/partial/manager-index');
+
+//Bootstrap ember app
+$this->inlineScript()->captureStart();
+
+$apiUrl = ltrim($this->url('file_connector/api'), '/');
+
+$shortLocale = explode("_", $this->plugin('translate')->getTranslator()->getLocale())[0];
+
+echo <<<JS
+
+JS;
+$this->inlineScript()->captureEnd();
+$this->inlineScript()->appendFile($this->basePath() . '/js/process-config/app.js');
+?>

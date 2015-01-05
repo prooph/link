@@ -61,9 +61,15 @@ return array(
 
     ],
     'view_manager' => array(
-        'template_path_stack' => array(
-            __DIR__ . '/../view',
-        ),
+        'template_map' => [
+            'process-config/dashboard/widget' => __DIR__ . '/../view/process-config/dashboard/widget.phtml',
+            'process-config/process-manager/app' => __DIR__ . '/../view/process-config/process-manager/app.phtml',
+            //Partials for ProcessManager
+            'process-config/process-manager/partial/manager-index'  => __DIR__ . '/../view/process-config/process-manager/partial/manager-index.phtml',
+            'process-config/process-manager/partial/sidebar-left'   => __DIR__ . '/../view/process-config/process-manager/partial/sidebar-left.phtml',
+            'process-config/process-manager/partial/create-process' => __DIR__ . '/../view/process-config/process-manager/partial/create-process.phtml',
+            'process-config/process-manager/partial/edit-process'   => __DIR__ . '/../view/process-config/process-manager/partial/edit-process.phtml',
+        ],
     ),
     'asset_manager' => array(
         'resolver_configs' => array(
