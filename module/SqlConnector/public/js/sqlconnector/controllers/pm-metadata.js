@@ -50,6 +50,28 @@ ProcessManager.SqlconnectorMetadataController = Ember.ObjectController.extend({
             delete filterObj[filter.key];
 
             this.get("metadata").set("filter", Em.hashToObject(filterObj, PM.Object));
+        },
+        addOrderBy : function () {
+            if (Em.isEmpty(this.get("tempOrderByProp"))) return;
+            if (Em.isEmpty(this.get("tempOrderByOrder"))) return;
+
+            var orderBy = this.get("metadata").getWithDefault("order_by", "");
+
+            if (! Em.isEmpty(orderBy)) orderBy = orderBy + ", ";
+
+            orderBy = orderBy + this.get("tempOrderByProp") + " " + this.get("tempOrderByOrder");
+
+            this.get("metadata").set("order_by", orderBy);
+
+            this.set("tempOrderByProp", null);
+            this.set("tempOrderByOrder", null);
+        },
+        removeOrderBy : function (order) {
+            var orderByStr = this.get("orderByArr").filter(function(orderBy) {
+                return orderBy != order;
+            }).join(", ");
+
+            this.get("metadata").set("order_by", orderByStr);
         }
     },
     init : function () {
@@ -69,6 +91,8 @@ ProcessManager.SqlconnectorMetadataController = Ember.ObjectController.extend({
 
     tempFilter : null,
     isDuplicateColumn : false,
+    tempOrderByProp : null,
+    tempOrderByOrder : null,
 
     isSingleResultType : function () {
         var dataTypeObj = PM.DataTypes.findBy("value", this.get("parentController.selectedDataType"));
@@ -151,5 +175,29 @@ ProcessManager.SqlconnectorMetadataController = Ember.ObjectController.extend({
         }
 
         return false;
-    }.property('parentController.selectedDataType', 'metadata.identifier')
+    }.property('parentController.selectedDataType', 'metadata.identifier'),
+
+    possibleOrderByProperties : function () {
+        var dataTypeProperties = this.get("possibleDataTypeProperties");
+
+        var orderByProps = this.get("orderByArr").map(function (order) {
+            return order.split(" ")[0];
+        });
+
+        return dataTypeProperties.filter(function (prop) {
+            return ! orderByProps.contains(prop);
+        })
+    }.property("possibleDataTypeProperties", "metadata.order_by"),
+
+    orderByArr : function () {
+        var orderBy =  this.get("metadata").get("order_by");
+
+        if (Em.isEmpty(orderBy)) return [];
+
+        return orderBy.split(",").map(function(order) {
+            return $.trim(order);
+        });
+    }.property("metadata.order_by"),
+
+    orderOptions : ["ASC", "DESC"]
 });

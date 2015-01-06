@@ -9,6 +9,10 @@ body {
 
 .form-control-with-desc {margin-top: 20px}
 
+.form-inline .form-control-inline-2 {
+    width: 50px;
+    max-width: 50px;
+}
 
 .form-inline .form-control-inline-2 {
     width: 100px;
@@ -23,6 +27,16 @@ body {
 .form-inline .form-control-inline-4 {
     width: 200px;
     max-width: 200px;
+}
+
+.form-inline .form-control-inline-5 {
+    width: 250px;
+    max-width: 250px;
+}
+
+.form-inline .form-control-inline-6 {
+    width: 300px;
+    max-width: 300px;
 }
 
 
