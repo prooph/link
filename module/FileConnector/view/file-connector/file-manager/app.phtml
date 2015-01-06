@@ -8,7 +8,9 @@
 </div>
 <?php
 
-echo $this->partial('file-connector/file-manager/partial/manager-index');
+echo $this->partial('file-connector/file-manager/partial/connectors');
+echo $this->partial('file-connector/file-manager/partial/connector-create');
+echo $this->partial('file-connector/file-manager/partial/sidebar-left');
 
 //Bootstrap ember app
 $this->inlineScript()->captureStart();
@@ -36,7 +38,26 @@ Em.I18n.locale = '{$shortLocale}';
 Em.I18n.translations = $clientTranslations;
 
 App.Object = Ember.Object.extend(Em.Serializable);
+
+App.Router.map(function() {
+    this.resource('connectors', { path: '/' }, function() {
+        this.route('create');
+        this.resource('connector', {path: '/connector/:connector_id'}, function() {
+            this.route('edit');
+        });
+    });
+});
+
+App.ApplicationRoute = Ember.Route.extend({
+    model : function() {
+        {$this->emberPushToStore('connector', $this->connectors)}
+
+        this.store.all("connector").forEach(function(connector) {
+            connector.set("metadata", Em.hashToObject(connector.get("metadata"), App.Object));
+        });
+    }
+});
 JS;
 $this->inlineScript()->captureEnd();
-//$this->inlineScript()->appendFile($this->basePath() . '/js/file-connector/app.js');
+$this->inlineScript()->appendFile($this->basePath() . '/js/file-connector/app.js');
 ?>

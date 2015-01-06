@@ -53,7 +53,8 @@ return [
                     'file_type' => 'csv',
                     'path' => 'data/fileconnector',
                     'filename_template'  => 'productcollection-{{#now}}Y-m-d{{/now}}.csv',
-                ]
+                ],
+                'ui_metadata_key' => 'FileConnectorMetadata',
             ],
             'sqlconnector:::ginger_test_source' => [
                 'allowed_messages' => [
@@ -63,7 +64,8 @@ return [
                     0 => 'SqlConnector\DataType\GingerTestSource\Product',
                     1 => 'SqlConnector\DataType\GingerTestSource\ProductCollection',
                 ],
-                'dbal_connection' => 'ginger_test_source'
+                'dbal_connection' => 'ginger_test_source',
+                'ui_metadata_key' => 'SqlconnectorMetadata',
             ]
         ],
     ],

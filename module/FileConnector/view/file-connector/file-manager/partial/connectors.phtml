@@ -1,8 +1,8 @@
-<script type="text/x-handlebars" data-template-name="manager/index">
+<script type="text/x-handlebars" data-template-name="connectors/index">
     <div class="row">
         <div class="col-md-12">
             <div id="connectors" class="list-group">
-                {{#each connector in connectors}}
+                {{#each connector in model}}
                 {{#link-to 'connector' connector class="list-group-item text-center"}}<strong>{{connector.name}}</strong>{{/link-to}}
                 {{/each}}
             </div>
