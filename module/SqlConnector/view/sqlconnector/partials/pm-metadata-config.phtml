@@ -22,7 +22,7 @@
             <button class="btn btn-sm btn-danger" {{action "removeFilter" filterItem}}><span class="glyphicon glyphicon-remove"></span></button>
         </form>
     {{/each}}
-    <br><br>
+    <br>
     <form class="form-inline">
         <div class="form-group">
             {{view "select" id="first-filter-input" class="form-control form-control-inline-4"
@@ -47,37 +47,39 @@
         <br>
         <p class="alert alert-danger"><?php echo $this->translate('Your filter would never match entries, because you try to add the same property twice. This is only possible when defining a -between- filter, but your operands do not match, too. Please correct your choice.') ?></p>
     {{/if}}
-    <hr>
-    <form class="form-inline">
-        <div class="form-group">
-            <label for="limit">Limit</label>
-            {{input type="text" name="limit" class="form-control form-control-inline-2" value=metadata.limit placeholder="Limit"}}
-        </div>&nbsp;&nbsp;
-        <div class="form-group">
-            <label for="offset">Offset</label>
-            {{input type="text" name="offset" class="form-control form-control-inline-2" value=metadata.offset placeholder="Offset"}}
-        </div>
-    </form>
-    <br>
-    <form class="form-inline">
-        <div class="form-group text-">
-            <label for="order_by" class="text-btn-align">Order By</label>&nbsp;&nbsp;
-            {{#each order in orderByArr}}
-                <span class="text-btn-align"><big>{{order}}</big></span>&nbsp;<button class="btn btn-xs btn-danger" {{action "removeOrderBy" order}}><span class="glyphicon glyphicon-remove"></span></button>
-            {{/each}}
+    {{#unless isSingleResultType}}
+        <hr>
+        <form class="form-inline">
+            <div class="form-group">
+                <label for="limit">Limit</label>
+                {{input type="text" name="limit" class="form-control form-control-inline-2" value=metadata.limit placeholder="Limit"}}
+            </div>&nbsp;&nbsp;
+            <div class="form-group">
+                <label for="offset">Offset</label>
+                {{input type="text" name="offset" class="form-control form-control-inline-2" value=metadata.offset placeholder="Offset"}}
+            </div>
+        </form>
+        <br>
+        <form class="form-inline">
+            <div class="form-group text-">
+                <label for="order_by" class="text-btn-align">Order By</label>&nbsp;&nbsp;
+                {{#each order in orderByArr}}
+                    <span class="text-btn-align"><big>{{order}}</big></span>&nbsp;<button class="btn btn-xs btn-danger" {{action "removeOrderBy" order}}><span class="glyphicon glyphicon-remove"></span></button>
+                {{/each}}
 
-            {{view "select" class="form-control form-control-inline-2"
-            prompt="- <?php echo $this->translate('Property') ?> -"
-            content=possibleOrderByProperties
-            value=tempOrderByProp}}
-            &nbsp;&nbsp;
-            {{view "select" class="form-control form-control-inline-2"
-            prompt="- <?php echo $this->translate('Order') ?> -"
-            content=orderOptions
-            value=tempOrderByOrder}}
-            &nbsp;&nbsp;
-            <button class="btn btn-sm btn-success" {{action "addOrderBy"}}><span class="glyphicon glyphicon-plus"></span></button>
-        </div>
-    </form>
+                {{view "select" class="form-control form-control-inline-2"
+                prompt="- <?php echo $this->translate('Property') ?> -"
+                content=possibleOrderByProperties
+                value=tempOrderByProp}}
+                &nbsp;&nbsp;
+                {{view "select" class="form-control form-control-inline-2"
+                prompt="- <?php echo $this->translate('Order') ?> -"
+                content=orderOptions
+                value=tempOrderByOrder}}
+                &nbsp;&nbsp;
+                <button class="btn btn-sm btn-success" {{action "addOrderBy"}}><span class="glyphicon glyphicon-plus"></span></button>
+            </div>
+        </form>
+    {{/unless}}
 {{/unless}}
 </script>
