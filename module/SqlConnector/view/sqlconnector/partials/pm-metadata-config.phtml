@@ -1,9 +1,45 @@
 <script type="text/x-handlebars" data-template-name="sqlconnector/pm-metadata-config">
 <h5><?php echo $this->translate('Filter') ?></h5>
 {{#if isSingleResultType}}
-    <div class="form-group">
-        <label for="filter_identifier"><?php echo $this->translate('Filter By Identifier') ?>?</label>
-        {{input type="checkbox" name="filter_identifier" checked=metadata.identifier}}
+    <div class="checkbox">
+        <label for="filter_identifier">
+            {{input type="checkbox" name="filter_identifier" checked=metadata.identifier}} <?php echo $this->translate('Filter By Identifier') ?>
+        </label>
     </div>
 {{/if}}
+
+    {{#each filterItem in metadataFilterList}}
+        <form class="form-inline">
+            <div class="form-group">
+                {{input type="text" name="filter_value" value=filterItem.column readonly=true}}
+            </div>&nbsp;&nbsp;
+            <div class="form-group">
+                {{input type="text" name="filter_value" value=filterItem.operand readonly=true}}
+            </div>&nbsp;&nbsp;
+            <div class="form-group">
+                {{input type="text" name="filter_value" value=filterItem.value readonly=true}}
+            </div>&nbsp;&nbsp;
+            <button class="btn btn-danger" {{action "removeFilter" filterItem}}><span class="glyphicon glyphicon-remove"></span></button>
+        </form>
+    {{/each}}
+    <form class="form-inline">
+        <div class="form-group">
+            {{view "select" class="form-control"
+            prompt="- <?php echo $this->translate('Property') ?> -"
+            content=possibleDataTypeProperties
+            value=tempFilter.column}}
+        </div>&nbsp;&nbsp;
+        <div class="form-group">
+            {{view "select" class="form-control"
+            prompt="- <?php echo $this->translate('Operand') ?> -"
+            content=possibleOperands
+            value=tempFilter.operand}}
+        </div>&nbsp;&nbsp;
+        <div class="form-group">
+            {{input type="text" name="filter_value" value=tempFilter.value placeholder="<?php echo $this->translate('Value') ?>"}}
+        </div>&nbsp;&nbsp;
+        <button class="btn btn-success" {{action "addFilter"}}><span class="glyphicon glyphicon-plus"></span></button>
+        {{input type="hidden" name="filter_key" value=autoFilterKey}}
+    </form>
+
 </script>

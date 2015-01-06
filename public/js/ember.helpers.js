@@ -30,9 +30,10 @@ Em.Serializable = Ember.Mixin.create({
                 continue;
             }
 
-            if (this[key] instanceof Em.Object) this[key] = this.serialize.apply(this[key]);
+            if (this[key] instanceof Em.Object) result[key] = this.serialize.apply(this[key]);
+            else result[key] = this[key];
 
-            result[key] = this[key];
+
         }
         return result;
     }

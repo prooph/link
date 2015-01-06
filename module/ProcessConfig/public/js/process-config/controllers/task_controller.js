@@ -47,6 +47,13 @@ ProcessManager.TaskController = Ember.ObjectController.extend({
     isATargetSelected            : Ember.computed.notEmpty("model.target"),
     isManipulationScriptSelected : Ember.computed.notEmpty("manipulation_script"),
 
+    selectedConnector : function () {
+        if (this.get("isASourceSelected")) return this.get("source");
+        if (this.get("isATargetSelected")) return this.get("target");
+
+        return null;
+    }.property("source", "target"),
+
     selectedDataType : function () {
         switch (this.get("task_type")) {
             case Em.I18n.t("task.collect_data.value"):
@@ -279,8 +286,6 @@ ProcessManager.TaskController = Ember.ObjectController.extend({
         var connector = this.get("connectors")[connectorName];
 
         if (Ember.isEmpty(connector)) return null;
-
-        if (Ember.isEmpty(this.get("metadata"))) this.set("metadata", Ember.Object.create({}));
 
         return connector.ui_metadata_key;
     }.property("source", "model.target"),

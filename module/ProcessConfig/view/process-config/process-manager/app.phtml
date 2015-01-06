@@ -73,6 +73,8 @@ window.ProcessManager = Ember.Application.create({
     rootElement : '#app'
 });
 
+window.PM = ProcessManager;
+
 DS.RESTAdapter.reopen({
   namespace : '{$apiUrl}'
 });
