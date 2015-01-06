@@ -3,20 +3,53 @@ ProcessManager.SqlconnectorMetadataController = Ember.ObjectController.extend({
         addFilter : function() {
             if (Em.isEmpty(this.get("metadata").get("filter"))) this.get("metadata").set("filter", PM.Object.create({}));
 
-            var filterKey = this.get("tempFilter").get("key");
+            var tempFilter = this.get("tempFilter").serialize();
 
-            delete this.get("tempFilter").key;
+            var filterKey = tempFilter.key;
 
-            this.get("metadata").get("filter").set(filterKey, this.get("tempFilter"));
+            delete tempFilter.key;
+
+            var filters = this.get("metadata").get("filter").serialize();
+
+            //We allow the selection of a column for max two times to specify a between like filter
+            //otherwise we will show an error
+            if (typeof filters[filterKey + "_1"] !== "undefined") {
+                this.set("isDuplicateColumn", true);
+                return;
+            } else {
+                this.set("isDuplicateColumn", false);
+            }
+
+            if (typeof filters[filterKey] !== "undefined") {
+                var oneFilter = filters[filterKey];
+
+                if (oneFilter.operand === "=" || oneFilter.operand === "like" || oneFilter.operand === "ilike"
+                    || tempFilter.operand === "=" || tempFilter.operand === "like" || tempFilter.operand === "ilike") {
+                    this.set("isDuplicateColumn", true);
+                    return;
+                } else {
+                    this.set("isDuplicateColumn", false);
+                }
+
+                delete filters[filterKey];
+                filters[filterKey + "_1"] = oneFilter;
+                filterKey = filterKey + "_2";
+            }
+
+            filters[filterKey] = tempFilter;
+
+            this.get("metadata").set("filter", Em.hashToObject(filters, PM.Object));
 
             this.set("tempFilter", PM.Object.create({}));
+
+            $("#first-filter-input").focus();
         },
         removeFilter : function(filter) {
             var filterObj = this.get("metadata").get("filter").serialize();
 
             delete filterObj[filter.key];
 
-            this.get("metadata").set("filter", PM.Object.create(filterObj));
+            this.get("metadata").set("filter", Em.hashToObject(filterObj, PM.Object));
         }
     },
     init : function () {
@@ -25,9 +58,9 @@ ProcessManager.SqlconnectorMetadataController = Ember.ObjectController.extend({
         if (Ember.isEmpty(this.get("metadata"))) {
             var connector = this.get("parentController").get("connectors")[this.get("parentController.selectedConnector")];
             if (Ember.isEmpty(connector.metadata)) {
-                this.set("metadata", PM.Object.create({}));
+                this.set("model.metadata", PM.Object.create({}));
             } else {
-                this.set("metadata", Em.hashToObject(connector.metadata, PM.Object));
+                this.set("model.metadata", Em.hashToObject(connector.metadata, PM.Object));
             }
         }
 
@@ -35,6 +68,7 @@ ProcessManager.SqlconnectorMetadataController = Ember.ObjectController.extend({
     },
 
     tempFilter : null,
+    isDuplicateColumn : false,
 
     isSingleResultType : function () {
         var dataTypeObj = PM.DataTypes.findBy("value", this.get("parentController.selectedDataType"));
@@ -79,7 +113,9 @@ ProcessManager.SqlconnectorMetadataController = Ember.ObjectController.extend({
     __toFormFilter : function (filterKey, filterValue) {
         //FilterValue is already an object so we only need to add the filterKey
         if (filterValue instanceof PM.Object) {
-            return filterValue.set("key", filterKey);
+            var filter = filterValue.serialize();
+            filter['key'] = filterKey;
+            return filter;
         }
 
         //Filter is a simple Key-Value-Pair which resolves to equal filter
@@ -97,5 +133,23 @@ ProcessManager.SqlconnectorMetadataController = Ember.ObjectController.extend({
         this.get("tempFilter").set("key", column);
 
         return column;
-    }.property("tempFilter.column")
+    }.property("tempFilter.column"),
+
+    isIdentifier : function () {
+        var dataTypeObj = PM.DataTypes.findBy("value", this.get("parentController.selectedDataType"));
+
+        if (Ember.isEmpty(dataTypeObj) || dataTypeObj.native_type !== "collection") {
+            var isIdentifier = this.get("metadata").get("identifier") || false;
+
+            if (isIdentifier) this.get("metadata").set("filter", PM.Object.create({}));
+
+            return isIdentifier;
+        }
+
+        if (dataTypeObj.native_type === "collection") {
+            this.get("metadata").set("identifier", false);
+        }
+
+        return false;
+    }.property('parentController.selectedDataType', 'metadata.identifier')
 });

@@ -7,39 +7,44 @@
         </label>
     </div>
 {{/if}}
-
+{{#unless isIdentifier}}
     {{#each filterItem in metadataFilterList}}
         <form class="form-inline">
             <div class="form-group">
-                {{input type="text" name="filter_value" value=filterItem.column readonly=true}}
+                {{input type="text" name="filter_column" class="form-control form-control-inline-4" value=filterItem.column readonly=true}}
             </div>&nbsp;&nbsp;
             <div class="form-group">
-                {{input type="text" name="filter_value" value=filterItem.operand readonly=true}}
+                {{input type="text" name="filter_operand" class="form-control form-control-inline-3" value=filterItem.operand readonly=true}}
             </div>&nbsp;&nbsp;
             <div class="form-group">
-                {{input type="text" name="filter_value" value=filterItem.value readonly=true}}
+                {{input type="text" name="filter_value" class="form-control form-control-inline-4" value=filterItem.value readonly=true}}
             </div>&nbsp;&nbsp;
-            <button class="btn btn-danger" {{action "removeFilter" filterItem}}><span class="glyphicon glyphicon-remove"></span></button>
+            <button class="btn btn-sm btn-danger" {{action "removeFilter" filterItem}}><span class="glyphicon glyphicon-remove"></span></button>
         </form>
     {{/each}}
+    <hr>
     <form class="form-inline">
         <div class="form-group">
-            {{view "select" class="form-control"
+            {{view "select" id="first-filter-input" class="form-control form-control-inline-4"
             prompt="- <?php echo $this->translate('Property') ?> -"
             content=possibleDataTypeProperties
             value=tempFilter.column}}
         </div>&nbsp;&nbsp;
         <div class="form-group">
-            {{view "select" class="form-control"
+            {{view "select" class="form-control form-control-inline-3"
             prompt="- <?php echo $this->translate('Operand') ?> -"
             content=possibleOperands
-            value=tempFilter.operand}}
+            value=tempFilter.operand
+            }}
         </div>&nbsp;&nbsp;
         <div class="form-group">
-            {{input type="text" name="filter_value" value=tempFilter.value placeholder="<?php echo $this->translate('Value') ?>"}}
+            {{input type="text" name="filter_value" class="form-control form-control-inline-4" value=tempFilter.value placeholder="<?php echo $this->translate('Value') ?>"}}
         </div>&nbsp;&nbsp;
-        <button class="btn btn-success" {{action "addFilter"}}><span class="glyphicon glyphicon-plus"></span></button>
+        <button class="btn btn-sm btn-success" {{action "addFilter"}}><span class="glyphicon glyphicon-plus"></span></button>
         {{input type="hidden" name="filter_key" value=autoFilterKey}}
     </form>
-
+    {{#if isDuplicateColumn}}
+        <p class="alert alert-danger"><?php echo $this->translate('Your filter would never match entries, because you try to add the same property twice. This is only possible when defining a -between- filter, but your operands do not match, too. Please correct your choice.') ?></p>
+    {{/if}}
+{{/unless}}
 </script>

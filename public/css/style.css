@@ -10,6 +10,22 @@ body {
 .form-control-with-desc {margin-top: 20px}
 
 
+.form-inline .form-control-inline-2 {
+    width: 100px;
+    max-width: 100px;
+}
+
+.form-inline .form-control-inline-3 {
+    width: 150px;
+    max-width: 150px;
+}
+
+.form-inline .form-control-inline-4 {
+    width: 200px;
+    max-width: 200px;
+}
+
+
 /* Sidebar Styles */
 
 #sidebar-left {
