@@ -39,6 +39,16 @@ return array(
                             ]
                         ]
                     ],
+                    'configurator-test' => [
+                        'type' => 'Literal',
+                        'options' => [
+                            'route' => '/process-manager-test',
+                            'defaults' => [
+                                'controller' => 'ProcessConfig\Controller\ProcessManager',
+                                'action' => 'start-test-app'
+                            ]
+                        ]
+                    ],
                     'api' => [
                         'type' => 'Literal',
                         'options' => [
@@ -75,6 +85,7 @@ return array(
         'template_map' => [
             'process-config/dashboard/widget' => __DIR__ . '/../view/process-config/dashboard/widget.phtml',
             'process-config/process-manager/app' => __DIR__ . '/../view/process-config/process-manager/app.phtml',
+            'process-config/process-manager/app-test' => __DIR__ . '/../view/process-config/process-manager/app-test.phtml',
             //Partials for ProcessManager
             'process-config/process-manager/partial/manager-index'  => __DIR__ . '/../view/process-config/process-manager/partial/manager-index.phtml',
             'process-config/process-manager/partial/sidebar-left'   => __DIR__ . '/../view/process-config/process-manager/partial/sidebar-left.phtml',
@@ -95,6 +106,10 @@ return array(
                     'js/process-config/views/data_type_select.js',
                     'js/process-config/views/helpers.js',
                 ),
+                'js/process-config/app-test.js' => array(
+                    'js/process-config/tests/bootstrap.js',
+                    'js/process-config/tests/manager-index/manager-index-test.js',
+                )
             ),
             'paths' => array(
                 __DIR__ . '/../public',

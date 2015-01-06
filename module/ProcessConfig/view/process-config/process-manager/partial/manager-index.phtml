@@ -1,7 +1,7 @@
 <script type="text/x-handlebars" data-template-name="manager/index">
     <div class="row">
         <div class="col-md-12">
-            <div class="list-group">
+            <div id="processes" class="list-group">
                 {{#each process in model}}
                 {{#link-to 'process' process class="list-group-item text-center"}}<strong>{{process.name}}</strong>{{/link-to}}
                 {{/each}}

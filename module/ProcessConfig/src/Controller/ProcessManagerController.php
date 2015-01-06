@@ -21,6 +21,7 @@ use Ginger\Type\Description\Description;
 use Ginger\Type\Prototype;
 use Ginger\Type\PrototypeProperty;
 use SystemConfig\Projection\GingerConfig;
+use SystemConfig\Service\ConfigWriter\ZendPhpArrayWriter;
 use SystemConfig\Service\NeedsSystemConfig;
 use ZF\ContentNegotiation\ViewModel;
 
@@ -62,6 +63,25 @@ final class ProcessManagerController extends AbstractQueryController implements 
             'connectors' => $this->systemConfig->getConnectors(),
             'view_addons' => $this->viewAddons
         ]);
+
+        $viewModel->setTemplate('process-config/process-manager/app');
+
+        return $viewModel;
+    }
+
+    /**
+     * @return ViewModel
+     */
+    public function startTestAppAction()
+    {
+        //@TODO check development mode
+        $this->layout('process-config/process-manager/app-test');
+
+        $fixtures = include(__DIR__ . '/../../tests/data/process-manager-data-fixtures.php');
+
+        $fixtures['view_addons'] = $this->viewAddons;
+
+        $viewModel = new ViewModel($fixtures);
 
         $viewModel->setTemplate('process-config/process-manager/app');
 
@@ -130,6 +150,17 @@ final class ProcessManagerController extends AbstractQueryController implements 
             'label' => $description->label(),
             'properties' => $properties,
             'native_type' => $description->nativeType()
+        ];
+    }
+
+    private function getTestProcesses()
+    {
+        return [
+            'ginger-message-sqlconnectordatatypegingertestsourcetartikelcollection-collect-data' => [
+                'id'  => $startMessage,
+                'name' => $processDefinition['name'],
+                'processType' => $processDefinition['process_type'],
+            ]
         ];
     }
 
