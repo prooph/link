@@ -1,4 +1,4 @@
-ProcessManager.SqlconnectorMetadataController = Ember.ObjectController.extend({
+PM.SqlconnectorMetadataController = Ember.ObjectController.extend({
     actions : {
         addFilter : function() {
             if (Em.isEmpty(this.get("metadata").get("filter"))) this.get("metadata").set("filter", PM.Object.create({}));

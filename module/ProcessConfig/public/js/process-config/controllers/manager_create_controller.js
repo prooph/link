@@ -1,4 +1,4 @@
-ProcessManager.ManagerCreateController = Ember.ObjectController.extend({
+App.ManagerCreateController = Ember.ObjectController.extend({
     actions : {
         setDataTypeSelectFocused : function () {
             this.set("dataTypeSelectFocused", true);
@@ -59,13 +59,13 @@ ProcessManager.ManagerCreateController = Ember.ObjectController.extend({
         if (this.get("processType") == Em.I18n.t('process.foreach.value')) name = name + "Foreach ";
         if (this.get("messageType") == Em.I18n.t('message.collect_data.value')) name = name + "Collect ";
         if (this.get("messageType") == Em.I18n.t('message.data_collected.value')) name = name + "Process ";
-        if (this.get("dataType") != null) name = name + ProcessManager.dataTypeName(this.get("dataType")) + " ";
+        if (this.get("dataType") != null) name = name + App.dataTypeName(this.get("dataType")) + " ";
 
         return name;
     }.property("processType", "messageType", "dataType")
 });
 
-ProcessManager.ManagerCreateRoute = Ember.Route.extend({
+App.ManagerCreateRoute = Ember.Route.extend({
     model : function () {
         return {
             processTypes : [
@@ -88,7 +88,7 @@ ProcessManager.ManagerCreateRoute = Ember.Route.extend({
                     label : Em.I18n.t('message.data_collected.label')
                 }
             ],
-            dataTypes : ProcessManager.DataTypes
+            dataTypes : App.DataTypes
         }
     }
 });

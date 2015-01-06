@@ -1,4 +1,4 @@
-ProcessManager.ProcessRoute = Ember.Route.extend({
+App.ProcessRoute = Ember.Route.extend({
     renderTemplate : function () {
         this.render('process');
 
@@ -12,7 +12,7 @@ ProcessManager.ProcessRoute = Ember.Route.extend({
     }
 });
 
-ProcessManager.TasksIndexRoute = Ember.Route.extend({
+App.TasksIndexRoute = Ember.Route.extend({
     model : function () {
         return this.modelFor("process");
     },
@@ -27,7 +27,7 @@ ProcessManager.TasksIndexRoute = Ember.Route.extend({
     }
 });
 
-ProcessManager.ProcessEditRoute = Ember.Route.extend({
+App.ProcessEditRoute = Ember.Route.extend({
     renderTemplate : function () {
         this.render(
             'process.edit',

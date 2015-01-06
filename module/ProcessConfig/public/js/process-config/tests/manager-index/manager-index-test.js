@@ -1,6 +1,6 @@
 module('Manager Index', {
     setup: function() {
-        ProcessManager.reset();
+        App.reset();
     }
 });
 

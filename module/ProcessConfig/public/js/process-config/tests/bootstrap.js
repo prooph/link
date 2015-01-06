@@ -1,8 +1,8 @@
-ProcessManager.setupForTesting();
-ProcessManager.injectTestHelpers();
+App.setupForTesting();
+App.injectTestHelpers();
 
-ProcessManager.ApplicationAdapter = DS.FixtureAdapter;
+App.ApplicationAdapter = DS.FixtureAdapter;
 
 //Fixtures are provided by the backend, but FixtureAdapter requires the FIXTURES set up
-ProcessManager.Process.FIXTURES = [];
+App.Process.FIXTURES = [];
 

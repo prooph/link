@@ -1,4 +1,4 @@
-ProcessManager.SqlconnectorMetadataView = Ember.View.extend({
+PM.SqlconnectorMetadataView = Ember.View.extend({
     templateName : 'sqlconnector/pm-metadata-config'
 });
 

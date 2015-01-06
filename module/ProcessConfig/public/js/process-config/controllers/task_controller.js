@@ -1,4 +1,4 @@
-ProcessManager.TaskController = Ember.ObjectController.extend({
+App.TaskController = Ember.ObjectController.extend({
     actions : {
         saveTask : function () {
             var taskId = this.get("model.id"), m = this.get("model"), self = this;
@@ -226,7 +226,7 @@ ProcessManager.TaskController = Ember.ObjectController.extend({
 
         if (dataTypes.length == 1) this.set(setter, dataTypes[0]);
         var labeledDataTypes = dataTypes.map(function(dataType) {
-            return ProcessManager.DataTypes.findBy('value', dataType);
+            return App.DataTypes.findBy('value', dataType);
         });
 
         return labeledDataTypes;
@@ -292,7 +292,7 @@ ProcessManager.TaskController = Ember.ObjectController.extend({
     showMetadata : Ember.computed.notEmpty("uiMetadataKey")
 });
 
-ProcessManager.TaskRoute = Ember.Route.extend({
+App.TaskRoute = Ember.Route.extend({
     model : function(params) {
         var process = this.modelFor('process');
         var task = process.get('tasks').objectAt(parseInt(params.task_id) - 1);
@@ -301,11 +301,11 @@ ProcessManager.TaskRoute = Ember.Route.extend({
         else return task;
     },
     setupController: function(controller, model) {
-        var oldTask = Em.hashToObject(model.serialize(), ProcessManager.Object);
+        var oldTask = Em.hashToObject(model.serialize(), App.Object);
 
-        controller.set("taskTypes", ProcessManager.TaskTypes);
-        controller.set("manipulationScripts", ProcessManager.ManipulationScrits);
-        controller.set("connectors", ProcessManager.Connectors);
+        controller.set("taskTypes", App.TaskTypes);
+        controller.set("manipulationScripts", App.ManipulationScrits);
+        controller.set("connectors", App.Connectors);
         controller.set("process", this.modelFor('process'));
         controller.set("oldTask", oldTask);
         controller.set("saveTask",false);
@@ -334,7 +334,7 @@ ProcessManager.TaskRoute = Ember.Route.extend({
     }
 });
 
-ProcessManager.TasksCreateRoute = Ember.Route.extend({
+App.TasksCreateRoute = Ember.Route.extend({
     activate : function () {
         var process = this.modelFor('process'),
             tasks = process.get("tasks"),
@@ -352,13 +352,13 @@ ProcessManager.TasksCreateRoute = Ember.Route.extend({
             }
         }
 
-        var newTask = ProcessManager.Object.create({id : tasks.length + 1, task_type : taskType});
+        var newTask = App.Object.create({id : tasks.length + 1, task_type : taskType});
 
         this.transitionTo('task', newTask);
     }
 });
 
-ProcessManager.TaskDeleteRoute = Ember.Route.extend({
+App.TaskDeleteRoute = Ember.Route.extend({
     afterModel : function (model) {
         var process = this.modelFor("process"), tasks = process.get("tasks"), self  = this;
 

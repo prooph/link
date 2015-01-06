@@ -69,11 +69,11 @@ $clientTranslations = json_encode([
 ]);
 
 echo <<<JS
-window.ProcessManager = Ember.Application.create({
+window.App = Ember.Application.create({
     rootElement : '#app'
 });
 
-window.PM = ProcessManager;
+window.PM = App;
 
 DS.RESTAdapter.reopen({
   namespace : '{$apiUrl}'
@@ -83,15 +83,15 @@ Em.I18n.locale = '{$shortLocale}';
 
 Em.I18n.translations = $clientTranslations;
 
-ProcessManager.TaskTypes          = $possibleTaskTypes;
-ProcessManager.ManipulationScrits = $possibleManipulationScripts;
-ProcessManager.DataTypes          = $possibleDataTypes;
-ProcessManager.Connectors         = $connectors;
+App.TaskTypes          = $possibleTaskTypes;
+App.ManipulationScrits = $possibleManipulationScripts;
+App.DataTypes          = $possibleDataTypes;
+App.Connectors         = $connectors;
 
-ProcessManager.Object = Ember.Object.extend(Em.Serializable);
+App.Object = Ember.Object.extend(Em.Serializable);
 
 //Route Config
-ProcessManager.Router.map(function() {
+App.Router.map(function() {
     this.resource('manager', { path: '/' }, function() {
         this.route('create');
         this.resource('process', {path: '/process/:process_id'}, function() {
@@ -106,12 +106,12 @@ ProcessManager.Router.map(function() {
     });
 });
 
-ProcessManager.ApplicationRoute = Ember.Route.extend({
+App.ApplicationRoute = Ember.Route.extend({
     model : function() {
         {$this->emberPushToStore('process', $this->processes)}
 
         this.store.all("process").forEach(function(process) {
-            process.set("tasks", Em.hashToObject(process.get("tasks"), ProcessManager.Object));
+            process.set("tasks", Em.hashToObject(process.get("tasks"), App.Object));
         });
     }
 });

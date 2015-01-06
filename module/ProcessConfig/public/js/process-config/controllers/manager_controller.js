@@ -1,13 +1,13 @@
-ProcessManager.ManagerController = Ember.ArrayController.extend({
+App.ManagerController = Ember.ArrayController.extend({
 });
 
-ProcessManager.ManagerRoute = Ember.Route.extend({
+App.ManagerRoute = Ember.Route.extend({
     model: function () {
         return this.store.all('process');
     }
 });
 
-ProcessManager.ManagerIndexRoute = Ember.Route.extend({
+App.ManagerIndexRoute = Ember.Route.extend({
     model : function () {
         return this.modelFor('manager');
     }

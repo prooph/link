@@ -1,4 +1,4 @@
-ProcessManager.DataTypeSelect = Ember.Select.extend({
+App.DataTypeSelect = Ember.Select.extend({
     focusIn : function () {
         this.get("controller").send("setDataTypeSelectFocused");
     },
@@ -7,5 +7,5 @@ ProcessManager.DataTypeSelect = Ember.Select.extend({
     }
 });
 
-Ember.Handlebars.helper("data-type-select", ProcessManager.DataTypeSelect);
+Ember.Handlebars.helper("data-type-select", App.DataTypeSelect);
 
