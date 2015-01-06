@@ -36,6 +36,8 @@ final class FileManagerController extends AbstractQueryController implements Nee
         ]);
 
         $viewModel->setTemplate('file-connector/file-manager/app');
+
+        return $viewModel;
     }
 
     /**

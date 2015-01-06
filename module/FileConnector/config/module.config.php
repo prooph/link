@@ -92,14 +92,6 @@ return array(
         'resolver_configs' => array(
             'collections' => array(
                 'js/file-connector/file-manager/app.js' => array(
-                    'js/process-config/controllers/manager_controller.js',
-                    'js/process-config/controllers/manager_create_controller.js',
-                    'js/process-config/controllers/process_controller.js',
-                    'js/process-config/controllers/task_controller.js',
-                    'js/process-config/models/process.js',
-                    'js/process-config/models/helpers.js',
-                    'js/process-config/views/data_type_select.js',
-                    'js/process-config/views/helpers.js',
                 ),
             ),
             'paths' => array(
@@ -120,7 +112,8 @@ return array(
     ],
     'controllers' => array(
         'invokables' => [
-            'FileConnector\Controller\DashboardWidget' => 'FileConnector\Controller\DashboardWidgetController'
+            'FileConnector\Controller\DashboardWidget' => 'FileConnector\Controller\DashboardWidgetController',
+            'FileConnector\Controller\FileManager' => 'FileConnector\Controller\FileManagerController',
         ]
     ),
     'prooph.psb' => [

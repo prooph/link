@@ -17,9 +17,26 @@ $apiUrl = ltrim($this->url('file_connector/api'), '/');
 
 $shortLocale = explode("_", $this->plugin('translate')->getTranslator()->getLocale())[0];
 
+$clientTranslations = json_encode([
+    'file_manager' => [
+        'label' => $this->translate('File Manager')
+    ]
+]);
 echo <<<JS
+window.App = Ember.Application.create({
+    rootElement : '#app'
+});
 
+DS.RESTAdapter.reopen({
+  namespace : '{$apiUrl}'
+});
+
+Em.I18n.locale = '{$shortLocale}';
+
+Em.I18n.translations = $clientTranslations;
+
+App.Object = Ember.Object.extend(Em.Serializable);
 JS;
 $this->inlineScript()->captureEnd();
-$this->inlineScript()->appendFile($this->basePath() . '/js/process-config/app.js');
+//$this->inlineScript()->appendFile($this->basePath() . '/js/file-connector/app.js');
 ?>

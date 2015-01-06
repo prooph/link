@@ -1,1 +1,11 @@
-Manager Index
+<script type="text/x-handlebars" data-template-name="manager/index">
+    <div class="row">
+        <div class="col-md-12">
+            <div id="connectors" class="list-group">
+                {{#each connector in connectors}}
+                {{#link-to 'connector' connector class="list-group-item text-center"}}<strong>{{connector.name}}</strong>{{/link-to}}
+                {{/each}}
+            </div>
+        </div>
+    </div>
+</script>
