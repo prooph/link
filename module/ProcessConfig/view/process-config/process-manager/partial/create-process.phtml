@@ -1,4 +1,4 @@
-<script type="text/x-handlebars" data-template-name="manager/create">
+<script type="text/x-handlebars" data-template-name="processes/create">
     <h2><?php echo $this->translate('New Process') ?></h2>
     <hr>
     <div class="row">
@@ -11,7 +11,7 @@
                         content=processTypes
                         optionValuePath="content.value"
                         optionLabelPath="content.label"
-                        value=processType}}
+                        value=process_type}}
                     </div>
                 </div>
                 <div class="col-md-6">
@@ -38,7 +38,7 @@
                     content=messageTypes
                     optionValuePath="content.value"
                     optionLabelPath="content.label"
-                    value=messageType}}
+                    value=message_type}}
                     </div>
                     <div {{bind-attr class=":form-group :has-feedback isDataTypeSelected:has-success"}}>
                     {{data-type-select class="form-control form-control-with-desc"
@@ -46,7 +46,7 @@
                     content=dataTypes
                     optionValuePath="content.value"
                     optionLabelPath="content.label"
-                    value=dataType}}
+                    value=data_type}}
                     </div>
                 </div>
                 <div class="col-md-6">

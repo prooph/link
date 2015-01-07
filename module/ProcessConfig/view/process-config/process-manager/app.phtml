@@ -92,7 +92,7 @@ App.Object = Ember.Object.extend(Em.Serializable);
 
 //Route Config
 App.Router.map(function() {
-    this.resource('manager', { path: '/' }, function() {
+    this.resource('processes', { path: '/' }, function() {
         this.route('create');
         this.resource('process', {path: '/process/:process_id'}, function() {
             this.resource('tasks', function () {

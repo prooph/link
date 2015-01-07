@@ -14,7 +14,7 @@ return array(
     //see the fileconnector and sqlconnector view add ons for examples
     'process_manager' => [
         'view_addons' => [
-            'process-config/process-manager/partial/manager-index',
+            'process-config/process-manager/partial/processes',
             'process-config/process-manager/partial/create-process',
             'process-config/process-manager/partial/edit-process',
             'process-config/process-manager/partial/sidebar-left'
@@ -87,7 +87,7 @@ return array(
             'process-config/process-manager/app' => __DIR__ . '/../view/process-config/process-manager/app.phtml',
             'process-config/process-manager/app-test' => __DIR__ . '/../view/process-config/process-manager/app-test.phtml',
             //Partials for ProcessManager
-            'process-config/process-manager/partial/manager-index'  => __DIR__ . '/../view/process-config/process-manager/partial/manager-index.phtml',
+            'process-config/process-manager/partial/processes'      => __DIR__ . '/../view/process-config/process-manager/partial/processes.phtml',
             'process-config/process-manager/partial/sidebar-left'   => __DIR__ . '/../view/process-config/process-manager/partial/sidebar-left.phtml',
             'process-config/process-manager/partial/create-process' => __DIR__ . '/../view/process-config/process-manager/partial/create-process.phtml',
             'process-config/process-manager/partial/edit-process'   => __DIR__ . '/../view/process-config/process-manager/partial/edit-process.phtml',
@@ -97,8 +97,8 @@ return array(
         'resolver_configs' => array(
             'collections' => array(
                 'js/process-config/app.js' => array(
-                    'js/process-config/controllers/manager_controller.js',
-                    'js/process-config/controllers/manager_create_controller.js',
+                    'js/process-config/controllers/processes_controller.js',
+                    'js/process-config/controllers/processes_create_controller.js',
                     'js/process-config/controllers/process_controller.js',
                     'js/process-config/controllers/task_controller.js',
                     'js/process-config/models/process.js',

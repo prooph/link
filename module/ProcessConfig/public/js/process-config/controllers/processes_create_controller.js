@@ -1,4 +1,4 @@
-App.ManagerCreateController = Ember.ObjectController.extend({
+App.ProcessesCreateController = Ember.ObjectController.extend({
     actions : {
         setDataTypeSelectFocused : function () {
             this.set("dataTypeSelectFocused", true);
@@ -20,14 +20,14 @@ App.ManagerCreateController = Ember.ObjectController.extend({
             var con = this;
 
             process.save().then(function () {
-                con.transitionToRoute('manager');
+                con.transitionToRoute('processes');
             }).catch($.failNotify);
         }
     },
 
-    process_type : null,
-    message_type : null,
-    data_type    : null,
+    processTypes : [],
+    messageTypes : [],
+    dataTypes : [],
 
     isNonProcessSelected    : Ember.computed.empty("process_type"),
     isAProcessSelected      : Ember.computed.notEmpty("process_type"),
@@ -65,9 +65,9 @@ App.ManagerCreateController = Ember.ObjectController.extend({
     }.property("process_type", "message_type", "data_type")
 });
 
-App.ManagerCreateRoute = Ember.Route.extend({
-    model : function () {
-        return {
+App.ProcessesCreateRoute = Ember.Route.extend({
+    setupController : function(controller, model) {
+        controller.setProperties({
             processTypes : [
                 {
                     value : Em.I18n.t('process.linear.value'),
@@ -88,7 +88,15 @@ App.ManagerCreateRoute = Ember.Route.extend({
                     label : Em.I18n.t('message.data_collected.label')
                 }
             ],
-            dataTypes : App.DataTypes
-        }
+            dataTypes : App.DataTypes,
+            model : model
+        });
+    },
+    model : function () {
+        return App.Object.create({
+            process_type : null,
+            message_type : null,
+            data_type    : null
+        });
     }
 });

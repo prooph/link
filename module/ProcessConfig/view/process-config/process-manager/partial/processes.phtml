@@ -1,10 +1,11 @@
-<script type="text/x-handlebars" data-template-name="manager/index">
+<script type="text/x-handlebars" data-template-name="processes/index">
     <div class="row">
         <div class="col-md-12">
             <div id="processes" class="list-group">
                 {{#each process in model}}
                 {{#link-to 'process' process class="list-group-item text-center"}}<strong>{{process.name}}</strong>{{/link-to}}
                 {{/each}}
+                {{#link-to 'processes.create' class="list-group-item list-group-item-success text-center"}}<strong><?php echo strtoupper($this->translate('Add New Process')) ?></strong>{{/link-to}}
             </div>
         </div>
     </div>
