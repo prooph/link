@@ -16,9 +16,9 @@ $this->inlineScript()->captureStart();
 
 $apiUrl = ltrim($this->url('process_config/api'), '/');
 
-$possibleDataTypes = json_encode($this->possible_data_types);
-$possibleTaskTypes = json_encode($this->possible_task_types);
-$possibleManipulationScripts = json_encode($this->possible_manipulation_scripts);
+$availableDataTypes = json_encode($this->available_data_types);
+$availableTaskTypes = json_encode($this->available_task_types);
+$availableManipulationScripts = json_encode($this->available_manipulation_scripts);
 $connectors = json_encode($this->connectors);
 $shortLocale = explode("_", $this->plugin('translate')->getTranslator()->getLocale())[0];
 $clientTranslations = json_encode([
@@ -83,9 +83,9 @@ Em.I18n.locale = '{$shortLocale}';
 
 Em.I18n.translations = $clientTranslations;
 
-App.TaskTypes          = $possibleTaskTypes;
-App.ManipulationScrits = $possibleManipulationScripts;
-App.DataTypes          = $possibleDataTypes;
+App.TaskTypes          = $availableTaskTypes;
+App.ManipulationScrits = $availableManipulationScripts;
+App.DataTypes          = $availableDataTypes;
 App.Connectors         = $connectors;
 
 App.Object = Ember.Object.extend(Em.Serializable);

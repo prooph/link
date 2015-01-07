@@ -27,13 +27,13 @@
         <div class="form-group">
             {{view "select" id="first-filter-input" class="form-control form-control-inline-4"
             prompt="- <?php echo $this->translate('Property') ?> -"
-            content=possibleDataTypeProperties
+            content=availableDataTypeProperties
             value=tempFilter.column}}
         </div>&nbsp;&nbsp;
         <div class="form-group">
             {{view "select" class="form-control form-control-inline-3"
             prompt="- <?php echo $this->translate('Operand') ?> -"
-            content=possibleOperands
+            content=availableOperands
             value=tempFilter.operand
             }}
         </div>&nbsp;&nbsp;
@@ -69,7 +69,7 @@
 
                 {{view "select" class="form-control form-control-inline-2"
                 prompt="- <?php echo $this->translate('Property') ?> -"
-                content=possibleOrderByProperties
+                content=availableOrderByProperties
                 value=tempOrderByProp}}
                 &nbsp;&nbsp;
                 {{view "select" class="form-control form-control-inline-2"

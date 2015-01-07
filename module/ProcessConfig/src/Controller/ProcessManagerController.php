@@ -49,12 +49,12 @@ final class ProcessManagerController extends AbstractQueryController
             'processes' => Func::map(
                     $this->systemConfig->getProcessDefinitions(),
                     function($definition, $message) {
-                        return $this->convertToClientProcess($message, $definition, $this->systemConfig->getAllPossibleDataTypes());
+                        return $this->convertToClientProcess($message, $definition, $this->systemConfig->getAllAvailableDataTypes());
                     }
                 ),
-            'possible_data_types' => $this->getDataTypesForClient(),
-            'possible_task_types' => \Ginger\Processor\Definition::getAllTaskTypes(),
-            'possible_manipulation_scripts' => $this->scriptLocation->getScriptNames(),
+            'available_data_types' => $this->getDataTypesForClient(),
+            'available_task_types' => \Ginger\Processor\Definition::getAllTaskTypes(),
+            'available_manipulation_scripts' => $this->scriptLocation->getScriptNames(),
             'connectors' => $this->systemConfig->getConnectors(),
             'view_addons' => $this->viewAddons
         ]);

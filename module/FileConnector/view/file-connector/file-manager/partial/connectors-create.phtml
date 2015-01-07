@@ -3,7 +3,26 @@
     <hr>
     <div class="row">
         <div class="col-sm-12 col-md-8 col-md-offset-2">
-
+            <div {{bind-attr class=":form-group :has-feedback isDataTypeSelected:has-success :text-left"}}>
+                <label for="data_type"><?php echo $this->translate('Choose data type for which you want to create a file connector.') ?></label>
+                {{view "select" name="data_type" class="form-control"
+                prompt="- <?php echo $this->translate('Data Type') ?> -"
+                content=availableDataTypes
+                optionValuePath="content.value"
+                optionLabelPath="content.label"
+                value=dataType}}
+            </div>
+            <div {{bind-attr class=":form-group :has-feedback isFileTypeSelected:has-success :text-left"}}>
+                <label for="file_type"><?php echo $this->translate('Select a file type.') ?></label>
+                {{view "select" name="file_type" class="form-control"
+                prompt="- <?php echo $this->translate('File Type') ?> -"
+                content=availableFileTypes
+                value=metadata.file_type}}
+            </div>
+            <div {{bind-attr class=":form-group :has-feedback isNotEmptyName:has-success :text-left"}}>
+                <label for="name"><?php echo $this->translate('Give the connector a unique name (or use the default)') ?></label>
+                {{input type="text" name="name" class="form-control form-control" value=nameWithDefault placeholder="Name"}}
+            </div>
         </div>
     </div>
 </script>

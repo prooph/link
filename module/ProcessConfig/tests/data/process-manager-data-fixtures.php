@@ -24,7 +24,7 @@ return [
             ],
         ],
     ],
-    'possible_data_types' => [
+    'available_data_types' => [
         [
             'value' => 'SqlConnector\\DataType\\GingerTestSource\\Tartikel',
             'label' => 'Tartikel Testsource',
@@ -95,13 +95,13 @@ return [
             'native_type' => 'collection',
         ],
     ],
-    'possible_task_types' => [
+    'available_task_types' => [
         'collect_data',
         'process_data',
         'manipulate_payload',
         'run_sub_process',
     ],
-    'possible_manipulation_scripts' => [
+    'available_manipulation_scripts' => [
         'manipulate-products.php',
     ],
     'connectors' => [

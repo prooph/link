@@ -187,7 +187,7 @@ final class GingerConfig implements SystemChangedEventRecorder
     {
         $processConfig = ["name" => $name, "process_type" => $type, "tasks" => $tasks];
 
-        $this->assertMessageName($startMessage, $this->projection()->getAllPossibleDataTypes());
+        $this->assertMessageName($startMessage, $this->projection()->getAllAvailableDataTypes());
         $this->assertStartMessageNotExists($startMessage);
         $this->assertProcessConfig($startMessage, $processConfig);
 
@@ -209,7 +209,7 @@ final class GingerConfig implements SystemChangedEventRecorder
      */
     public function replaceProcessTriggeredBy($startMessage, array $processConfig, ConfigWriter $configWriter)
     {
-        $this->assertMessageName($startMessage, $this->projection()->getAllPossibleDataTypes());
+        $this->assertMessageName($startMessage, $this->projection()->getAllAvailableDataTypes());
         $this->assertProcessConfig($startMessage, $processConfig);
 
         if (! isset($this->config['ginger']['processes'][$startMessage])) throw new \InvalidArgumentException(sprintf('Can not find a process that is triggered by message %s', $startMessage));
@@ -249,7 +249,7 @@ final class GingerConfig implements SystemChangedEventRecorder
         $projection = new \SystemConfig\Projection\GingerConfig($config, $this->configLocation, true);
 
         foreach ($config['ginger']['processes'] as $startMessage => $processConfig) {
-            $this->assertMessageName($startMessage, $projection->getAllPossibleDataTypes());
+            $this->assertMessageName($startMessage, $projection->getAllAvailableDataTypes());
             $this->assertProcessConfig($startMessage, $processConfig);
         }
 
@@ -282,10 +282,10 @@ final class GingerConfig implements SystemChangedEventRecorder
 
     /**
      * @param string $messageName
-     * @param array $possibleGingerTypes
+     * @param array $availableGingerTypes
      * @throws \InvalidArgumentException
      */
-    private function assertMessageName($messageName, array $possibleGingerTypes)
+    private function assertMessageName($messageName, array $availableGingerTypes)
     {
         if (! is_string($messageName)) throw new \InvalidArgumentException('Message name must be a string');
 
@@ -296,7 +296,7 @@ final class GingerConfig implements SystemChangedEventRecorder
 
 
 
-        DataTypeClass::extractFromMessageName($messageName, $possibleGingerTypes);
+        DataTypeClass::extractFromMessageName($messageName, $availableGingerTypes);
     }
 
     /**

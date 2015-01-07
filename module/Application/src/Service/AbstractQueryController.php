@@ -50,7 +50,7 @@ class AbstractQueryController extends \Zend\Mvc\Controller\AbstractActionControl
     protected function getDataTypesForClient(array $dataTypes = null)
     {
         if (is_null($dataTypes)) {
-            $dataTypes = $this->systemConfig->getAllPossibleDataTypes();
+            $dataTypes = $this->systemConfig->getAllAvailableDataTypes();
         }
 
         return array_map(function($dataTypeClass) { return $this->prepareDataType($dataTypeClass); }, $dataTypes);

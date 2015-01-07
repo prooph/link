@@ -37,5 +37,13 @@ final class FileTypeAdapterManager extends AbstractPluginManager
     {
         if (! $plugin instanceof FileTypeAdapter) throw new \RuntimeException(sprintf("FileTypeAdapter %s does not implement FileConnector\Service\FileTypeAdapter", get_class($plugin)));
     }
+
+    /**
+     * @return array
+     */
+    public function getAvailableFileTypes()
+    {
+        return array_merge(array_keys($this->invokableClasses), array_keys($this->factories), array_keys($this->aliases), array_keys($this->instances));
+    }
 }
  

@@ -40,7 +40,7 @@ final class GingerConfig
     /**
      * @var array
      */
-    private $possibleTypes;
+    private $availableTypes;
 
     /**
      * @param array $gingerConfig
@@ -89,11 +89,11 @@ final class GingerConfig
     /**
      * @return array
      */
-    public function getAllPossibleDataTypes()
+    public function getAllAvailableDataTypes()
     {
-        if (! is_null($this->possibleTypes)) return $this->possibleTypes;
+        if (! is_null($this->availableTypes)) return $this->availableTypes;
 
-        $possibleTypes = [];
+        $availableTypes = [];
 
         foreach ($this->config->arrayValue('ginger.connectors') as $connectorConfig) {
             if (! is_array($connectorConfig)) continue;
@@ -101,13 +101,13 @@ final class GingerConfig
             $typesDefinition = new ArrayReader($connectorConfig);
 
             foreach($typesDefinition->arrayValue('allowed_types') as $allowedType) {
-                $possibleTypes[] = $allowedType;
+                $availableTypes[] = $allowedType;
             }
         }
 
-        $this->possibleTypes = array_unique($possibleTypes);
+        $this->availableTypes = array_unique($availableTypes);
 
-        return $this->possibleTypes;
+        return $this->availableTypes;
     }
 
     /**

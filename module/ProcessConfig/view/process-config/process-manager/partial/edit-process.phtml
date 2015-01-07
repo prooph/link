@@ -32,7 +32,7 @@
     <div {{bind-attr class=":form-group :has-feedback isATaskTypeSelected:has-success"}}>
         {{view "select" class="form-control form-control-with-desc"
         prompt="- <?php echo $this->translate('Task Type') ?> -"
-        content=possibleTaskTypes
+        content=availableTaskTypes
         optionValuePath="content.value"
         optionLabelPath="content.label"
         value=task_type}}
@@ -41,13 +41,13 @@
         <div {{bind-attr class=":form-group :has-feedback isASourceSelected:has-success"}}>
             {{view "select" class="form-control form-control-with-desc"
             prompt="- <?php echo $this->translate('Source') ?> -"
-            content=possibleSources
+            content=availableSources
             value=source}}
         </div>
         <div {{bind-attr class=":form-group :has-feedback isADataTypeSelected:has-success"}}>
             {{view "select" class="form-control form-control-with-desc"
             prompt="- <?php echo $this->translate('Data Type') ?> -"
-            content=possibleDataTypes
+            content=availableDataTypes
             optionValuePath="content.value"
             optionLabelPath="content.label"
             value=data_type}}
@@ -57,13 +57,13 @@
         <div {{bind-attr class=":form-group :has-feedback isATargetSelected:has-success"}}>
             {{view "select" class="form-control form-control-with-desc"
             prompt="- <?php echo $this->translate('Target') ?> -"
-            content=possibleTargets
+            content=availableTargets
             value=model.target}}
         </div>
         <div {{bind-attr class=":form-group :has-feedback isADataTypeSelected:has-success"}}>
             {{view "select" class="form-control form-control-with-desc"
             prompt="- <?php echo $this->translate('Data Type') ?> -"
-            content=possibleDataTypes
+            content=availableDataTypes
             optionValuePath="content.value"
             optionLabelPath="content.label"
             value=preferred_type}}

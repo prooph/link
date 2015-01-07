@@ -95,6 +95,7 @@ return array(
             'collections' => array(
                 'js/file-connector/app.js' => array(
                     'js/file-connector/controllers/connectors-index.js',
+                    'js/file-connector/controllers/connectors-create.js',
                     'js/file-connector/models/connector.js',
                 ),
             ),
@@ -115,9 +116,11 @@ return array(
         ]
     ],
     'controllers' => array(
+        'factories' => [
+            'FileConnector\Controller\FileManager' => 'FileConnector\Controller\Factory\FileManagerControllerFactory',
+        ],
         'invokables' => [
             'FileConnector\Controller\DashboardWidget' => 'FileConnector\Controller\DashboardWidgetController',
-            'FileConnector\Controller\FileManager' => 'FileConnector\Controller\FileManagerController',
         ]
     ),
     'prooph.psb' => [

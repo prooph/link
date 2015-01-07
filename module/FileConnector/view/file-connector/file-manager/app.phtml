@@ -19,6 +19,8 @@ $apiUrl = ltrim($this->url('file_connector/api'), '/');
 
 $shortLocale = explode("_", $this->plugin('translate')->getTranslator()->getLocale())[0];
 
+$availableDataTypes = json_encode($this->available_data_types);
+
 $clientTranslations = json_encode([
     'file_manager' => [
         'label' => $this->translate('File Manager')
@@ -39,6 +41,8 @@ Em.I18n.translations = $clientTranslations;
 
 App.Object = Ember.Object.extend(Em.Serializable);
 
+App.DataTypes = $availableDataTypes;
+
 App.Router.map(function() {
     this.resource('connectors', { path: '/' }, function() {
         this.route('create');
@@ -50,7 +54,7 @@ App.Router.map(function() {
 
 App.ApplicationRoute = Ember.Route.extend({
     model : function() {
-        {$this->emberPushToStore('connector', $this->connectors)}
+        {$this->emberPushToStore('connector', $this->file_connectors)}
 
         this.store.all("connector").forEach(function(connector) {
             connector.set("metadata", Em.hashToObject(connector.get("metadata"), App.Object));

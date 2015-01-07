@@ -114,7 +114,7 @@ PM.SqlconnectorMetadataController = Ember.ObjectController.extend({
         return filterList;
     }.property('metadata.filter'),
 
-    possibleDataTypeProperties : function () {
+    availableDataTypeProperties : function () {
         var dataTypeObj = PM.DataTypes.findBy("value", this.get("parentController.selectedDataType"));
 
         if (Ember.isEmpty(dataTypeObj)) return [];
@@ -132,7 +132,7 @@ PM.SqlconnectorMetadataController = Ember.ObjectController.extend({
         return properties;
     }.property("parentController.selectedDataType"),
 
-    possibleOperands : ["=", "<", "<=", ">", ">=", "like", "ilike"],
+    availableOperands : ["=", "<", "<=", ">", ">=", "like", "ilike"],
 
     __toFormFilter : function (filterKey, filterValue) {
         //FilterValue is already an object so we only need to add the filterKey
@@ -177,8 +177,8 @@ PM.SqlconnectorMetadataController = Ember.ObjectController.extend({
         return false;
     }.property('parentController.selectedDataType', 'metadata.identifier'),
 
-    possibleOrderByProperties : function () {
-        var dataTypeProperties = this.get("possibleDataTypeProperties");
+    availableOrderByProperties : function () {
+        var dataTypeProperties = this.get("availableDataTypeProperties");
 
         var orderByProps = this.get("orderByArr").map(function (order) {
             return order.split(" ")[0];
@@ -187,7 +187,7 @@ PM.SqlconnectorMetadataController = Ember.ObjectController.extend({
         return dataTypeProperties.filter(function (prop) {
             return ! orderByProps.contains(prop);
         })
-    }.property("possibleDataTypeProperties", "metadata.order_by"),
+    }.property("availableDataTypeProperties", "metadata.order_by"),
 
     orderByArr : function () {
         var orderBy =  this.get("metadata").get("order_by");

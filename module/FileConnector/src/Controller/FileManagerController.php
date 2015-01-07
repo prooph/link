@@ -24,15 +24,45 @@ use Zend\View\Model\ViewModel;
  */
 final class FileManagerController extends AbstractQueryController
 {
+    /**
+     * @var array
+     */
+    private $availableFileTypes = array();
+
+    /**
+     * @param array $availableFileTypes
+     */
+    public function __construct(array $availableFileTypes)
+    {
+        $this->availableFileTypes = $availableFileTypes;
+    }
+
     public function startAppAction()
     {
         $viewModel = new ViewModel([
-            'connectors' => [],
+            'file_connectors' => $this->getFileConnectorsForClient(),
+            'system_connectors' => $this->systemConfig->getConnectors(),
+            'available_data_types' => $this->getDataTypesForClient(),
+
         ]);
 
         $viewModel->setTemplate('file-connector/file-manager/app');
 
         return $viewModel;
+    }
+
+    private function getFileConnectorsForClient()
+    {
+        return array_map(
+            'FileConnector\FileManager\FileConnectorTranslator::translateForClient',
+            array_filter(
+                $this->systemConfig->getConnectors(),
+                function ($connector, $id) {
+                    return strpos($id, "fileconnector:::") !== false;
+                }
+            )
+
+        );
     }
 }
  
