@@ -11,6 +11,7 @@
 
 namespace SystemConfig;
 
+use SystemConfig\Service\SystemConfigChangesHandlerProvider;
 use SystemConfig\Service\SystemConfigProvider;
 use Zend\Mvc\MvcEvent;
 
@@ -20,9 +21,13 @@ class Module
     {
         $sm = $e->getApplication()->getServiceManager();
         $cm = $sm->get('ControllerLoader');
+
         $configProvider = new SystemConfigProvider();
         $sm->addInitializer($configProvider);
         $cm->addInitializer($configProvider);
+
+        $systemChangesHandlerProvider = new SystemConfigChangesHandlerProvider();
+        $sm->addInitializer($systemChangesHandlerProvider);
     }
 
     public function getConfig()

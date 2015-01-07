@@ -11,14 +11,113 @@
 
 namespace FileConnector\Api;
 
+use Application\Service\AbstractRestController;
+use Application\Service\ActionController;
+use FileConnector\FileManager\FileConnectorTranslator;
+use Prooph\ServiceBus\CommandBus;
+use SystemConfig\Command\AddConnectorToConfig;
+use SystemConfig\Projection\GingerConfig;
+use SystemConfig\Service\NeedsSystemConfig;
+use ZF\ApiProblem\ApiProblem;
+use ZF\ApiProblem\ApiProblemResponse;
+
 /**
  * Class FileConnector
  *
  * @package FileConnector\Api
  * @author Alexander Miertsch <kontakt@codeliner.ws>
  */
-final class FileConnector 
+final class FileConnector extends AbstractRestController implements ActionController, NeedsSystemConfig
 {
+    /**
+     * @var CommandBus
+     */
+    private $commandBus;
 
+    /**
+     * @var GingerConfig
+     */
+    private $systemConfig;
+
+    /**
+     * @var array
+     */
+    private $availableFileTypes;
+
+    /**
+     * @param array $availableFileTypes
+     */
+    public function __construct(array $availableFileTypes)
+    {
+        $this->availableFileTypes = $availableFileTypes;
+    }
+
+    /**
+     * @param array $data
+     * @return mixed|void
+     */
+    public function create(array $data)
+    {
+        if (! array_key_exists("connector", $data)) return new ApiProblemResponse(new ApiProblem(422, 'Root key connector missing in request data'));
+
+        $data = $data["connector"];
+
+        $result = $this->validateConnectorData($data);
+
+        if ($result instanceof ApiProblemResponse) return $result;
+
+        $data = FileConnectorTranslator::translateFromClient($data);
+
+        $this->commandBus->dispatch(AddConnectorToConfig::fromDefinition(
+            FileConnectorTranslator::generateConnectorId($data),
+            $data['name'],
+            $data['allowed_messages'],
+            $data['allowed_types'],
+            $this->systemConfig->getConfigLocation(),
+            [
+                'metadata' => $data['metadata'],
+                'ui_metadata_key' => 'FileConnectorMetadata',
+            ]
+        ));
+
+        return ["connector" => FileConnectorTranslator::translateToClient($data)];
+    }
+
+    /**
+     * @param CommandBus $commandBus
+     * @return void
+     */
+    public function setCommandBus(CommandBus $commandBus)
+    {
+        $this->commandBus = $commandBus;
+    }
+
+    /**
+     * @param GingerConfig $systemConfig
+     * @return void
+     */
+    public function setSystemConfig(GingerConfig $systemConfig)
+    {
+        $this->systemConfig = $systemConfig;
+    }
+
+    /**
+     * @param array $data
+     * @return null|ApiProblemResponse
+     */
+    private function validateConnectorData(array $data)
+    {
+        if (! array_key_exists("name", $data)) return new ApiProblemResponse(new ApiProblem(422, 'Connector name missing in request data'));
+        if (! array_key_exists("data_type", $data)) return new ApiProblemResponse(new ApiProblem(422, 'Data type missing in request data'));
+        if (! array_key_exists("writable", $data)) return new ApiProblemResponse(new ApiProblem(422, 'Writable missing in request data'));
+        if (! array_key_exists("readable", $data)) return new ApiProblemResponse(new ApiProblem(422, 'Readable missing in request data'));
+        if (! array_key_exists("metadata", $data)) return new ApiProblemResponse(new ApiProblem(422, 'Metadata missing in request data'));
+        if (! is_array($data["metadata"])) return new ApiProblemResponse(new ApiProblem(422, 'Metadata must be an array'));
+        if (! array_key_exists("file_type", $data["metadata"])) return new ApiProblemResponse(new ApiProblem(422, 'Metadata.file_type missing in request data'));
+
+        if (! in_array($data['metadata']['file_type'], $this->availableFileTypes)) return new ApiProblemResponse(new ApiProblem(422, 'Metadata.file_type is not a known file type'));
+
+        return null;
+    }
 }
  

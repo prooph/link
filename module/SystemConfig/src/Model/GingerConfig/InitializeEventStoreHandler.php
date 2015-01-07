@@ -24,28 +24,8 @@ use SystemConfig\Model\EventStoreConfig;
  * @package SystemConfig\Model\GingerConfig
  * @author Alexander Miertsch <kontakt@codeliner.ws>
  */
-final class InitializeEventStoreHandler 
+final class InitializeEventStoreHandler extends SystemConfigChangesHandler
 {
-    /**
-     * @var ConfigWriter
-     */
-    private $configWriter;
-
-    /**
-     * @var EventBus
-     */
-    private $eventBus;
-
-    /**
-     * @param ConfigWriter $configWriter
-     * @param EventBus $eventBus
-     */
-    public function __construct(ConfigWriter $configWriter, EventBus $eventBus)
-    {
-        $this->configWriter = $configWriter;
-        $this->eventBus = $eventBus;
-    }
-
     /**
      * @param InitializeEventStore $command
      */

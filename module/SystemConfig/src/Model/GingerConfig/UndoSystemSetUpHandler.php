@@ -21,21 +21,8 @@ use SystemConfig\Model\GingerConfig;
  * @package SystemConfig\Model\GingerConfig
  * @author Alexander Miertsch <kontakt@codeliner.ws>
  */
-final class UndoSystemSetUpHandler 
+final class UndoSystemSetUpHandler extends SystemConfigChangesHandler
 {
-    /**
-     * @var EventBus
-     */
-    private $eventBus;
-
-    /**
-     * @param EventBus $eventBus
-     */
-    public function __construct(EventBus $eventBus)
-    {
-        $this->eventBus = $eventBus;
-    }
-
     /**
      * @param UndoSystemSetUp $command
      */

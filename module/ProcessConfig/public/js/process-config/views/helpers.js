@@ -37,7 +37,5 @@ Ember.Handlebars.helper('task-desc', function(task) {
 
 
 App.dataTypeName = function (dataType) {
-    var dataTypeObj = App.DataTypes.findBy('value', dataType);
-
-    return (typeof dataTypeObj !== "undefined")? dataTypeObj.label : dataType;
+    return data_type_name(dataType, App.DataTypes);
 };

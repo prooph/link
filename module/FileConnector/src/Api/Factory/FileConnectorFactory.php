@@ -6,33 +6,35 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  * 
- * Date: 07.12.14 - 21:36
+ * Date: 07.01.15 - 23:10
  */
 
-namespace SystemConfig\Service\Factory;
+namespace FileConnector\Api\Factory;
 
-use SystemConfig\Service\ConfigWriter\ZendPhpArrayWriter;
-use SystemConfig\Model\GingerConfig\CreateDefaultConfigFileHandler;
+use FileConnector\Api\FileConnector;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
 /**
- * Class CreateDefaultConfigFileHandlerFactory
+ * Class FileConnectorFactory
  *
- * @package SystemConfig\Service\Factory
+ * @package FileConnector\Api\Factory
  * @author Alexander Miertsch <kontakt@codeliner.ws>
  */
-final class CreateDefaultConfigFileHandlerFactory implements FactoryInterface
+final class FileConnectorFactory implements FactoryInterface
 {
+
     /**
      * Create service
      *
      * @param ServiceLocatorInterface $serviceLocator
-     * @return CreateDefaultConfigFileHandler
+     * @return mixed
      */
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
-        return new CreateDefaultConfigFileHandler(new ZendPhpArrayWriter(), $serviceLocator->get('prooph.psb.event_bus'));
+        $fileTypeAdapters = $serviceLocator->getServiceLocator()->get("fileconnector.file_type_adapter_manager");
+
+        return new FileConnector($fileTypeAdapters->getAvailableFileTypes());
     }
 }
  

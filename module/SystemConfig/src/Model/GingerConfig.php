@@ -18,11 +18,14 @@ use Ginger\Environment\Environment;
 use Ginger\Message\MessageNameUtils;
 use Ginger\Processor\Definition;
 use Ginger\Processor\NodeName;
+use SystemConfig\Event\ConnectorWasAddedToConfig;
 use SystemConfig\Event\GingerConfigFileWasCreated;
 use Application\SharedKernel\ConfigLocation;
 use SystemConfig\Event\GingerConfigFileWasRemoved;
 use SystemConfig\Event\NewProcessWasAddedToConfig;
 use SystemConfig\Event\NodeNameWasChanged;
+use SystemConfig\Event\ProcessConfigWasChanged;
+use Zend\Stdlib\ArrayUtils;
 use Zend\Stdlib\ErrorHandler;
 
 /**
@@ -59,6 +62,11 @@ final class GingerConfig implements SystemChangedEventRecorder
      * @var \SystemConfig\Projection\GingerConfig
      */
     private $projection;
+
+    /**
+     * @var array
+     */
+    private $availableMessageTypes;
 
     /**
      * Uses Ginger\Environment to initialize with its defaults
@@ -222,6 +230,39 @@ final class GingerConfig implements SystemChangedEventRecorder
             $this->toArray(),
             $this->configLocation->toString() . DIRECTORY_SEPARATOR . self::$configFileName
         );
+
+        $this->recordThat(ProcessConfigWasChanged::to($processConfig, $oldProcessConfig, $startMessage));
+    }
+
+    /**
+     * @param string $connectorId
+     * @param string $connectorName
+     * @param array $allowedMessages
+     * @param array $allowedTypes
+     * @param ConfigWriter $configWriter
+     * @param array $additionConfig
+     * @throws \InvalidArgumentException
+     */
+    public function addConnector($connectorId, $connectorName, array $allowedMessages, array $allowedTypes, ConfigWriter $configWriter, array $additionConfig = array())
+    {
+        $connectorConfig = array_merge([
+            'name' => $connectorName,
+            'allowed_messages' => $allowedMessages,
+            'allowed_types' => $allowedTypes,
+        ], $additionConfig);
+
+        $this->assertConnectorConfig($connectorId, $connectorConfig, $this->projection());
+
+        if (in_array($connectorId, $this->projection()->getConnectors())) throw new \InvalidArgumentException(sprintf("A connector with id %s is already configured", $connectorId));
+
+        $this->config['ginger']['connectors'][$connectorId] = $connectorConfig;
+
+        $configWriter->replaceConfigInDirectory(
+            $this->toArray(),
+            $this->configLocation->toString() . DIRECTORY_SEPARATOR . self::$configFileName
+        );
+
+        $this->recordThat(ConnectorWasAddedToConfig::withDefinition($connectorId, $connectorConfig));
     }
 
     /**
@@ -251,6 +292,12 @@ final class GingerConfig implements SystemChangedEventRecorder
         foreach ($config['ginger']['processes'] as $startMessage => $processConfig) {
             $this->assertMessageName($startMessage, $projection->getAllAvailableDataTypes());
             $this->assertProcessConfig($startMessage, $processConfig);
+        }
+
+        foreach ($config['ginger']['connectors'] as $connectorId => $connectorConfig)
+        {
+            if (! is_array($connectorConfig)) throw new \InvalidArgumentException(sprintf('Connector config for connector %s must be an array', $connectorId));
+            $this->assertConnectorConfig($connectorId, $connectorConfig, $projection);
         }
 
         $this->config = $config;
@@ -350,6 +397,58 @@ final class GingerConfig implements SystemChangedEventRecorder
             default:
                 throw new \InvalidArgumentException(sprintf('Invalid task type %s in config %s', $taskConfig['task_type'], $configPath));
         }
+    }
+
+    /**
+     * @param string $connectorId
+     * @param array $connectorConfig
+     * @param \SystemConfig\Projection\GingerConfig $config
+     * @throws \InvalidArgumentException
+     */
+    private function assertConnectorConfig($connectorId, array $connectorConfig, \SystemConfig\Projection\GingerConfig $config)
+    {
+        if (! is_string($connectorId) || empty($connectorId)) throw new \InvalidArgumentException("Connector id must a non empty string");
+
+        if (! array_key_exists('name', $connectorConfig))       throw new \InvalidArgumentException('Missing name in connector config '. $connectorId);
+        if (!is_string($connectorConfig['name']) || empty($connectorConfig['name'])) throw new \InvalidArgumentException('Name must be a non empty string in connector config '. $connectorId);
+        if (! array_key_exists('allowed_messages', $connectorConfig))       throw new \InvalidArgumentException('Missing allowed messages in connector config '. $connectorId);
+        if (!is_array($connectorConfig['allowed_messages'])) throw new \InvalidArgumentException('Allowed messages must be an array in connector config '. $connectorId);
+
+        array_walk($connectorConfig['allowed_messages'], function($allowedMessage) use ($connectorId) {
+            if (! in_array($allowedMessage, $this->getAvailableMessageTypes())) throw new \InvalidArgumentException(sprintf('Allowed message %s is not a valid workflow message suffix in connector config %s', $allowedMessage, $connectorId));
+        });
+
+        if (! array_key_exists('allowed_types', $connectorConfig))       throw new \InvalidArgumentException('Missing allowed types in connector config '. $connectorId);
+        if (!is_array($connectorConfig['allowed_types'])) throw new \InvalidArgumentException('Allowed types must be an array in connector config '. $connectorId);
+
+        array_walk($connectorConfig['allowed_types'], function ($allowedType) use ($connectorId, $config) {
+            if (! in_array($allowedType, $config->getAllAvailableDataTypes())) throw new \InvalidArgumentException(sprintf('Allowed data type %s is not known by the system in connector config %s', $allowedType, $connectorId));
+        });
+
+        if (isset($connectorConfig['metadata'])) {
+            if (!is_array($connectorConfig['metadata'])) throw new \InvalidArgumentException('Metadata must be an array in connector config '. $connectorId);
+        }
+
+        if (isset($connectorConfig['preferred_type'])) {
+            if (! in_array($connectorConfig['preferred_type'], $config->getAllAvailableDataTypes())) throw new \InvalidArgumentException(sprintf('Preferred data type %s is not known by the system in connector config %s', $connectorConfig['preferred_type'], $connectorId));
+        }
+    }
+
+    /**
+     * @return array
+     */
+    private function getAvailableMessageTypes()
+    {
+        if (is_null($this->availableMessageTypes)) {
+            $this->availableMessageTypes = [
+                MessageNameUtils::COLLECT_DATA,
+                MessageNameUtils::DATA_COLLECTED,
+                MessageNameUtils::PROCESS_DATA,
+                MessageNameUtils::DATA_PROCESSED,
+            ];
+        }
+
+        return $this->availableMessageTypes;
     }
 }
  

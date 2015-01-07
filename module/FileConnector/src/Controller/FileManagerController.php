@@ -43,6 +43,7 @@ final class FileManagerController extends AbstractQueryController
             'file_connectors' => $this->getFileConnectorsForClient(),
             'system_connectors' => $this->systemConfig->getConnectors(),
             'available_data_types' => $this->getDataTypesForClient(),
+            'available_file_types' => $this->availableFileTypes,
 
         ]);
 
@@ -53,15 +54,14 @@ final class FileManagerController extends AbstractQueryController
 
     private function getFileConnectorsForClient()
     {
-        return array_map(
-            'FileConnector\FileManager\FileConnectorTranslator::translateForClient',
-            array_filter(
-                $this->systemConfig->getConnectors(),
-                function ($connector, $id) {
-                    return strpos($id, "fileconnector:::") !== false;
-                }
-            )
+        $fileConnectors = [];
 
+        foreach ($this->systemConfig->getConnectors() as $id => $connector) {
+            if (strpos($id, "fileconnector:::") !== false) $fileConnectors[$id] = $connector;
+        }
+        return array_map(
+            'FileConnector\FileManager\FileConnectorTranslator::translateToClient',
+            $fileConnectors
         );
     }
 }

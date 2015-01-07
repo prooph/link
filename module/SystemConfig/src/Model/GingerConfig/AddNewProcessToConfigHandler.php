@@ -23,28 +23,8 @@ use SystemConfig\Model\GingerConfig;
  * @package SystemConfig\Model\GingerConfig
  * @author Alexander Miertsch <alexander.miertsch.extern@sixt.com>
  */
-final class AddNewProcessToConfigHandler
+final class AddNewProcessToConfigHandler extends SystemConfigChangesHandler
 {
-    /**
-     * @var ConfigWriter
-     */
-    private $configWriter;
-
-    /**
-     * @var EventBus
-     */
-    private $eventBus;
-
-    /**
-     * @param ConfigWriter $configWriter
-     * @param EventBus $eventBus
-     */
-    public function __construct(ConfigWriter $configWriter, EventBus $eventBus)
-    {
-        $this->configWriter = $configWriter;
-        $this->eventBus = $eventBus;
-    }
-
     /**
      * @param AddNewProcessToConfig $command
      */
@@ -60,6 +40,6 @@ final class AddNewProcessToConfigHandler
             $this->configWriter
         );
 
-        foreach ($gingerConfig->popRecordedEvents() as $recordedEvent) $this->eventBus->dispatch($recordedEvent);
+        $this->publishChanges($gingerConfig);
     }
 } 

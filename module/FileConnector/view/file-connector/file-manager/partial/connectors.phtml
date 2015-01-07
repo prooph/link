@@ -5,6 +5,7 @@
                 {{#each connector in model}}
                 {{#link-to 'connector' connector class="list-group-item text-center"}}<strong>{{connector.name}}</strong>{{/link-to}}
                 {{/each}}
+                {{#link-to 'connectors.create' class="list-group-item list-group-item-success text-center"}}<strong><?php echo strtoupper($this->translate('Add New Connector')) ?></strong>{{/link-to}}
             </div>
         </div>
     </div>

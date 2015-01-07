@@ -70,7 +70,7 @@ return array(
                                         'id' => '.+',
                                     ),
                                     'defaults' => [
-                                        'controller' => 'FileConnector\Api\Connector',
+                                        'controller' => 'FileConnector\Api\FileConnector',
                                     ]
                                 ]
                             ]
@@ -86,7 +86,7 @@ return array(
             'file-connector/file-manager/app' => __DIR__ . '/../view/file-connector/file-manager/app.phtml',
             //Partials for FileConnectorManager
             'file-connector/file-manager/partial/connectors'        => __DIR__ . '/../view/file-connector/file-manager/partial/connectors.phtml',
-            'file-connector/file-manager/partial/connectors-create' => __DIR__ . '/../view/file-connector/file-manager/partial/connectors-create.phtml',
+            'file-connector/file-manager/partial/connector-edit'    => __DIR__ . '/../view/file-connector/file-manager/partial/connector-edit.phtml',
             'file-connector/file-manager/partial/sidebar-left'      => __DIR__ . '/../view/file-connector/file-manager/partial/sidebar-left.phtml',
         ],
     ),
@@ -96,7 +96,9 @@ return array(
                 'js/file-connector/app.js' => array(
                     'js/file-connector/controllers/connectors-index.js',
                     'js/file-connector/controllers/connectors-create.js',
+                    'js/file-connector/controllers/connector-edit.js',
                     'js/file-connector/models/connector.js',
+                    'js/file-connector/views/helpers.js',
                 ),
             ),
             'paths' => array(
@@ -118,6 +120,7 @@ return array(
     'controllers' => array(
         'factories' => [
             'FileConnector\Controller\FileManager' => 'FileConnector\Controller\Factory\FileManagerControllerFactory',
+            'FileConnector\Api\FileConnector'          => 'FileConnector\Api\Factory\FileConnectorFactory',
         ],
         'invokables' => [
             'FileConnector\Controller\DashboardWidget' => 'FileConnector\Controller\DashboardWidgetController',
@@ -130,13 +133,13 @@ return array(
     ],
     'zf-content-negotiation' => [
         'controllers' => [
-            'FileConnector\Controller\Configuration' => 'Json',
+            'FileConnector\Api\FileConnector' => 'Json',
         ],
         'accept_whitelist' => [
-            'FileConnector\Controller\Configuration' => ['application/json'],
+            'FileConnector\Api\FileConnector' => ['application/json'],
         ],
         'content_type_whitelist' => [
-            'FileConnector\Controller\Configuration' => ['application/json'],
+            'FileConnector\Api\FileConnector' => ['application/json'],
         ],
     ],
 );

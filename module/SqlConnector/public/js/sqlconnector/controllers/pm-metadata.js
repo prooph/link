@@ -86,6 +86,13 @@ PM.SqlconnectorMetadataController = Ember.ObjectController.extend({
             }
         }
 
+        var filter = this.get("metadata").get("filter");
+
+        //Workaround because empty filter translates to array instead of object
+        if ($.isArray(filter)) {
+            this.get("metadata").set("filter", PM.Object.create());
+        }
+
         this.set("tempFilter", PM.Object.create({}));
     },
 

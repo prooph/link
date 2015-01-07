@@ -29,17 +29,42 @@ final class FileConnectorTranslator
      * @param array $connectorData
      * @return array
      */
-    public static function translateForClient(array $connectorData)
+    public static function translateToClient(array $connectorData)
     {
         $connectorData['id'] = self::generateConnectorId($connectorData);
-        $connectorData['writable'] = in_array("process-data", $connectorData['allowed_messages']);
-        $connectorData['readable'] = in_array("collect-data", $connectorData['allowed_messages']);
+        $connectorData['writable'] = in_array(MessageNameUtils::PROCESS_DATA, $connectorData['allowed_messages']);
+        $connectorData['readable'] = in_array(MessageNameUtils::COLLECT_DATA, $connectorData['allowed_messages']);
 
         unset($connectorData['allowed_messages']);
 
         $connectorData['data_type'] = $connectorData['allowed_types'][0];
 
         unset($connectorData['allowed_types']);
+
+        unset($connectorData['ui_metadata_key']);
+
+        return $connectorData;
+    }
+
+    /**
+     * @param array $connectorData
+     * @return array
+     */
+    public static function translateFromClient(array $connectorData)
+    {
+        if (isset($connectorData['id'])) unset($connectorData['id']);
+
+        $connectorData['allowed_messages'] = [];
+
+        if ($connectorData['writable']) $connectorData['allowed_messages'][] = MessageNameUtils::PROCESS_DATA;
+        if ($connectorData['readable']) $connectorData['allowed_messages'][] = MessageNameUtils::COLLECT_DATA;
+
+        unset($connectorData['writable']);
+        unset($connectorData['readable']);
+
+        $connectorData['allowed_types'] = [$connectorData['data_type']];
+
+        unset($connectorData['data_type']);
 
         return $connectorData;
     }

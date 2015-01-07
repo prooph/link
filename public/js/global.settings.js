@@ -1,4 +1,23 @@
-//Additions
+window.data_type_name = function (dataType, availableDataTypes) {
+    var dataTypeObj = availableDataTypes.findBy('value', dataType);
+
+    return (typeof dataTypeObj !== "undefined")? dataTypeObj.label : dataType;
+};
+
+window.hash_find_by = function(hash, key, value) {
+    var found = null;
+
+    $.each(hash, function(hashKey, hashValue) {
+        if (hashValue[key] == value) {
+            found = hashValue;
+            return false;
+        }
+    });
+
+    return found;
+};
+
+//jQuery Additions
 (function( $ ) {
 
     $.postJSON = function(url, data, settings) {
@@ -28,3 +47,4 @@ $(function() {
         globalPosition: 'bottom left'
     });
 });
+

@@ -22,28 +22,8 @@ use SystemConfig\Model\GingerConfig;
  * @package SystemConfig\Model\GingerConfig
  * @author Alexander Miertsch <kontakt@codeliner.ws>
  */
-final class CreateDefaultConfigFileHandler 
+final class CreateDefaultConfigFileHandler extends SystemConfigChangesHandler
 {
-    /**
-     * @var ConfigWriter
-     */
-    private $configWriter;
-
-    /**
-     * @var EventBus
-     */
-    private $eventBus;
-
-    /**
-     * @param ConfigWriter $configWriter
-     * @param EventBus $eventBus
-     */
-    public function __construct(ConfigWriter $configWriter, EventBus $eventBus)
-    {
-        $this->configWriter = $configWriter;
-        $this->eventBus = $eventBus;
-    }
-
     /**
      * @param CreateDefaultGingerConfigFile $command
      * @throws \RuntimeException
@@ -52,7 +32,7 @@ final class CreateDefaultConfigFileHandler
     {
         $gingerConfig = GingerConfig::initializeWithDefaultsIn($command->configLocation(), $this->configWriter);
 
-        foreach($gingerConfig->popRecordedEvents() as $event) $this->eventBus->dispatch($event);
+        $this->publishChanges($gingerConfig);
     }
 }
  

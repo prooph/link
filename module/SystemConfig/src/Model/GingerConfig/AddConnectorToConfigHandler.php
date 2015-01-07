@@ -6,31 +6,34 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  * 
- * Date: 30.12.14 - 18:13
+ * Date: 07.01.15 - 21:42
  */
 
 namespace SystemConfig\Model\GingerConfig;
-use Prooph\ServiceBus\EventBus;
-use SystemConfig\Command\ChangeProcessConfig;
-use SystemConfig\Model\ConfigWriter;
+
+use SystemConfig\Command\AddConnectorToConfig;
 use SystemConfig\Model\GingerConfig;
 
 /**
- * Class ChangeProcessConfigHandler
+ * Class AddConnectorToConfigHandler
  *
  * @package SystemConfig\Model\GingerConfig
  * @author Alexander Miertsch <kontakt@codeliner.ws>
  */
-final class ChangeProcessConfigHandler extends SystemConfigChangesHandler
+final class AddConnectorToConfigHandler extends SystemConfigChangesHandler
 {
-    /**
-     * @param ChangeProcessConfig $command
-     */
-    public function handle(ChangeProcessConfig $command)
+    public function handle(AddConnectorToConfig $command)
     {
         $gingerConfig = GingerConfig::initializeFromConfigLocation($command->configLocation());
 
-        $gingerConfig->replaceProcessTriggeredBy($command->startMessage(), $command->processConfig(), $this->configWriter);
+        $gingerConfig->addConnector(
+            $command->connectorId(),
+            $command->connectorName(),
+            $command->allowedMessage(),
+            $command->allowedTypes(),
+            $this->configWriter,
+            $command->additionalData()
+        );
 
         $this->publishChanges($gingerConfig);
     }

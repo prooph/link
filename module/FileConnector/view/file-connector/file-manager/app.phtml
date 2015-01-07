@@ -9,7 +9,7 @@
 <?php
 
 echo $this->partial('file-connector/file-manager/partial/connectors');
-echo $this->partial('file-connector/file-manager/partial/connectors-create');
+echo $this->partial('file-connector/file-manager/partial/connector-edit');
 echo $this->partial('file-connector/file-manager/partial/sidebar-left');
 
 //Bootstrap ember app
@@ -20,6 +20,8 @@ $apiUrl = ltrim($this->url('file_connector/api'), '/');
 $shortLocale = explode("_", $this->plugin('translate')->getTranslator()->getLocale())[0];
 
 $availableDataTypes = json_encode($this->available_data_types);
+$availableFileTypes  = json_encode($this->available_file_types);
+$availableSystemConnectors = json_encode($this->system_connectors);
 
 $clientTranslations = json_encode([
     'file_manager' => [
@@ -42,6 +44,8 @@ Em.I18n.translations = $clientTranslations;
 App.Object = Ember.Object.extend(Em.Serializable);
 
 App.DataTypes = $availableDataTypes;
+App.FileTypes = $availableFileTypes;
+App.SystemConnectors = $availableSystemConnectors;
 
 App.Router.map(function() {
     this.resource('connectors', { path: '/' }, function() {

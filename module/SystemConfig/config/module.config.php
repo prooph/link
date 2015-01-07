@@ -59,19 +59,19 @@ return array(
         ],
     ),
     'service_manager' => [
+        'invokables' => [
+            //Command handlers
+            'SystemConfig\Model\GingerConfig\CreateDefaultConfigFileHandler' => 'SystemConfig\Model\GingerConfig\CreateDefaultConfigFileHandler',
+            'SystemConfig\Model\GingerConfig\InitializeEventStoreHandler'    => 'SystemConfig\Model\GingerConfig\InitializeEventStoreHandler',
+            'SystemConfig\Model\GingerConfig\ChangeNodeNameHandler'          => 'SystemConfig\Model\GingerConfig\ChangeNodeNameHandler',
+            'SystemConfig\Model\GingerConfig\AddNewProcessToConfigHandler'   => 'SystemConfig\Model\GingerConfig\AddNewProcessToConfigHandler' ,
+            'SystemConfig\Model\GingerConfig\ChangeProcessConfigHandler'     => 'SystemConfig\Model\GingerConfig\ChangeProcessConfigHandler',
+            'SystemConfig\Model\GingerConfig\UndoSystemSetUpHandler'         => 'SystemConfig\Model\GingerConfig\UndoSystemSetUpHandler',
+            'SystemConfig\Model\GingerConfig\AddConnectorToConfigHandler'    => 'SystemConfig\Model\GingerConfig\AddConnectorToConfigHandler',
+        ],
         'factories' => [
-
             //Projections
             'ginger_config_projection' => 'SystemConfig\Projection\Factory\GingerConfigFactory',
-
-            //Command handlers
-            'SystemConfig\Model\GingerConfig\CreateDefaultConfigFileHandler' => 'SystemConfig\Service\Factory\CreateDefaultConfigFileHandlerFactory',
-            'SystemConfig\Model\GingerConfig\InitializeEventStoreHandler'    => 'SystemConfig\Service\Factory\InitializeEventStoreHandlerFactory',
-            'SystemConfig\Model\GingerConfig\ChangeNodeNameHandler'          => 'SystemConfig\Service\Factory\ChangeNodeNameHandlerFactory',
-            'SystemConfig\Model\GingerConfig\AddNewProcessToConfigHandler'   => 'SystemConfig\Service\Factory\AddNewProcessToConfigHandlerFactory',
-            'SystemConfig\Model\GingerConfig\ChangeProcessConfigHandler'     => 'SystemConfig\Service\Factory\ChangeProcessConfigHandlerFactory',
-            'SystemConfig\Model\GingerConfig\UndoSystemSetUpHandler'         => 'SystemConfig\Service\Factory\UndoSystemSetUpHandlerFactory',
-
         ]
     ],
     'controllers' => array(
@@ -90,6 +90,7 @@ return array(
             'SystemConfig\Command\AddNewProcessToConfig'         => 'SystemConfig\Model\GingerConfig\AddNewProcessToConfigHandler',
             'SystemConfig\Command\ChangeProcessConfig'           => 'SystemConfig\Model\GingerConfig\ChangeProcessConfigHandler',
             'SystemConfig\Command\UndoSystemSetUp'               => 'SystemConfig\Model\GingerConfig\UndoSystemSetUpHandler',
+            'SystemConfig\Command\AddConnectorToConfig'          => 'SystemConfig\Model\GingerConfig\AddConnectorToConfigHandler',
         ]
     ],
     'zf-content-negotiation' => [
