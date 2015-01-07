@@ -85,9 +85,9 @@ return array(
             'file-connector/dashboard/widget' => __DIR__ . '/../view/file-connector/dashboard/widget.phtml',
             'file-connector/file-manager/app' => __DIR__ . '/../view/file-connector/file-manager/app.phtml',
             //Partials for FileConnectorManager
-            'file-connector/file-manager/partial/connectors' => __DIR__ . '/../view/file-connector/file-manager/partial/connectors.phtml',
-            'file-connector/file-manager/partial/connector-create' => __DIR__ . '/../view/file-connector/file-manager/partial/connector-create.phtml',
-            'file-connector/file-manager/partial/sidebar-left' => __DIR__ . '/../view/file-connector/file-manager/partial/sidebar-left.phtml',
+            'file-connector/file-manager/partial/connectors'        => __DIR__ . '/../view/file-connector/file-manager/partial/connectors.phtml',
+            'file-connector/file-manager/partial/connectors-create' => __DIR__ . '/../view/file-connector/file-manager/partial/connectors-create.phtml',
+            'file-connector/file-manager/partial/sidebar-left'      => __DIR__ . '/../view/file-connector/file-manager/partial/sidebar-left.phtml',
         ],
     ),
     'asset_manager' => array(

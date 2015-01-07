@@ -22,7 +22,7 @@ use SystemConfig\Service\NeedsSystemConfig;
  * @package SqlConnector\src\Controller
  * @author Alexander Miertsch <kontakt@codeliner.ws>
  */
-final class DashboardWidgetController extends AbstractWidgetController implements NeedsSystemConfig
+final class DashboardWidgetController extends AbstractWidgetController
 {
     /**
      * @return DashboardWidget
@@ -30,15 +30,6 @@ final class DashboardWidgetController extends AbstractWidgetController implement
     public function widgetAction()
     {
 
-    }
-
-    /**
-     * @param GingerConfig $systemConfig
-     * @return void
-     */
-    public function setSystemConfig(GingerConfig $systemConfig)
-    {
-        // TODO: Implement setSystemConfig() method.
     }
 }
  

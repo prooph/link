@@ -22,12 +22,8 @@ use Zend\View\Model\ViewModel;
  * @package SystemConfig\Controller
  * @author Alexander Miertsch <kontakt@codeliner.ws>
  */
-class OverviewController extends AbstractQueryController implements NeedsSystemConfig
+class OverviewController extends AbstractQueryController
 {
-    /**
-     * @var GingerConfig
-     */
-    private $systemConfig;
     /**
      * @return ViewModel
      */
@@ -49,15 +45,6 @@ class OverviewController extends AbstractQueryController implements NeedsSystemC
         $params['config_file_name'] = \SystemConfig\Model\GingerConfig::configFileName();
 
         return new ViewModel($params);
-    }
-
-    /**
-     * @param GingerConfig $systemConfig
-     * @return void
-     */
-    public function setSystemConfig(GingerConfig $systemConfig)
-    {
-        $this->systemConfig = $systemConfig;
     }
 }
  

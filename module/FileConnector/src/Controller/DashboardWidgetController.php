@@ -22,12 +22,8 @@ use SystemConfig\Service\NeedsSystemConfig;
  * @package FileConnector\Controller
  * @author Alexander Miertsch <kontakt@codeliner.ws>
  */
-final class DashboardWidgetController extends AbstractWidgetController implements NeedsSystemConfig
+final class DashboardWidgetController extends AbstractWidgetController
 {
-    /**
-     * @var GingerConfig
-     */
-    private $systemConfig;
 
     /**
      * @return DashboardWidget
@@ -49,15 +45,6 @@ final class DashboardWidgetController extends AbstractWidgetController implement
             4,
             ['gingerConfig' => $this->systemConfig, 'fileConnectors' => $connectors]
         );
-    }
-
-    /**
-     * @param GingerConfig $systemConfig
-     * @return void
-     */
-    public function setSystemConfig(GingerConfig $systemConfig)
-    {
-        $this->systemConfig = $systemConfig;
     }
 }
  

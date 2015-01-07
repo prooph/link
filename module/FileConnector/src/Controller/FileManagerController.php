@@ -22,13 +22,8 @@ use Zend\View\Model\ViewModel;
  * @package FileConnector\Controller
  * @author Alexander Miertsch <kontakt@codeliner.ws>
  */
-final class FileManagerController extends AbstractQueryController implements NeedsSystemConfig
+final class FileManagerController extends AbstractQueryController
 {
-    /**
-     * @var GingerConfig
-     */
-    private $systemConfig;
-
     public function startAppAction()
     {
         $viewModel = new ViewModel([
@@ -38,15 +33,6 @@ final class FileManagerController extends AbstractQueryController implements Nee
         $viewModel->setTemplate('file-connector/file-manager/app');
 
         return $viewModel;
-    }
-
-    /**
-     * @param GingerConfig $systemConfig
-     * @return void
-     */
-    public function setSystemConfig(GingerConfig $systemConfig)
-    {
-        $this->systemConfig = $systemConfig;
     }
 }
  

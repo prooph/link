@@ -22,13 +22,8 @@ use SystemConfig\Service\NeedsSystemConfig;
  * @package SystemConfig\src\Controller
  * @author Alexander Miertsch <kontakt@codeliner.ws>
  */
-class DashboardWidgetController extends AbstractWidgetController implements NeedsSystemConfig
+class DashboardWidgetController extends AbstractWidgetController
 {
-    /**
-     * @var GingerConfig
-     */
-    private $systemConfig;
-
     /**
      * @return DashboardWidget
      */
@@ -52,15 +47,6 @@ class DashboardWidgetController extends AbstractWidgetController implements Need
 
 
         return DashboardWidget::initialize('system-config/dashboard/widget', 'System Configuration', 4, $params);
-    }
-
-    /**
-     * @param GingerConfig $systemConfig
-     * @return void
-     */
-    public function setSystemConfig(GingerConfig $systemConfig)
-    {
-        $this->systemConfig = $systemConfig;
     }
 }
  

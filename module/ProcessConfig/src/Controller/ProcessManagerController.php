@@ -31,13 +31,8 @@ use ZF\ContentNegotiation\ViewModel;
  * @package ProcessConfig\Controller
  * @author Alexander Miertsch <kontakt@codeliner.ws>
  */
-final class ProcessManagerController extends AbstractQueryController implements NeedsSystemConfig
+final class ProcessManagerController extends AbstractQueryController
 {
-    /**
-     * @var GingerConfig
-     */
-    private $systemConfig;
-
     /**
      * @var ScriptLocation
      */
@@ -57,7 +52,7 @@ final class ProcessManagerController extends AbstractQueryController implements 
                         return $this->convertToClientProcess($message, $definition, $this->systemConfig->getAllPossibleDataTypes());
                     }
                 ),
-            'possible_data_types' => $this->prepareDataTypes($this->systemConfig->getAllPossibleDataTypes()),
+            'possible_data_types' => $this->getDataTypesForClient(),
             'possible_task_types' => \Ginger\Processor\Definition::getAllTaskTypes(),
             'possible_manipulation_scripts' => $this->scriptLocation->getScriptNames(),
             'connectors' => $this->systemConfig->getConnectors(),
@@ -122,55 +117,6 @@ final class ProcessManagerController extends AbstractQueryController implements 
                 $processDefinition['tasks']
             )
         ];
-    }
-
-    /**
-     * @param array $dataTypes
-     * @return array
-     */
-    private function prepareDataTypes(array $dataTypes)
-    {
-        return array_map(function($dataTypeClass) { return $this->prepareDataType($dataTypeClass); }, $dataTypes);
-    }
-
-    private function prepareDataType($dataTypeClass)
-    {
-        $properties = [];
-
-        /** @var $typeProperty PrototypeProperty */
-        foreach ($dataTypeClass::prototype()->typeProperties() as $typeProperty) {
-            $properties[$typeProperty->propertyName()] = $this->prepareDataType($typeProperty->typePrototype()->of());
-        }
-
-        /** @var $description Description */
-        $description = $dataTypeClass::prototype()->typeDescription();
-
-        return [
-            'value' => $dataTypeClass,
-            'label' => $description->label(),
-            'properties' => $properties,
-            'native_type' => $description->nativeType()
-        ];
-    }
-
-    private function getTestProcesses()
-    {
-        return [
-            'ginger-message-sqlconnectordatatypegingertestsourcetartikelcollection-collect-data' => [
-                'id'  => $startMessage,
-                'name' => $processDefinition['name'],
-                'processType' => $processDefinition['process_type'],
-            ]
-        ];
-    }
-
-    /**
-     * @param GingerConfig $systemConfig
-     * @return void
-     */
-    public function setSystemConfig(GingerConfig $systemConfig)
-    {
-        $this->systemConfig = $systemConfig;
     }
 
     /**
