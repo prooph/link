@@ -95,7 +95,7 @@ App.TaskController = Ember.ObjectController.extend({
             taskTypes = [];
 
         if (Em.isEmpty(prevTask)) {
-            taskTypes = this.__derivePossibleTaskTypesFromStartMessage(process.get("startMessage"));
+            taskTypes = this.__derivePossibleTaskTypesFromStartMessage(process.get("start_message"));
         } else {
             taskTypes = this.__derivePossibleTaskTypesFromPrevTask(prevTask);
         }
@@ -140,7 +140,7 @@ App.TaskController = Ember.ObjectController.extend({
     __derivePossibleTaskTypesFromStartMessage : function (startMessage) {
         var taskTypes = [];
 
-        switch (startMessage.messageType) {
+        switch (startMessage.message_type) {
             case Em.I18n.t("message.collect_data.value"):
                 taskTypes.push({
                     value : Em.I18n.t("task.collect_data.value"),
@@ -171,7 +171,7 @@ App.TaskController = Ember.ObjectController.extend({
             sources = [];
 
         if (prevTaskId == 0) {
-            sources = this.__derivePossibleSourcesFromStartMessage(process.get("startMessage"));
+            sources = this.__derivePossibleSourcesFromStartMessage(process.get("start_message"));
         } else {
             $.each(this.get("connectors"), function(name, connector) {
                 if (Em.isEmpty(connector.allowed_messages)) return;
@@ -197,7 +197,7 @@ App.TaskController = Ember.ObjectController.extend({
         $.each(this.get("connectors"), function(name, connector) {
             if (Em.isEmpty(connector.allowed_messages)) return;
 
-            if (connector.allowed_messages.contains(startMessage.messageType)) {
+            if (connector.allowed_messages.contains(startMessage.message_type)) {
                 sources.push(name);
             }
         });
@@ -240,7 +240,7 @@ App.TaskController = Ember.ObjectController.extend({
             targets = [];
 
         if (prevTaskId == 0) {
-            targets = this.__derivePossibleTargetsFromStartMessage(process.get("startMessage"));
+            targets = this.__derivePossibleTargetsFromStartMessage(process.get("start_message"));
         } else {
             $.each(this.get("connectors"), function(name, connector) {
                 if (Em.isEmpty(connector.allowed_messages)) return;
@@ -257,7 +257,7 @@ App.TaskController = Ember.ObjectController.extend({
     }.property("task_type"),
 
     __derivePossibleTargetsFromStartMessage : function (startMessage) {
-        if (startMessage.messageType != Em.I18n.t("message.data_collected.value")) return [];
+        if (startMessage.message_type != Em.I18n.t("message.data_collected.value")) return [];
 
         var targets = [];
 
@@ -342,7 +342,7 @@ App.TasksCreateRoute = Ember.Route.extend({
 
         if (Em.isEmpty(tasks)) {
 
-            switch (process.get("startMessage").messageType) {
+            switch (process.get("start_message").message_type) {
                 case Em.I18n.t('message.collect_data.value'):
                     taskType = Em.I18n.t('task.collect_data.value');
                     break;

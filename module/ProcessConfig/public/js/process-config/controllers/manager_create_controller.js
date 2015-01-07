@@ -10,10 +10,10 @@ App.ManagerCreateController = Ember.ObjectController.extend({
 
             var process = this.store.createRecord('process', {
                 "name" : this.get("processName"),
-                "processType" : this.get("processType"),
-                "startMessage" : {
-                    messageType : this.get("messageType"),
-                    dataType : this.get("dataType")
+                "process_type" : this.get("process_type"),
+                "start_message" : {
+                    message_type : this.get("message_type"),
+                    data_type : this.get("data_type")
                 },
                 "tasks" : []
             });
@@ -25,21 +25,21 @@ App.ManagerCreateController = Ember.ObjectController.extend({
         }
     },
 
-    processType : null,
-    messageType : null,
-    dataType    : null,
+    process_type : null,
+    message_type : null,
+    data_type    : null,
 
-    isNonProcessSelected    : Ember.computed.empty("processType"),
-    isAProcessSelected      : Ember.computed.notEmpty("processType"),
-    isLinearProcess         : Ember.computed.equal("processType", Em.I18n.t('process.linear.value')),
-    isForeachProcess        : Ember.computed.equal("processType", Em.I18n.t('process.foreach.value')),
+    isNonProcessSelected    : Ember.computed.empty("process_type"),
+    isAProcessSelected      : Ember.computed.notEmpty("process_type"),
+    isLinearProcess         : Ember.computed.equal("process_type", Em.I18n.t('process.linear.value')),
+    isForeachProcess        : Ember.computed.equal("process_type", Em.I18n.t('process.foreach.value')),
 
-    isNonMessageSelected    : Ember.computed.empty("messageType"),
-    isAMessageTypeSelected  : Ember.computed.notEmpty("messageType"),
-    isCollectDataMessage    : Ember.computed.equal("messageType", Em.I18n.t('message.collect_data.value')),
-    isDataCollectedMessage  : Ember.computed.equal("messageType", Em.I18n.t('message.data_collected.value')),
+    isNonMessageSelected    : Ember.computed.empty("message_type"),
+    isAMessageTypeSelected  : Ember.computed.notEmpty("message_type"),
+    isCollectDataMessage    : Ember.computed.equal("message_type", Em.I18n.t('message.collect_data.value')),
+    isDataCollectedMessage  : Ember.computed.equal("message_type", Em.I18n.t('message.data_collected.value')),
 
-    isDataTypeSelected      : Ember.computed.notEmpty("dataType"),
+    isDataTypeSelected      : Ember.computed.notEmpty("data_type"),
 
     dataTypeSelectFocused : false,
     isNotDataTypeSelectFocused : function () {
@@ -55,14 +55,14 @@ App.ManagerCreateController = Ember.ObjectController.extend({
     processName : function () {
         var name = "";
 
-        if (this.get("processType") == Em.I18n.t('process.linear.value')) name = name + "Linear ";
-        if (this.get("processType") == Em.I18n.t('process.foreach.value')) name = name + "Foreach ";
-        if (this.get("messageType") == Em.I18n.t('message.collect_data.value')) name = name + "Collect ";
-        if (this.get("messageType") == Em.I18n.t('message.data_collected.value')) name = name + "Process ";
-        if (this.get("dataType") != null) name = name + App.dataTypeName(this.get("dataType")) + " ";
+        if (this.get("process_type") == Em.I18n.t('process.linear.value')) name = name + "Linear ";
+        if (this.get("process_type") == Em.I18n.t('process.foreach.value')) name = name + "Foreach ";
+        if (this.get("message_type") == Em.I18n.t('message.collect_data.value')) name = name + "Collect ";
+        if (this.get("message_type") == Em.I18n.t('message.data_collected.value')) name = name + "Process ";
+        if (this.get("data_type") != null) name = name + App.dataTypeName(this.get("data_type")) + " ";
 
         return name;
-    }.property("processType", "messageType", "dataType")
+    }.property("process_type", "message_type", "data_type")
 });
 
 App.ManagerCreateRoute = Ember.Route.extend({

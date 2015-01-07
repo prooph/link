@@ -101,10 +101,10 @@ final class ProcessManagerController extends AbstractQueryController
         return [
             'id'  => $startMessage,
             'name' => $processDefinition['name'],
-            'processType' => $processDefinition['process_type'],
-            'startMessage' => [
-                'messageType' => $messageType,
-                'dataType' => DataTypeClass::extractFromMessageName($startMessage, $knownDataTypes)
+            'process_type' => $processDefinition['process_type'],
+            'start_message' => [
+                'message_type' => $messageType,
+                'data_type' => DataTypeClass::extractFromMessageName($startMessage, $knownDataTypes)
             ],
             'tasks' => array_map(
                 function ($task) {

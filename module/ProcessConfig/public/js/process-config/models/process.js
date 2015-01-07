@@ -1,7 +1,7 @@
 App.Process = DS.Model.extend({
     name : DS.attr("string"),
-    processType : DS.attr("string"),
-    startMessage : DS.attr(),
+    process_type : DS.attr("string"),
+    start_message : DS.attr(),
     tasks : DS.attr()
 });
 
