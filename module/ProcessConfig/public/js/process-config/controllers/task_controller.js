@@ -19,7 +19,7 @@ App.TaskController = Ember.ObjectController.extend(Ember.Evented, {
                 delete m["allowed_types"];
                 delete m["preferred_type"];
             } else {
-                m.set("allowed_types", this.get("availableDataTypes"));
+                m.set("allowed_types", this.get("availableDataTypes").map(function (data_type) { return data_type.value; }));
             }
 
             if (m.task_type != Em.I18n.t("task.manipulate_payload.value")) {
@@ -28,7 +28,7 @@ App.TaskController = Ember.ObjectController.extend(Ember.Evented, {
 
             this.process.save().then(function () {
                 self.transitionToRoute('tasks.index');
-            }).catch($.failNotify);
+            });
         }
     },
 
@@ -292,7 +292,7 @@ App.TaskController = Ember.ObjectController.extend(Ember.Evented, {
             };
         });
 
-        if (targets.length == 1) this.set("target", targets[0].value);
+        if (targets.length == 1) this.set("model.target", targets[0].value);
 
         return targets;
     }.property("task_type"),

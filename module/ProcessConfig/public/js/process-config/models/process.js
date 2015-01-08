@@ -7,11 +7,9 @@ App.Process = DS.Model.extend({
 
 App.ProcessSerializer = DS.RESTSerializer.extend({
     normalize : function(type, hash, prop) {
-
         if (type === App.Process) {
             hash.tasks = Em.hashToObject(hash.tasks, App.Object);
         }
-
         return this._super(type, hash, prop);
     }
 });
