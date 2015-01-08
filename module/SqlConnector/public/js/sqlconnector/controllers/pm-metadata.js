@@ -3,13 +3,13 @@ PM.SqlconnectorMetadataController = Ember.ObjectController.extend({
         addFilter : function() {
             if (Em.isEmpty(this.get("metadata").get("filter"))) this.get("metadata").set("filter", PM.Object.create({}));
 
-            var tempFilter = this.get("tempFilter").serialize();
+            var tempFilter = this.get("tempFilter").toHash();
 
             var filterKey = tempFilter.key;
 
             delete tempFilter.key;
 
-            var filters = this.get("metadata").get("filter").serialize();
+            var filters = this.get("metadata").get("filter").toHash();
 
             //We allow the selection of a column for max two times to specify a between like filter
             //otherwise we will show an error
@@ -45,7 +45,7 @@ PM.SqlconnectorMetadataController = Ember.ObjectController.extend({
             $("#first-filter-input").focus();
         },
         removeFilter : function(filter) {
-            var filterObj = this.get("metadata").get("filter").serialize();
+            var filterObj = this.get("metadata").get("filter").toHash();
 
             delete filterObj[filter.key];
 
@@ -114,7 +114,7 @@ PM.SqlconnectorMetadataController = Ember.ObjectController.extend({
 
         var filterList = [];
 
-        for (key in filters.serialize()) {
+        for (key in filters.toHash()) {
             filterList.push(this.__toFormFilter( key, filters.get(key)));
         }
 
@@ -144,7 +144,7 @@ PM.SqlconnectorMetadataController = Ember.ObjectController.extend({
     __toFormFilter : function (filterKey, filterValue) {
         //FilterValue is already an object so we only need to add the filterKey
         if (filterValue instanceof PM.Object) {
-            var filter = filterValue.serialize();
+            var filter = filterValue.toHash();
             filter['key'] = filterKey;
             return filter;
         }

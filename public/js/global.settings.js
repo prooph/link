@@ -4,6 +4,12 @@ window.data_type_name = function (dataType, availableDataTypes) {
     return (typeof dataTypeObj !== "undefined")? dataTypeObj.label : dataType;
 };
 
+window.connector_name = function (connectorId, availableConnectors) {
+    var connector = availableConnectors[connectorId];
+
+    return (typeof  connector != "undefined")? connector.name : connectorId;
+};
+
 window.hash_find_by = function(hash, key, value) {
     var found = null;
 

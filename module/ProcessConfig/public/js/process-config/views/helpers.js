@@ -4,13 +4,13 @@ Ember.Handlebars.helper('task-desc', function(task) {
 
     if (task.task_type === Em.I18n.t("task.collect_data.value")) {
 
-        var source = (Em.isEmpty(task.source))? "source" : task.source;
+        var source = (Em.isEmpty(task.source))? "source" : App.connectorName(task.source);
         var sourceType = (typeof task.data_type === "undefined")? "data" : dataTypeName(task.data_type);
         return prefix + Em.I18n.t('task.collect_data.name', {sourceType : sourceType, source : source});
     }
 
     if (task.task_type === Em.I18n.t("task.process_data.value")) {
-        var target = (Em.isEmpty(task.target))? "target" : task.target;
+        var target = (Em.isEmpty(task.target))? "target" : App.connectorName(task.target);
         var preferredType = 'data';
 
         if (typeof task.preferred_type != "undefined") {
@@ -39,3 +39,7 @@ Ember.Handlebars.helper('task-desc', function(task) {
 App.dataTypeName = function (dataType) {
     return data_type_name(dataType, App.DataTypes);
 };
+
+App.connectorName = function (connectorId) {
+    return connector_name(connectorId, App.Connectors);
+}

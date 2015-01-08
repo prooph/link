@@ -42,6 +42,8 @@
             {{view "select" class="form-control form-control-with-desc"
             prompt="- <?php echo $this->translate('Source') ?> -"
             content=availableSources
+            optionValuePath="content.value"
+            optionLabelPath="content.label"
             value=source}}
         </div>
         <div {{bind-attr class=":form-group :has-feedback isADataTypeSelected:has-success"}}>

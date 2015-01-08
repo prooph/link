@@ -184,8 +184,15 @@ App.TaskController = Ember.ObjectController.extend({
             return sources;
         }
 
+        sources = sources.map(function (name) {
+            return {
+                label : App.connectorName(name),
+                value : name
+            };
+        });
+
         if (sources.length == 1) {
-            this.set("source", sources[0]);
+            this.set("source", sources[0].value);
         }
 
         return sources;
@@ -251,7 +258,14 @@ App.TaskController = Ember.ObjectController.extend({
             });
         }
 
-        if (targets.length == 1) this.set("model.target", targets[0]);
+        targets = targets.map(function (name) {
+            return {
+                label : App.connectorName(name),
+                value : name
+            };
+        });
+
+        if (targets.length == 1) this.set("model.target", targets[0].value);
 
         return targets;
     }.property("task_type"),
