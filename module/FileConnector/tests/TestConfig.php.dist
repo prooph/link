@@ -2,10 +2,11 @@
 return array(
     'modules' => array(
         'FileConnector',
+        'Application'
     ),
     'module_listener_options' => array(
         'config_glob_paths'    => array(
-            '../../../config/autoload/{,*.}{global,local}.php',
+            'config/test.config.php',
         ),
         'module_paths' => array(
             'module',

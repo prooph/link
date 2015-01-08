@@ -53,7 +53,8 @@ final class AbstractFileGatewayFactory implements AbstractFactoryInterface
         if (is_null($this->cachedFileGateway)) {
             $this->cachedFileGateway = new FileGateway(
                 $serviceLocator->get('fileconnector.file_type_adapter_manager'),
-                $serviceLocator->get('fileconnector.filename_renderer')
+                $serviceLocator->get('fileconnector.filename_renderer'),
+                $serviceLocator->get('application.locations_translator')
             );
         }
 

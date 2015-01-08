@@ -11,6 +11,7 @@
 
 namespace FileConnector\Service;
 
+use Application\SharedKernel\LocationTranslator;
 use Assert\Assertion;
 use FileConnector\Service\FileTypeAdapter\FileTypeAdapterManager;
 use Ginger\Message\LogMessage;
@@ -37,9 +38,14 @@ use Zend\Stdlib\ErrorHandler;
 final class FileGateway implements WorkflowMessageHandler
 {
     /**
-     * Required key in metadata. Defines the path where file(s) can be found or written to
+     * Required key in metadata (if location is not present). Defines the path where file(s) can be found or written to
      */
     const META_PATH               = 'path';
+
+    /**
+     * Optional key in metadata. Can be defined instead of path is translated into a path via Application\SharedKernel\LocationTranslator
+     */
+    const META_LOCATION           = 'location';
 
     /**
      * Required key in metadata. Defines the type of the file. The key must match with one of the registered FileTypeAdapters
@@ -150,13 +156,20 @@ final class FileGateway implements WorkflowMessageHandler
     private $fileNameRenderer;
 
     /**
+     * @var LocationTranslator
+     */
+    private $locationTranslator;
+
+    /**
      * @param FileTypeAdapterManager $fileTypeAdapters
      * @param FileNameRenderer $fileNameRenderer
+     * @param LocationTranslator $locationTranslator
      */
-    public function __construct(FileTypeAdapterManager $fileTypeAdapters, FileNameRenderer $fileNameRenderer)
+    public function __construct(FileTypeAdapterManager $fileTypeAdapters, FileNameRenderer $fileNameRenderer, LocationTranslator $locationTranslator)
     {
-        $this->fileTypeAdapters = $fileTypeAdapters;
-        $this->fileNameRenderer = $fileNameRenderer;
+        $this->fileTypeAdapters   = $fileTypeAdapters;
+        $this->fileNameRenderer   = $fileNameRenderer;
+        $this->locationTranslator = $locationTranslator;
     }
 
     /**
@@ -192,6 +205,10 @@ final class FileGateway implements WorkflowMessageHandler
     private function collectData(WorkflowMessage $workflowMessage)
     {
         $metadata = $workflowMessage->getMetadata();
+
+        if (isset($metadata[self::META_LOCATION]) && !isset($metadata[self::META_PATH])) {
+            $metadata[self::META_PATH] = $this->locationTranslator->getPathFor($metadata[self::META_LOCATION]);
+        }
 
         if (! isset($metadata[self::META_FILENAME_PATTERN])) throw new \InvalidArgumentException("Missing filename_pattern in metadata");
         if (! isset($metadata[self::META_FILE_TYPE])) throw new \InvalidArgumentException("Missing file_type in metadata");
@@ -317,6 +334,10 @@ final class FileGateway implements WorkflowMessageHandler
     private function processData(WorkflowMessage $workflowMessage)
     {
         $metadata = $workflowMessage->getMetadata();
+
+        if (isset($metadata[self::META_LOCATION]) && !isset($metadata[self::META_PATH])) {
+            $metadata[self::META_PATH] = $this->locationTranslator->getPathFor($metadata[self::META_LOCATION]);
+        }
 
         if (! isset($metadata[self::META_FILENAME_TEMPLATE])) throw new \InvalidArgumentException("Missing filename_pattern in metadata");
         if (! isset($metadata[self::META_FILE_TYPE])) throw new \InvalidArgumentException("Missing file_type in metadata");

@@ -11,6 +11,7 @@
 
 namespace FileConnectorTest\Service;
 
+use Application\SharedKernel\LocationTranslator;
 use FileConnector\Service\FileGateway;
 use FileConnectorTest\Bootstrap;
 use FileConnectorTest\DataType\TestUser;
@@ -73,9 +74,15 @@ final class FileGatewayTest extends TestCase
 
         $this->eventBus->utilize(new WorkflowProcessorInvokeStrategy());
 
+        $locationTranslator = new LocationTranslator([
+            'temp' => sys_get_temp_dir(),
+            'testdata' => $this->getTestDataPath()
+        ]);
+
         $this->fileGateway = new FileGateway(
             Bootstrap::getServiceManager()->get('fileconnector.file_type_adapter_manager'),
-            Bootstrap::getServiceManager()->get('fileconnector.filename_renderer')
+            Bootstrap::getServiceManager()->get('fileconnector.filename_renderer'),
+            $locationTranslator
         );
 
         $this->fileGateway->useCommandBus($this->commandBus);
@@ -107,6 +114,42 @@ final class FileGatewayTest extends TestCase
         $metadata = [
             'filename_pattern' => '/^users-header\.csv$/',
             'path' => $this->getTestDataPath(),
+            'file_type' => 'csv'
+        ];
+
+        $message = WorkflowMessage::collectDataOf(TestUserCollection::prototype(), $metadata);
+
+        $message->connectToProcessTask($taskListPosition);
+
+        $this->fileGateway->handleWorkflowMessage($message);
+
+        $this->assertInstanceOf('Ginger\Message\WorkflowMessage', $this->messageReceiver->getLastReceivedMessage());
+
+        /** @var $wfMessage WorkflowMessage */
+        $wfMessage = $this->messageReceiver->getLastReceivedMessage();
+
+        $userCollection = $wfMessage->getPayload()->toType();
+
+        $this->assertInstanceOf('FileConnectorTest\DataType\TestUserCollection', $userCollection);
+
+        $this->assertEquals(3, count($userCollection->value()));
+        $this->assertEquals(3, $wfMessage->getMetadata()['total_items']);
+
+        foreach ($userCollection->value() as $testUser) {
+            $this->assertInstanceOf('FileConnectorTest\DataType\TestUser', $testUser);
+        }
+    }
+
+    /**
+     * @test
+     */
+    public function it_collects_users_from_a_single_csv_file_using_location_instead_of_path()
+    {
+        $taskListPosition = TaskListPosition::at(TaskListId::linkWith(NodeName::defaultName(), ProcessId::generate()), 1);
+
+        $metadata = [
+            'filename_pattern' => '/^users-header\.csv$/',
+            'location' => 'testdata',
             'file_type' => 'csv'
         ];
 
@@ -231,6 +274,47 @@ final class FileGatewayTest extends TestCase
         $metadata = [
             FileGateway::META_FILE_TYPE         => 'csv',
             FileGateway::META_PATH              => $this->tempPath,
+            FileGateway::META_FILENAME_TEMPLATE => 'users-{{#now}}{{/now}}.csv',
+        ];
+
+        $this->tempFiles[] = 'users-' . date('Y-m-d') . '.csv';
+
+        $workflowMessage = WorkflowMessage::newDataCollected($testUsers);
+
+        $workflowMessage->connectToProcessTask($taskListPosition);
+
+        $workflowMessage = $workflowMessage->prepareDataProcessing($taskListPosition, $metadata);
+
+        $this->fileGateway->handleWorkflowMessage($workflowMessage);
+
+        $this->assertInstanceOf('Ginger\Message\WorkflowMessage', $this->messageReceiver->getLastReceivedMessage());
+
+        $this->assertTrue(file_exists($this->tempPath . $this->tempFiles[0]));
+    }
+
+    /**
+     * @test
+     */
+    public function it_writes_users_to_file_using_location_instead_of_path()
+    {
+        $taskListPosition = TaskListPosition::at(TaskListId::linkWith(NodeName::defaultName(), ProcessId::generate()), 1);
+
+        $testUsers = TestUserCollection::fromNativeValue([
+            [
+                "id" => 1,
+                "name" => "John Doe",
+                "age" => 34
+            ],
+            [
+                "id" => 2,
+                "name" => "Max Mustermann",
+                "age" => 41
+            ],
+        ]);
+
+        $metadata = [
+            FileGateway::META_FILE_TYPE         => 'csv',
+            FileGateway::META_LOCATION          => 'temp',
             FileGateway::META_FILENAME_TEMPLATE => 'users-{{#now}}{{/now}}.csv',
         ];
 
