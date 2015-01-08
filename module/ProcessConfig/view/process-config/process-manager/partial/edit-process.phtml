@@ -60,6 +60,8 @@
             {{view "select" class="form-control form-control-with-desc"
             prompt="- <?php echo $this->translate('Target') ?> -"
             content=availableTargets
+            optionValuePath="content.value"
+            optionLabelPath="content.label"
             value=model.target}}
         </div>
         <div {{bind-attr class=":form-group :has-feedback isADataTypeSelected:has-success"}}>
