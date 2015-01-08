@@ -112,7 +112,8 @@ final class FileGatewayTest extends TestCase
         $taskListPosition = TaskListPosition::at(TaskListId::linkWith(NodeName::defaultName(), ProcessId::generate()), 1);
 
         $metadata = [
-            'filename_pattern' => '/^users-header\.csv$/',
+            //Use normal filename as pattern
+            'filename_pattern' => 'users-header.csv',
             'path' => $this->getTestDataPath(),
             'file_type' => 'csv'
         ];
@@ -148,7 +149,8 @@ final class FileGatewayTest extends TestCase
         $taskListPosition = TaskListPosition::at(TaskListId::linkWith(NodeName::defaultName(), ProcessId::generate()), 1);
 
         $metadata = [
-            'filename_pattern' => '/^users-header\.csv$/',
+            //Use normal filename as pattern
+            'filename_pattern' => 'users-header.csv',
             'location' => 'testdata',
             'file_type' => 'csv'
         ];
@@ -184,6 +186,7 @@ final class FileGatewayTest extends TestCase
         $taskListPosition = TaskListPosition::at(TaskListId::linkWith(NodeName::defaultName(), ProcessId::generate()), 1);
 
         $metadata = [
+            //Use regex as filename
             'filename_pattern' => '/^testuser_.+\.json$/',
             'path' => $this->getTestDataPath(),
             'file_type' => 'json',

@@ -1,4 +1,4 @@
-App.TaskController = Ember.ObjectController.extend({
+App.TaskController = Ember.ObjectController.extend(Ember.Evented, {
     actions : {
         saveTask : function () {
             var taskId = this.get("model.id"), m = this.get("model"), self = this;
@@ -53,11 +53,35 @@ App.TaskController = Ember.ObjectController.extend({
     }.property("model.id"),
 
     selectedConnector : function () {
-        if (this.get("isASourceSelected")) return this.get("source");
-        if (this.get("isATargetSelected")) return this.get("target");
+        var connector = null, isOldConnector = false,replaceMetadata = false;
 
-        return null;
-    }.property("source", "target"),
+        if (this.get("isCollectDataTask") && this.get("isASourceSelected")) {
+            connector = this.get("source");
+            isOldConnector = connector === this.get("oldTask.source");
+        }else if (this.get("isProcessDataTask") && this.get("isATargetSelected")) {
+            connector = this.get("model.target");
+            isOldConnector = connector === this.get("oldTask.target");
+        }
+
+        if (Em.isEmpty(connector)) return null;
+
+        if (isOldConnector) {
+            if (Em.isEmpty(this.get("metadata"))) replaceMetadata = true;
+        } else {
+            replaceMetadata = true;
+        }
+
+        if (replaceMetadata) {
+            var connectorObj = this.get("connectors")[connector];
+            if (Ember.isEmpty(connectorObj.metadata)) {
+                this.set("metadata", PM.Object.create({}));
+            } else {
+                this.set("metadata", Em.hashToObject(connectorObj.metadata, PM.Object));
+            }
+        }
+
+        return connector;
+    }.property("isCollectDataTask", "isProcessDataTask", "source", "model.target"),
 
     selectedDataType : function () {
         switch (this.get("task_type")) {
@@ -69,7 +93,7 @@ App.TaskController = Ember.ObjectController.extend({
                 break;
         }
         return null;
-    }.property("data_type", "preferred_type"),
+    }.property("data_type", "preferred_type", "task_type"),
 
     isADataTypeSelected : Ember.computed.notEmpty("selectedDataType"),
 
@@ -185,8 +209,6 @@ App.TaskController = Ember.ObjectController.extend({
                     sources.push(name);
                 }
             });
-
-            return sources;
         }
 
         sources = sources.map(function (name) {
@@ -270,7 +292,7 @@ App.TaskController = Ember.ObjectController.extend({
             };
         });
 
-        if (targets.length == 1) this.set("model.target", targets[0].value);
+        if (targets.length == 1) this.set("target", targets[0].value);
 
         return targets;
     }.property("task_type"),
@@ -291,24 +313,23 @@ App.TaskController = Ember.ObjectController.extend({
         return targets;
     },
     uiMetadataKey : function () {
-        switch (this.get("task_type")) {
-            case Em.I18n.t('task.collect_data.value'):
-                connectorName = this.get("source");
-                break;
-            case Em.I18n.t('task.process_data.value'):
-                connectorName = this.get("model.target");
-                break;
-            default:
-                return null;
-        }
+        this.trigger("uiMetadataKeyWillChange");
+        return this.getCurrentUiMetadataKey();
+    }.property("selectedConnector"),
+
+    showMetadata : Ember.computed.notEmpty("uiMetadataKey"),
+
+    getCurrentUiMetadataKey : function () {
+        var connectorName = this.get("selectedConnector");
+
+        if (Em.isEmpty(connectorName)) return null;
 
         var connector = this.get("connectors")[connectorName];
 
-        if (Ember.isEmpty(connector)) return null;
+        if (Em.isEmpty(connector)) return null;
 
         return connector.ui_metadata_key;
-    }.property("source", "model.target"),
-    showMetadata : Ember.computed.notEmpty("uiMetadataKey")
+    }
 });
 
 App.TaskRoute = Ember.Route.extend({

@@ -6,12 +6,39 @@
         </div>
         <form class="form-inline">
             <div class="form-group">
-                {{input type="text" name="path" class="form-control form-control" value=metadata.path placeholder="Name"}}
+                {{view "select" name="location" class="form-control form-control-inline-4"
+                prompt="- <?php echo $this->translate('Location') ?> -"
+                content=availableLocations
+                value=metadata.location}}
+                &nbsp;&nbsp;<strong>/</strong>&nbsp;&nbsp;
+                {{input type="text" name="filename_pattern" class="form-control form-control-inline-10" value=metadata.filename_pattern placeholder="<?php echo $this->translate('Filename') ?>"}}
+            </div>
+            <br>
+            <br>
+            <div class="well well-sm text-info form-control-inline-12">
+                <?php echo $this->translate('Note: The filename will be translated to a regular expression. You can provide your own pattern by enclosing it with "/". Regex is useful when you need to match dynamic parts of the filename like dates, prefixes, suffixes, etc. If you are not familiar with Regex you can try it out online f.e. on ') ?><a href="http://www.regexr.com/" target="_blank">http://www.regexr.com/</a>
             </div>
         </form>
-        <div class="well well-sm text-info">
-            <?php echo $this->translate('Note: The filename will be translated to a regular expression. When you start it with the delimiter "/" you can provide your own pattern and match dynamic parts of the filename like dates, prefixes, suffixes, etc.') ?>
+        {{/if}}
+        {{#if isExport}}
+        <div class="form-group">
+            <label><?php echo $this->translate('Location') ?>&nbsp;/&nbsp;<?php echo $this->translate('Filename Template') ?></label>
         </div>
+        <form class="form-inline">
+            <div class="form-group">
+                {{view "select" name="location" class="form-control form-control-inline-4"
+                prompt="- <?php echo $this->translate('Location') ?> -"
+                content=availableLocations
+                value=metadata.location}}
+                &nbsp;&nbsp;<strong>/</strong>&nbsp;&nbsp;
+                {{input type="text" name="filename_template" class="form-control form-control-inline-10" value=metadata.filename_template placeholder="<?php echo $this->translate('Filename Template') ?>"}}
+            </div>
+            <br>
+            <br>
+            <div class="well well-sm text-info form-control-inline-12">
+                <?php echo sprintf($this->translate('Note: The filename template can contain placeholders like %s or %s to dynamically create unique files which won\'t conflict with older files. If you want to learn more about it have a look at the docs: '), '\{{data.id}}', '\{{#now}}Y-m-d\{{/now}}') ?><a href="#" target="_blank">@TODO: Add link to docs/</a>
+            </div>
+        </form>
         {{/if}}
         <div class="form-group">
 

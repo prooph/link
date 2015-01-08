@@ -55,5 +55,13 @@ final class LocationTranslator
 
         return $location ? : null;
     }
+
+    /**
+     * @return array
+     */
+    public function getLocations()
+    {
+        return array_keys($this->locations);
+    }
 }
  

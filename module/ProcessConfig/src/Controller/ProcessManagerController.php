@@ -13,6 +13,7 @@ namespace ProcessConfig\Controller;
 
 use Application\Service\AbstractQueryController;
 use Application\SharedKernel\DataTypeClass;
+use Application\SharedKernel\LocationTranslator;
 use Application\SharedKernel\ScriptLocation;
 use Ginger\Functional\Func;
 use Ginger\Message\MessageNameUtils;
@@ -43,6 +44,11 @@ final class ProcessManagerController extends AbstractQueryController
      */
     private $viewAddons;
 
+    /**
+     * @var LocationTranslator
+     */
+    private $locationTranslator;
+
     public function startAppAction()
     {
         $viewModel = new ViewModel([
@@ -56,6 +62,7 @@ final class ProcessManagerController extends AbstractQueryController
             'available_task_types' => \Ginger\Processor\Definition::getAllTaskTypes(),
             'available_manipulation_scripts' => $this->scriptLocation->getScriptNames(),
             'connectors' => $this->systemConfig->getConnectors(),
+            'locations'  => $this->locationTranslator->getLocations(),
             'view_addons' => $this->viewAddons
         ]);
 
@@ -133,6 +140,14 @@ final class ProcessManagerController extends AbstractQueryController
     public function setViewAddons(array $viewAddons)
     {
         $this->viewAddons = $viewAddons;
+    }
+
+    /**
+     * @param LocationTranslator $locationTranslator
+     */
+    public function setLocationTranslator(LocationTranslator $locationTranslator)
+    {
+        $this->locationTranslator = $locationTranslator;
     }
 }
  

@@ -20,6 +20,7 @@ $availableDataTypes = json_encode($this->available_data_types);
 $availableTaskTypes = json_encode($this->available_task_types);
 $availableManipulationScripts = json_encode($this->available_manipulation_scripts);
 $connectors = json_encode($this->connectors);
+$locations  = json_encode($this->locations);
 $shortLocale = explode("_", $this->plugin('translate')->getTranslator()->getLocale())[0];
 $clientTranslations = json_encode([
     'process' => [
@@ -87,6 +88,7 @@ App.TaskTypes          = $availableTaskTypes;
 App.ManipulationScrits = $availableManipulationScripts;
 App.DataTypes          = $availableDataTypes;
 App.Connectors         = $connectors;
+App.Locations          = $locations;
 
 App.Object = Ember.Object.extend(Em.Serializable);
 

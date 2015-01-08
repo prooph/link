@@ -234,7 +234,7 @@ final class FileGateway implements WorkflowMessageHandler
                     //We use scandir with descending order, so that files which include a date in the filename are sorted to newest first
                     scandir($metadata[self::META_PATH], 1),
                     function ($filename) use ($metadata) {
-                        return (bool)preg_match($metadata[self::META_FILENAME_PATTERN], $filename);
+                        return (bool)preg_match($this->filterRegex($metadata[self::META_FILENAME_PATTERN]), $filename);
                     }
                 )
             )
@@ -325,6 +325,18 @@ final class FileGateway implements WorkflowMessageHandler
         }
 
         $this->eventBus->dispatch($workflowMessage->answerWith($collectedData, $metadata));
+    }
+
+    /**
+     * @param $regexp
+     * @return string
+     */
+    private function filterRegex($regexp) {
+        if (strpos($regexp, "/") !== false && mb_substr($regexp, -1) == "/") {
+            return $regexp;
+        }
+
+        return "/" . preg_quote($regexp, "/") . "/";
     }
 
     /**

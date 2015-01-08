@@ -39,6 +39,16 @@ body {
     max-width: 300px;
 }
 
+.form-inline .form-control-inline-10 {
+    width: 500px;
+    max-width: 600px;
+}
+
+.form-inline .form-control-inline-12 {
+    width: 600px;
+    max-width: 600px;
+}
+
 
 /* Sidebar Styles */
 

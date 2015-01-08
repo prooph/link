@@ -77,20 +77,11 @@ PM.SqlconnectorMetadataController = Ember.ObjectController.extend({
     init : function () {
         this._super();
 
-        if (Ember.isEmpty(this.get("metadata"))) {
-            var connector = this.get("parentController").get("connectors")[this.get("parentController.selectedConnector")];
-            if (Ember.isEmpty(connector.metadata)) {
-                this.set("model.metadata", PM.Object.create({}));
-            } else {
-                this.set("model.metadata", Em.hashToObject(connector.metadata, PM.Object));
-            }
-        }
-
-        var filter = this.get("metadata").get("filter");
+        var filter = this.get("model.metadata").get("filter");
 
         //Workaround because empty filter translates to array instead of object
         if ($.isArray(filter)) {
-            this.get("metadata").set("filter", PM.Object.create());
+            this.get("model.metadata").set("filter", PM.Object.create());
         }
 
         this.set("tempFilter", PM.Object.create({}));

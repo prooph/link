@@ -41,6 +41,8 @@ final class ProcessManagerControllerFactory implements FactoryInterface
 
         $con->setViewAddons($config['process_manager']['view_addons']);
 
+        $con->setLocationTranslator($serviceLocator->getServiceLocator()->get('application.location_translator'));
+
         return $con;
     }
 }

@@ -27,7 +27,7 @@ return array(
             'application.psb.single_handle_method_invoke_strategy' => 'Application\ProophPlugin\SingleHandleMethodInvokeStrategy',
         ],
         'factories' => [
-            'application.locations_translator' => 'Application\SharedKernel\Factory\LocationTranslatorFactory',
+            'application.location_translator' => 'Application\SharedKernel\Factory\LocationTranslatorFactory',
         ],
         'abstract_factories' => array(
             'Zend\Cache\Service\StorageCacheAbstractServiceFactory',
