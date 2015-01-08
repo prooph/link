@@ -11,6 +11,7 @@
 
 namespace FileConnector\FileManager;
 use Ginger\Message\MessageNameUtils;
+use Rhumsaa\Uuid\Uuid;
 
 /**
  * Class FileConnectorTranslator
@@ -22,16 +23,16 @@ final class FileConnectorTranslator
 {
     public static function generateConnectorId(array $connectorData)
     {
-        return "fileconnector:::" . MessageNameUtils::normalize($connectorData['name']);
+        return "fileconnector:::" . Uuid::uuid4();
     }
 
     /**
      * @param array $connectorData
+     * @internal param string $connectorId
      * @return array
      */
     public static function translateToClient(array $connectorData)
     {
-        $connectorData['id'] = self::generateConnectorId($connectorData);
         $connectorData['writable'] = in_array(MessageNameUtils::PROCESS_DATA, $connectorData['allowed_messages']);
         $connectorData['readable'] = in_array(MessageNameUtils::COLLECT_DATA, $connectorData['allowed_messages']);
 

@@ -40,6 +40,6 @@ final class AddNewProcessToConfigHandler extends SystemConfigChangesHandler
             $this->configWriter
         );
 
-        $this->publishChanges($gingerConfig);
+        $this->publishChangesOf($gingerConfig);
     }
 } 

@@ -32,7 +32,7 @@ final class CreateDefaultConfigFileHandler extends SystemConfigChangesHandler
     {
         $gingerConfig = GingerConfig::initializeWithDefaultsIn($command->configLocation(), $this->configWriter);
 
-        $this->publishChanges($gingerConfig);
+        $this->publishChangesOf($gingerConfig);
     }
 }
  

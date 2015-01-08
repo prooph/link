@@ -32,12 +32,11 @@ final class DashboardWidgetController extends AbstractWidgetController
     {
         if (! $this->systemConfig->isConfigured()) return false;
 
-        $connectors = array_filter(
-            $this->systemConfig->getConnectors(),
-            function ($connector, $connectorName) {
-                return strpos($connectorName, 'fileconnector:::') !== false;
-            }
-        );
+        $connectors = [];
+
+        foreach ($this->systemConfig->getConnectors() as $connectorId => $connector) {
+            if (strpos($connectorId, 'fileconnector:::') !== false) $connectors[$connectorId] = $connector;
+        }
 
         return DashboardWidget::initialize(
             'file-connector/dashboard/widget',

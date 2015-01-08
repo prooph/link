@@ -43,9 +43,9 @@
                 <div class="pull-right">
                     {{#link-to "connectors.index" class="btn btn-default" activeClass=""}}<?php echo $this->translate('cancel') ?>{{/link-to}}
                     {{#if isNew}}
-                        <button class="btn btn-success" {{action createConnector}} {{bind-attr disabled=isNotValid}}><?php echo $this->translate('create connector') ?></button>
+                        <button class="btn btn-success" {{action "createConnector"}} {{bind-attr disabled=isNotValid}}><?php echo $this->translate('create connector') ?></button>
                     {{else}}
-                        <button class="btn btn-success" {{action saveConnector}} {{bind-attr disabled=isNotValid}}><?php echo $this->translate('save') ?></button>
+                        <button class="btn btn-success" {{action "saveConnector"}} {{bind-attr disabled=isNotValid}}><?php echo $this->translate('save') ?></button>
                     {{/if}}
                 </div>
             </div>

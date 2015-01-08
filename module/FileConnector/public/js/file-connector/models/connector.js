@@ -7,12 +7,12 @@ App.Connector = DS.Model.extend({
 });
 
 App.ConnectorSerializer = DS.RESTSerializer.extend({
-    normalize : function(type, hash) {
+    normalize : function(type, hash, prop) {
 
         if (type === App.Connector) {
             hash.metadata = Em.hashToObject(hash.metadata, App.Object);
-
-            this._super(type, hash);
         }
+
+        return this._super(type, hash, prop);
     }
 });

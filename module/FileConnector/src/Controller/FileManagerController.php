@@ -57,8 +57,12 @@ final class FileManagerController extends AbstractQueryController
         $fileConnectors = [];
 
         foreach ($this->systemConfig->getConnectors() as $id => $connector) {
-            if (strpos($id, "fileconnector:::") !== false) $fileConnectors[$id] = $connector;
+            if (strpos($id, "fileconnector:::") !== false) {
+                $connector['id'] = $id;
+                $fileConnectors[$id] = $connector;
+            }
         }
+
         return array_map(
             'FileConnector\FileManager\FileConnectorTranslator::translateToClient',
             $fileConnectors

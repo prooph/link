@@ -301,7 +301,7 @@ App.TaskRoute = Ember.Route.extend({
         else return task;
     },
     setupController: function(controller, model) {
-        var oldTask = Em.hashToObject(model.serialize(), App.Object);
+        var oldTask = Em.hashToObject(model.toHash(), App.Object);
 
         controller.set("taskTypes", App.TaskTypes);
         controller.set("manipulationScripts", App.ManipulationScrits);

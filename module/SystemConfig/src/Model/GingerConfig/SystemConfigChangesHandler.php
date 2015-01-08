@@ -34,7 +34,7 @@ class SystemConfigChangesHandler implements HandlesSystemConfigChanges
      */
     protected $configWriter;
 
-    public function publishChanges(GingerConfig $gingerConfig)
+    public function publishChangesOf(GingerConfig $gingerConfig)
     {
         foreach ($gingerConfig->popRecordedEvents() as $recordedEvent) $this->eventBus->dispatch($recordedEvent);
     }

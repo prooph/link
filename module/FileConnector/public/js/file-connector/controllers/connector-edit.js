@@ -1,10 +1,4 @@
 App.ConnectorEditController = Em.ObjectController.extend({
-    init : function () {
-        this._super();
-
-        this.__generateName();
-    },
-
     actions : {
         toggleReadable : function () {
             this.set("readable", ! this.get("readable"));
@@ -18,10 +12,18 @@ App.ConnectorEditController = Em.ObjectController.extend({
             connector.save().then(function () {
                 self.transitionToRoute("connectors.index");
             }).catch($.failNotify);
+        },
+        saveConnector : function () {
+            var self = this;
+
+            this.get("model").save().then(function () {
+                self.transitionToRoute("connectors.index");
+            }).catch($.failNotify);
         }
     },
 
     isNew : false,
+    isSaved : false,
     isDataTypeSelected : Ember.computed.notEmpty("data_type"),
     isFileTypeSelected : Ember.computed.notEmpty("metadata.file_type"),
 
@@ -43,9 +45,17 @@ App.ConnectorEditController = Em.ObjectController.extend({
     isDuplicateName : function () {
         if (Em.isEmpty(this.get("name"))) return false;
 
-        if (hash_find_by(App.SystemConnectors, "name", this.get("name"))) return true;
+        //First check if another file connector already has the same name
+        var otherC = this.get("store").all("connector").findBy("name", this.get("name"));
 
-        if (this.get("store").all("connector").findBy("name", this.get("name"))) return true;
+        //This is our own connector
+        if (! Ember.isEmpty(otherC) && otherC.get("id") == this.get("model.id")) return false;
+
+        //This must be another file connector
+        if (! Ember.isEmpty(otherC)) return true;
+
+        //Finally let's check if another system connector already uses the name
+        if (hash_find_by(App.SystemConnectors, "name", this.get("name"))) return true;
 
         return false;
     }.property("name"),
@@ -76,7 +86,6 @@ App.ConnectorEditController = Em.ObjectController.extend({
     }.property("data_type", "metadata.file_type"),
     __lastGeneratedName : null,
     __generateName : function () {
-
         if (Em.isEmpty(this.get("data_type"))) return null;
 
         var name = App.dataTypeName(this.get("data_type"));
@@ -90,11 +99,22 @@ App.ConnectorEditController = Em.ObjectController.extend({
         this.set("__lastGeneratedName", name);
 
         return name;
-    }
+    }.observes('model').on('init'),
+    __shadowCopy : null
 });
 
 App.ConnectorEditRoute = Em.Route.extend({
     setupController : function (controller, model) {
-        controller.setProperties({isNew : false, model : model});
+
+        controller.setProperties({isNew : false, isSaved: false, model : model, __shadowCopy: model.get("metadata").toHash()});
+    },
+    deactivate : function () {
+        var con = this.controllerFor("connector.edit");
+
+        if (! con.get("isSaved")) {
+            var shadowCopy = con.get("__shadowCopy");
+            con.get("model").rollback();
+            con.get("model").set("metadata", Em.hashToObject(shadowCopy, App.Object));
+        }
     }
 });

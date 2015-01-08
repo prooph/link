@@ -32,7 +32,7 @@ final class ChangeProcessConfigHandler extends SystemConfigChangesHandler
 
         $gingerConfig->replaceProcessTriggeredBy($command->startMessage(), $command->processConfig(), $this->configWriter);
 
-        $this->publishChanges($gingerConfig);
+        $this->publishChangesOf($gingerConfig);
     }
 }
  

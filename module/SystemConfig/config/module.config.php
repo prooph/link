@@ -68,6 +68,7 @@ return array(
             'SystemConfig\Model\GingerConfig\ChangeProcessConfigHandler'     => 'SystemConfig\Model\GingerConfig\ChangeProcessConfigHandler',
             'SystemConfig\Model\GingerConfig\UndoSystemSetUpHandler'         => 'SystemConfig\Model\GingerConfig\UndoSystemSetUpHandler',
             'SystemConfig\Model\GingerConfig\AddConnectorToConfigHandler'    => 'SystemConfig\Model\GingerConfig\AddConnectorToConfigHandler',
+            'SystemConfig\Model\GingerConfig\ChangeConnectorConfigHandler'    => 'SystemConfig\Model\GingerConfig\ChangeConnectorConfigHandler',
         ],
         'factories' => [
             //Projections
@@ -91,6 +92,7 @@ return array(
             'SystemConfig\Command\ChangeProcessConfig'           => 'SystemConfig\Model\GingerConfig\ChangeProcessConfigHandler',
             'SystemConfig\Command\UndoSystemSetUp'               => 'SystemConfig\Model\GingerConfig\UndoSystemSetUpHandler',
             'SystemConfig\Command\AddConnectorToConfig'          => 'SystemConfig\Model\GingerConfig\AddConnectorToConfigHandler',
+            'SystemConfig\Command\ChangeConnectorConfig'         => 'SystemConfig\Model\GingerConfig\ChangeConnectorConfigHandler',
         ]
     ],
     'zf-content-negotiation' => [

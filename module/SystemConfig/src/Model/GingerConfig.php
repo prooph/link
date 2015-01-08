@@ -18,6 +18,7 @@ use Ginger\Environment\Environment;
 use Ginger\Message\MessageNameUtils;
 use Ginger\Processor\Definition;
 use Ginger\Processor\NodeName;
+use SystemConfig\Event\ConnectorConfigWasChanged;
 use SystemConfig\Event\ConnectorWasAddedToConfig;
 use SystemConfig\Event\GingerConfigFileWasCreated;
 use Application\SharedKernel\ConfigLocation;
@@ -263,6 +264,30 @@ final class GingerConfig implements SystemChangedEventRecorder
         );
 
         $this->recordThat(ConnectorWasAddedToConfig::withDefinition($connectorId, $connectorConfig));
+    }
+
+    /**
+     * @param string $connectorId
+     * @param array $connectorConfig
+     * @param ConfigWriter $configWriter
+     * @throws \InvalidArgumentException
+     */
+    public function changeConnector($connectorId, array $connectorConfig, ConfigWriter $configWriter)
+    {
+        if (! isset($this->config['ginger']['connectors'][$connectorId])) throw new \InvalidArgumentException(sprintf('Connector with id %s can not be found', $connectorId));
+
+        $this->assertConnectorConfig($connectorId, $connectorConfig, $this->projection());
+
+        $oldConfig = $this->config['ginger']['connectors'][$connectorId];
+
+        $this->config['ginger']['connectors'][$connectorId] = $connectorConfig;
+
+        $configWriter->replaceConfigInDirectory(
+            $this->toArray(),
+            $this->configLocation->toString() . DIRECTORY_SEPARATOR . self::$configFileName
+        );
+
+        $this->recordThat(ConnectorConfigWasChanged::to($connectorConfig, $oldConfig, $connectorId));
     }
 
     /**

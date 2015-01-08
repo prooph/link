@@ -32,6 +32,6 @@ final class ChangeNodeNameHandler extends SystemConfigChangesHandler
 
         $gingerConfig->changeNodeName($command->newNodeName(), $this->configWriter);
 
-        $this->publishChanges($gingerConfig);
+        $this->publishChangesOf($gingerConfig);
     }
 } 

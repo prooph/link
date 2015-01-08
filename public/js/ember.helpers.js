@@ -15,7 +15,7 @@ Em.hashToObject = function(hash, objectType) {
 }
 
 Em.Serializable = Ember.Mixin.create({
-    serialize: function ()
+    toHash: function ()
     {
         var result = {};
         for (var key in $.extend(true, {}, this))
@@ -30,7 +30,7 @@ Em.Serializable = Ember.Mixin.create({
                 continue;
             }
 
-            if (this[key] instanceof Em.Object) result[key] = this.serialize.apply(this[key]);
+            if (this[key] instanceof Em.Object && typeof Em.toHash === "function") result[key] = this.toHash.apply(this[key]);
             else result[key] = this[key];
 
 

@@ -68,6 +68,8 @@ final class Process extends AbstractRestController implements ActionController, 
 
         $this->commandBus->dispatch($command);
 
+        $this->getResponse()->setStatusCode(201);
+
         $data["id"] = $startMessage;
 
         return ["process" => $data];

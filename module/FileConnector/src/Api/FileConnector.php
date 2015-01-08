@@ -16,6 +16,7 @@ use Application\Service\ActionController;
 use FileConnector\FileManager\FileConnectorTranslator;
 use Prooph\ServiceBus\CommandBus;
 use SystemConfig\Command\AddConnectorToConfig;
+use SystemConfig\Command\ChangeConnectorConfig;
 use SystemConfig\Projection\GingerConfig;
 use SystemConfig\Service\NeedsSystemConfig;
 use ZF\ApiProblem\ApiProblem;
@@ -68,8 +69,10 @@ final class FileConnector extends AbstractRestController implements ActionContro
 
         $data = FileConnectorTranslator::translateFromClient($data);
 
+        $id = FileConnectorTranslator::generateConnectorId($data);
+
         $this->commandBus->dispatch(AddConnectorToConfig::fromDefinition(
-            FileConnectorTranslator::generateConnectorId($data),
+            $id,
             $data['name'],
             $data['allowed_messages'],
             $data['allowed_types'],
@@ -80,7 +83,39 @@ final class FileConnector extends AbstractRestController implements ActionContro
             ]
         ));
 
-        return ["connector" => FileConnectorTranslator::translateToClient($data)];
+        $data = FileConnectorTranslator::translateToClient($data);
+
+        $data['id'] = $id;
+
+        return ["connector" => $data];
+    }
+
+    /**
+     * @param mixed $id
+     * @param array $data
+     * @return array|mixed|null|ApiProblemResponse
+     */
+    public function update($id, array $data)
+    {
+        if (! $this->existsConnector($id)) return new ApiProblemResponse(new ApiProblem(404, 'Connector can not be found'));
+
+        if (! array_key_exists("connector", $data)) return new ApiProblemResponse(new ApiProblem(422, 'Root key connector missing in request data'));
+
+        $data = $data["connector"];
+
+        $result = $this->validateConnectorData($data);
+
+        if ($result instanceof ApiProblemResponse) return $result;
+
+        $data = FileConnectorTranslator::translateFromClient($data);
+
+        $this->commandBus->dispatch(ChangeConnectorConfig::ofConnector($id, $data, $this->systemConfig->getConfigLocation()));
+
+        $data = FileConnectorTranslator::translateToClient($data);
+
+        $data['id'] = $id;
+
+        return ['connector' => $data];
     }
 
     /**
@@ -99,6 +134,15 @@ final class FileConnector extends AbstractRestController implements ActionContro
     public function setSystemConfig(GingerConfig $systemConfig)
     {
         $this->systemConfig = $systemConfig;
+    }
+
+    /**
+     * @param $connectorId
+     * @return bool
+     */
+    private function existsConnector($connectorId)
+    {
+        return isset($this->systemConfig->getConnectors()[$connectorId]);
     }
 
     /**
