@@ -1,0 +1,20 @@
+<script type="text/x-handlebars" data-template-name="fileconnector/pm-metadata-config">
+    <div class="text-left">
+        {{#if isImport}}
+        <div class="form-group">
+            <label><?php echo $this->translate('Location') ?>&nbsp;/&nbsp;<?php echo $this->translate('Filename') ?></label>
+        </div>
+        <form class="form-inline">
+            <div class="form-group">
+                {{input type="text" name="path" class="form-control form-control" value=metadata.path placeholder="Name"}}
+            </div>
+        </form>
+        <div class="well well-sm text-info">
+            <?php echo $this->translate('Note: The filename will be translated to a regular expression. When you start it with the delimiter "/" you can provide your own pattern and match dynamic parts of the filename like dates, prefixes, suffixes, etc.') ?>
+        </div>
+        {{/if}}
+        <div class="form-group">
+
+        </div>
+    </div>
+</script>

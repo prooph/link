@@ -5,7 +5,7 @@ App.TaskController = Ember.ObjectController.extend({
 
             this.set("saveTask", true);
 
-            if (Em.isEmpty(this.process.get("tasks")[taskId - 1])) {
+            if (this.get("isNewTask")) {
                 this.process.get("tasks").pushObject(m);
             }
 
@@ -46,6 +46,11 @@ App.TaskController = Ember.ObjectController.extend({
     isASourceSelected            : Ember.computed.notEmpty("source"),
     isATargetSelected            : Ember.computed.notEmpty("model.target"),
     isManipulationScriptSelected : Ember.computed.notEmpty("manipulation_script"),
+    isNewTask                    : function () {
+        var taskId = this.get("model.id");
+
+        return Em.isEmpty(this.process.get("tasks")[taskId - 1]);
+    }.property("model.id"),
 
     selectedConnector : function () {
         if (this.get("isASourceSelected")) return this.get("source");

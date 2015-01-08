@@ -25,7 +25,7 @@
         </div>
         <div {{bind-attr class=":form-group :has-feedback isValidName:has-success isDuplicateName:has-error :text-left"}}>
             <label for="name"><?php echo $this->translate('Give your connector a unique name (or use the default)') ?></label>
-            {{input type="text" name="name" class="form-control form-control" value=nameWithDefault placeholder="Name"}}
+            {{input type="text" name="name" class="form-control" value=nameWithDefault placeholder="Name"}}
             {{#if isDuplicateName}}
                 <br>
                 <div class="alert alert-danger"><?php echo $this->translate('The connector name is already in use. Please choose another name') ?>!</div>

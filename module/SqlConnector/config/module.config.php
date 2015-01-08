@@ -35,6 +35,7 @@ return array(
     'asset_manager' => array(
         'resolver_configs' => array(
             'collections' => array(
+                //Inject process manager metadata configurator for sql connectors
                 'js/process-config/app.js' => [
                     'js/sqlconnector/controllers/pm-metadata.js',
                     'js/sqlconnector/views/pm-metadata.js',

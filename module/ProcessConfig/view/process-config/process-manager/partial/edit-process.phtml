@@ -10,13 +10,7 @@
 <script type="text/x-handlebars" data-template-name="process/tasks">
     <div class="list-group">
         {{#each task in model.tasks}}
-        <div class="list-group-item">
-            {{task-desc task}}
-            <div class="pull-right">
-                {{#link-to 'task' task class="btn btn-default btn-sm"}}<span class="glyphicon glyphicon-edit"></span>{{/link-to}}&nbsp;&nbsp;
-                {{#link-to 'task.delete' task class="btn btn-danger btn-sm"}}<span class="glyphicon glyphicon-remove"></span>{{/link-to}}
-            </div>
-        </div>
+            {{#link-to 'task' task class="list-group-item"}}{{task-desc task}}{{/link-to}}
         {{/each}}
         {{#link-to 'tasks.create' class="list-group-item list-group-item-success text-center text-uppercase"}}<strong><?php echo $this->translate('Add Task') ?></strong>{{/link-to}}
     </div>
@@ -98,4 +92,11 @@
             </div>
         </div>
     </div>
+    {{#unless isNewTask}}
+    <hr>
+    <div class="well text-right">
+        <h4 class="text-danger text-center"><?php echo $this->translate('Danger Zone') ?></h4>
+        {{#link-to 'task.delete' model class="btn btn-danger"}}<?php echo $this->translate('Delete Task') ?>{{/link-to}}
+    </div>
+    {{/unless}}
 </script>

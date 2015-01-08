@@ -103,6 +103,8 @@ final class FileConnector extends AbstractRestController implements ActionContro
 
         $data = $data["connector"];
 
+        $data['ui_metadata_key'] = 'FileConnectorMetadata';
+
         $result = $this->validateConnectorData($data);
 
         if ($result instanceof ApiProblemResponse) return $result;

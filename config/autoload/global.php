@@ -12,5 +12,8 @@
  */
 
 return array(
-    // ...
+    'locations' => [
+        'inbox'  => __DIR__ . '/../../data/inbox',
+        'outbox' => __DIR__ . '/../../data/outbox',
+    ]
 );
