@@ -13,7 +13,7 @@ namespace FileConnector\Api;
 
 use Application\Service\AbstractRestController;
 use Application\Service\ActionController;
-use FileConnector\FileManager\FileConnectorTranslator;
+use FileConnector\FileManager\FileGatewayTranslator;
 use Prooph\ServiceBus\CommandBus;
 use SystemConfig\Command\AddConnectorToConfig;
 use SystemConfig\Command\ChangeConnectorConfig;
@@ -67,9 +67,9 @@ final class FileConnector extends AbstractRestController implements ActionContro
 
         if ($result instanceof ApiProblemResponse) return $result;
 
-        $data = FileConnectorTranslator::translateFromClient($data);
+        $data = FileGatewayTranslator::translateFromClient($data);
 
-        $id = FileConnectorTranslator::generateConnectorId($data);
+        $id = FileGatewayTranslator::generateConnectorId();
 
         $this->commandBus->dispatch(AddConnectorToConfig::fromDefinition(
             $id,
@@ -83,7 +83,7 @@ final class FileConnector extends AbstractRestController implements ActionContro
             ]
         ));
 
-        $data = FileConnectorTranslator::translateToClient($data);
+        $data = FileGatewayTranslator::translateToClient($data);
 
         $data['id'] = $id;
 
@@ -109,11 +109,11 @@ final class FileConnector extends AbstractRestController implements ActionContro
 
         if ($result instanceof ApiProblemResponse) return $result;
 
-        $data = FileConnectorTranslator::translateFromClient($data);
+        $data = FileGatewayTranslator::translateFromClient($data);
 
         $this->commandBus->dispatch(ChangeConnectorConfig::ofConnector($id, $data, $this->systemConfig->getConfigLocation()));
 
-        $data = FileConnectorTranslator::translateToClient($data);
+        $data = FileGatewayTranslator::translateToClient($data);
 
         $data['id'] = $id;
 

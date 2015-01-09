@@ -1,4 +1,16 @@
 PM.SqlconnectorMetadataController = Ember.ObjectController.extend({
+    init : function () {
+        this._super();
+
+        var filter = this.get("model.metadata").get("filter");
+
+        //Workaround because empty filter translates to array instead of object
+        if ($.isArray(filter)) {
+            this.get("model.metadata").set("filter", PM.Object.create());
+        }
+
+        this.set("tempFilter", PM.Object.create({}));
+    },
     actions : {
         addFilter : function() {
             if (Em.isEmpty(this.get("metadata").get("filter"))) this.get("metadata").set("filter", PM.Object.create({}));
@@ -71,20 +83,13 @@ PM.SqlconnectorMetadataController = Ember.ObjectController.extend({
                 return orderBy != order;
             }).join(", ");
 
-            this.get("metadata").set("order_by", orderByStr);
+            if (Em.isEmpty(orderByStr)) {
+                delete this.get("metadata").order_by;
+                this.set("orderByArr", []);
+            } else {
+                this.get("metadata").set("order_by", orderByStr);
+            }
         }
-    },
-    init : function () {
-        this._super();
-
-        var filter = this.get("model.metadata").get("filter");
-
-        //Workaround because empty filter translates to array instead of object
-        if ($.isArray(filter)) {
-            this.get("model.metadata").set("filter", PM.Object.create());
-        }
-
-        this.set("tempFilter", PM.Object.create({}));
     },
 
     tempFilter : null,

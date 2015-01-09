@@ -14,6 +14,7 @@ namespace SystemConfig\Service;
 use Application\SharedKernel\ConfigLocation;
 use SystemConfig\Definition;
 use SystemConfig\Projection\GingerConfig;
+use Zend\Mvc\Controller\ControllerManager;
 use Zend\ServiceManager\InitializerInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
@@ -28,11 +29,6 @@ use Zend\ServiceManager\ServiceLocatorInterface;
 final class SystemConfigProvider implements InitializerInterface
 {
     /**
-     * @var GingerConfig
-     */
-    private $systemConfig;
-
-    /**
      * Initialize
      *
      * @param $instance
@@ -41,19 +37,12 @@ final class SystemConfigProvider implements InitializerInterface
      */
     public function initialize($instance, ServiceLocatorInterface $serviceLocator)
     {
-        if ($instance instanceof NeedsSystemConfig) $instance->setSystemConfig($this->getSystemConfig());
-    }
-
-    /**
-     * @return GingerConfig
-     */
-    public function getSystemConfig()
-    {
-        if (is_null($this->systemConfig)) {
-            $this->systemConfig = \SystemConfig\Model\GingerConfig::asProjectionFrom(ConfigLocation::fromPath(Definition::getSystemConfigDir()));
+        if ($instance instanceof NeedsSystemConfig) {
+            if ($serviceLocator instanceof ControllerManager) {
+                $serviceLocator = $serviceLocator->getServiceLocator();
+            }
+            $instance->setSystemConfig($serviceLocator->get('system_config'));
         }
-
-        return $this->systemConfig;
     }
 }
  

@@ -26,6 +26,8 @@ App.TaskController = Ember.ObjectController.extend(Ember.Evented, {
                 delete m["manipulation_script"];
             }
 
+            this.trigger("TaskWillSave");
+
             this.process.save().then(function () {
                 self.transitionToRoute('tasks.index');
             });

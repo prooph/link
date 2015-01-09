@@ -113,7 +113,7 @@ final class GingerConfig implements SystemChangedEventRecorder
         } else {
             $env = Environment::setUp();
 
-            return new \SystemConfig\Projection\GingerConfig(['ginger' => $env->getConfig()], $configLocation);
+            return new \SystemConfig\Projection\GingerConfig(['ginger' => $env->getConfig()->toArray()], $configLocation);
         }
     }
 

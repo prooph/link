@@ -22,6 +22,13 @@ return array(
 
         ]
     ],
+    //Placeholder for configured connections. The UI creates a sqlconnector.local.php in config/autoload and puts
+    //all connections there. The connections are aliased and only the alias is put in the metadata
+    //of a connector definition. This ensures that sensitive connection params are not available in the UI except the
+    //sqlconnector UI itself.
+    'sqlconnector' => [
+        'connections' => []
+    ],
     'view_manager' => array(
         'template_map' => [
             'sqlconnector/partials/pm-metadata-config' => __DIR__ . '/../view/sqlconnector/partials/pm-metadata-config.phtml'
@@ -47,9 +54,8 @@ return array(
         ),
     ),
     'service_manager' => [
-        'factories' => [
-
-
+        'abstract_factories' => [
+            'SqlConnector\Service\Factory\AbstractDoctrineTableGatewayFactory'
         ]
     ],
     'controllers' => array(

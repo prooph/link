@@ -14,16 +14,16 @@ use Ginger\Message\MessageNameUtils;
 use Rhumsaa\Uuid\Uuid;
 
 /**
- * Class FileConnectorTranslator
+ * Class FileGatewayTranslator
  *
  * @package FileConnector\FileManager
  * @author Alexander Miertsch <kontakt@codeliner.ws>
  */
-final class FileConnectorTranslator 
+final class FileGatewayTranslator
 {
-    public static function generateConnectorId(array $connectorData)
+    public static function generateConnectorId()
     {
-        return "fileconnector:::" . Uuid::uuid4();
+        return "filegateway:::" . Uuid::uuid4();
     }
 
     /**
