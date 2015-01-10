@@ -16,6 +16,7 @@ use Ginger\Processor\NodeName;
 use Ginger\Processor\ProcessId;
 use Ginger\Processor\ProophPlugin\SingleTargetMessageRouter;
 use Ginger\Processor\ProophPlugin\WorkflowProcessorInvokeStrategy;
+use Ginger\Processor\RegistryWorkflowEngine;
 use Ginger\Processor\Task\TaskListId;
 use Ginger\Processor\Task\TaskListPosition;
 use Prooph\ServiceBus\CommandBus;
@@ -75,9 +76,12 @@ final class DoctrineTableGatewayTest extends TestCase
 
         $this->tableGateway = new DoctrineTableGateway($this->getDbalConnection(), 'users');
 
-        $this->tableGateway->useCommandBus($this->commandBus);
+        $workflowEngine = new RegistryWorkflowEngine();
 
-        $this->tableGateway->useEventBus($this->eventBus);
+        $workflowEngine->registerCommandBus($this->commandBus, [NodeName::defaultName()->toString()]);
+        $workflowEngine->registerEventBus($this->eventBus, [NodeName::defaultName()->toString()]);
+
+        $this->tableGateway->useWorkflowEngine($workflowEngine);
     }
 
     protected function tearDown()
@@ -104,12 +108,12 @@ final class DoctrineTableGatewayTest extends TestCase
         /** @var $wfMessage WorkflowMessage */
         $wfMessage = $this->messageReceiver->getLastReceivedMessage();
 
-        $userCollection = $wfMessage->getPayload()->toType();
+        $userCollection = $wfMessage->payload()->toType();
 
         $this->assertInstanceOf('SqlConnectorTest\DataType\TestUserCollection', $userCollection);
 
         $this->assertEquals(3, count($userCollection->value()));
-        $this->assertEquals(3, $wfMessage->getMetadata()['total_items']);
+        $this->assertEquals(3, $wfMessage->metadata()['total_items']);
 
         foreach ($userCollection->value() as $testUser) {
             $this->assertInstanceOf('SqlConnectorTest\DataType\TestUser', $testUser);
@@ -140,12 +144,12 @@ final class DoctrineTableGatewayTest extends TestCase
         /** @var $wfMessage WorkflowMessage */
         $wfMessage = $this->messageReceiver->getLastReceivedMessage();
 
-        $userCollection = $wfMessage->getPayload()->toType();
+        $userCollection = $wfMessage->payload()->toType();
 
         $this->assertInstanceOf('SqlConnectorTest\DataType\TestUserCollection', $userCollection);
 
         $this->assertEquals(1, count($userCollection->value()));
-        $this->assertEquals(1, $wfMessage->getMetadata()['total_items']);
+        $this->assertEquals(1, $wfMessage->metadata()['total_items']);
         $this->assertEquals(
             ['Donald Duck'],
             array_map(
@@ -182,12 +186,12 @@ final class DoctrineTableGatewayTest extends TestCase
         /** @var $wfMessage WorkflowMessage */
         $wfMessage = $this->messageReceiver->getLastReceivedMessage();
 
-        $userCollection = $wfMessage->getPayload()->toType();
+        $userCollection = $wfMessage->payload()->toType();
 
         $this->assertInstanceOf('SqlConnectorTest\DataType\TestUserCollection', $userCollection);
 
         $this->assertEquals(2, count($userCollection->value()));
-        $this->assertEquals(2, $wfMessage->getMetadata()['total_items']);
+        $this->assertEquals(2, $wfMessage->metadata()['total_items']);
         $this->assertEquals(
             ['John Doe', 'Donald Duck'],
             array_map(
@@ -230,12 +234,12 @@ final class DoctrineTableGatewayTest extends TestCase
         /** @var $wfMessage WorkflowMessage */
         $wfMessage = $this->messageReceiver->getLastReceivedMessage();
 
-        $userCollection = $wfMessage->getPayload()->toType();
+        $userCollection = $wfMessage->payload()->toType();
 
         $this->assertInstanceOf('SqlConnectorTest\DataType\TestUserCollection', $userCollection);
 
         $this->assertEquals(2, count($userCollection->value()));
-        $this->assertEquals(2, $wfMessage->getMetadata()['total_items']);
+        $this->assertEquals(2, $wfMessage->metadata()['total_items']);
         $this->assertEquals(
             ['John Doe', 'Max Mustermann'],
             array_map(
@@ -268,12 +272,12 @@ final class DoctrineTableGatewayTest extends TestCase
         /** @var $wfMessage WorkflowMessage */
         $wfMessage = $this->messageReceiver->getLastReceivedMessage();
 
-        $userCollection = $wfMessage->getPayload()->toType();
+        $userCollection = $wfMessage->payload()->toType();
 
         $this->assertInstanceOf('SqlConnectorTest\DataType\TestUserCollection', $userCollection);
 
         $this->assertEquals(2, count($userCollection->value()));
-        $this->assertEquals(3, $wfMessage->getMetadata()['total_items']);
+        $this->assertEquals(3, $wfMessage->metadata()['total_items']);
         $this->assertEquals(
             ['John Doe', 'Max Mustermann'],
             array_map(
@@ -305,12 +309,12 @@ final class DoctrineTableGatewayTest extends TestCase
         /** @var $wfMessage WorkflowMessage */
         $wfMessage = $this->messageReceiver->getLastReceivedMessage();
 
-        $userCollection = $wfMessage->getPayload()->toType();
+        $userCollection = $wfMessage->payload()->toType();
 
         $this->assertInstanceOf('SqlConnectorTest\DataType\TestUserCollection', $userCollection);
 
         $this->assertEquals(3, count($userCollection->value()));
-        $this->assertEquals(3, $wfMessage->getMetadata()['total_items']);
+        $this->assertEquals(3, $wfMessage->metadata()['total_items']);
 
         $expectedOrderedNames = ['Donald Duck', 'Max Mustermann', 'John Doe'];
 
@@ -337,7 +341,7 @@ final class DoctrineTableGatewayTest extends TestCase
         /** @var $wfMessage WorkflowMessage */
         $wfMessage = $this->messageReceiver->getLastReceivedMessage();
 
-        $user = $wfMessage->getPayload()->toType();
+        $user = $wfMessage->payload()->toType();
 
         $this->assertInstanceOf('SqlConnectorTest\DataType\TestUser', $user);
 
@@ -364,7 +368,7 @@ final class DoctrineTableGatewayTest extends TestCase
         /** @var $wfMessage WorkflowMessage */
         $wfMessage = $this->messageReceiver->getLastReceivedMessage();
 
-        $user = $wfMessage->getPayload()->toType();
+        $user = $wfMessage->payload()->toType();
 
         $this->assertInstanceOf('SqlConnectorTest\DataType\TestUser', $user);
 
@@ -391,7 +395,7 @@ final class DoctrineTableGatewayTest extends TestCase
         /** @var $wfMessage WorkflowMessage */
         $wfMessage = $this->messageReceiver->getLastReceivedMessage();
 
-        $user = $wfMessage->getPayload()->toType();
+        $user = $wfMessage->payload()->toType();
 
         $this->assertInstanceOf('SqlConnectorTest\DataType\TestUser', $user);
 

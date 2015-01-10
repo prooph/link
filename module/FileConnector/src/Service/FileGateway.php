@@ -14,6 +14,8 @@ namespace FileConnector\Service;
 use Application\SharedKernel\LocationTranslator;
 use Assert\Assertion;
 use FileConnector\Service\FileTypeAdapter\FileTypeAdapterManager;
+use Ginger\Message\AbstractWorkflowMessageHandler;
+use Ginger\Message\GingerMessage;
 use Ginger\Message\LogMessage;
 use Ginger\Message\MessageNameUtils;
 use Ginger\Message\WorkflowMessage;
@@ -35,7 +37,7 @@ use Zend\Stdlib\ErrorHandler;
  * @package FileConnector\Service
  * @author Alexander Miertsch <kontakt@codeliner.ws>
  */
-final class FileGateway implements WorkflowMessageHandler
+final class FileGateway extends AbstractWorkflowMessageHandler
 {
     /**
      * Required key in metadata (if location is not present). Defines the path where file(s) can be found or written to
@@ -136,16 +138,6 @@ final class FileGateway implements WorkflowMessageHandler
     const FILENAME_DATA_ITEM_INDEX = 'item_index';
 
     /**
-     * @var CommandBus
-     */
-    private $commandBus;
-
-    /**
-     * @var EventBus
-     */
-    private $eventBus;
-
-    /**
      * @var FileTypeAdapterManager
      */
     private $fileTypeAdapters;
@@ -173,25 +165,36 @@ final class FileGateway implements WorkflowMessageHandler
     }
 
     /**
-     * @param WorkflowMessage $aWorkflowMessage
-     * @return void
+     * If workflow message handler receives a collect-data message it forwards the message to this
+     * method and uses the returned GingerMessage as response
+     *
+     * @param WorkflowMessage $workflowMessage
+     * @return GingerMessage
      */
-    public function handleWorkflowMessage(WorkflowMessage $aWorkflowMessage)
+    protected function handleCollectData(WorkflowMessage $workflowMessage)
     {
         try {
-            switch ($aWorkflowMessage->getMessageType()) {
-                case MessageNameUtils::COLLECT_DATA:
-                    $this->collectData($aWorkflowMessage);
-                    break;
-                case MessageNameUtils::PROCESS_DATA:
-                    $this->processData($aWorkflowMessage);
-                    break;
-                default:
-                    $this->eventBus->dispatch(LogMessage::logUnsupportedMessageReceived($aWorkflowMessage, 'fileconnector'));
-            }
+            return $this->collectData($workflowMessage);
         } catch (\Exception $ex) {
             ErrorHandler::stop();
-            $this->eventBus->dispatch(LogMessage::logException($ex, $aWorkflowMessage->getProcessTaskListPosition()));
+            return LogMessage::logException($ex, $workflowMessage->processTaskListPosition());
+        }
+    }
+
+    /**
+     * If workflow message handler receives a process-data message it forwards the message to this
+     * method and uses the returned GingerMessage as response
+     *
+     * @param WorkflowMessage $workflowMessage
+     * @return GingerMessage
+     */
+    protected function handleProcessData(WorkflowMessage $workflowMessage)
+    {
+        try {
+            return $this->processData($workflowMessage);
+        } catch (\Exception $ex) {
+            ErrorHandler::stop();
+            return LogMessage::logException($ex, $workflowMessage->processTaskListPosition());
         }
     }
 
@@ -204,7 +207,7 @@ final class FileGateway implements WorkflowMessageHandler
      */
     private function collectData(WorkflowMessage $workflowMessage)
     {
-        $metadata = $workflowMessage->getMetadata();
+        $metadata = $workflowMessage->metadata();
 
         if (isset($metadata[self::META_LOCATION]) && !isset($metadata[self::META_PATH])) {
             $metadata[self::META_PATH] = $this->locationTranslator->getPathFor($metadata[self::META_LOCATION]);
@@ -246,11 +249,9 @@ final class FileGateway implements WorkflowMessageHandler
 
         if (count($fileNames)) {
             if ($fetchMode === self::META_FETCH_MODE_SINGLE_FILE) {
-                $this->collectDataFromSingleFile($fileNames[0], $workflowMessage, $fileHandler);
-                return;
+                return $this->collectDataFromSingleFile($fileNames[0], $workflowMessage, $fileHandler);
             } elseif ($fetchMode === self::META_FETCH_MODE_MULTI_FILES){
-                $this->collectDataFromMultipleFiles($fileNames, $workflowMessage, $fileHandler);
-                return;
+                return $this->collectDataFromMultipleFiles($fileNames, $workflowMessage, $fileHandler);
             } else {
                 throw new \InvalidArgumentException("Metadata contains unknown fetch_mode");
             }
@@ -258,7 +259,7 @@ final class FileGateway implements WorkflowMessageHandler
             if ($fetchMode === self::META_FETCH_MODE_SINGLE_FILE) {
                 throw new \InvalidArgumentException(sprintf("No file found for filename pattern %s", $metadata['filename_pattern']));
             } else {
-                $typeClass = $workflowMessage->getPayload()->getTypeClass();
+                $typeClass = $workflowMessage->payload()->getTypeClass();
 
                 if ($typeClass::prototype()->typeDescription()->nativeType() !== NativeType::COLLECTION) {
                     throw new \InvalidArgumentException(sprintf("Filename pattern %s matches no file and the requested ginger type %s is not a collection.", $metadata['filename_pattern'], $typeClass));
@@ -266,28 +267,27 @@ final class FileGateway implements WorkflowMessageHandler
 
                 $metadata[self::META_TOTAL_ITEMS] = 0;
 
-                $this->eventBus->dispatch($workflowMessage->answerWith($typeClass::fromNativeValue([]), $metadata));
-                return;
+                return $workflowMessage->answerWith($typeClass::fromNativeValue([]), $metadata);
             }
         }
     }
 
     private function collectDataFromSingleFile($filename, WorkflowMessage $workflowMessage, FileTypeAdapter $fileHandler)
     {
-        $typeClass = $workflowMessage->getPayload()->getTypeClass();
+        $typeClass = $workflowMessage->payload()->getTypeClass();
 
-        $metadata = $workflowMessage->getMetadata();
+        $metadata = $workflowMessage->metadata();
 
         $data = $fileHandler->readDataForType($filename, $typeClass::prototype(), $metadata);
 
-        $this->eventBus->dispatch($workflowMessage->answerWith($typeClass::fromNativeValue($data), $metadata));
+        return $workflowMessage->answerWith($typeClass::fromNativeValue($data), $metadata);
     }
 
     private function collectDataFromMultipleFiles($fileNames, WorkflowMessage $workflowMessage, FileTypeAdapter $fileHandler)
     {
-        $metadata = $workflowMessage->getMetadata();
+        $metadata = $workflowMessage->metadata();
 
-        $fileDataType = (isset($metadata[self::META_FILE_DATA_TYPE]))? $metadata[self::META_FILE_DATA_TYPE] : $workflowMessage->getPayload()->getTypeClass();
+        $fileDataType = (isset($metadata[self::META_FILE_DATA_TYPE]))? $metadata[self::META_FILE_DATA_TYPE] : $workflowMessage->payload()->getTypeClass();
 
         Assertion::implementsInterface($fileDataType, 'Ginger\Type\Type');
 
@@ -295,7 +295,7 @@ final class FileGateway implements WorkflowMessageHandler
 
         $fileDataCollection = [];
         $collectedData = null;
-        $typeClass = $workflowMessage->getPayload()->getTypeClass();
+        $typeClass = $workflowMessage->payload()->getTypeClass();
 
         foreach ($fileNames as $filename) {
             $fileDataCollection[] = $fileHandler->readDataForType($filename, $fileDataPrototype, $metadata);
@@ -324,7 +324,7 @@ final class FileGateway implements WorkflowMessageHandler
             $collectedData = $typeClass::fromNativeValue($fileDataCollection);
         }
 
-        $this->eventBus->dispatch($workflowMessage->answerWith($collectedData, $metadata));
+        return $workflowMessage->answerWith($collectedData, $metadata);
     }
 
     /**
@@ -345,7 +345,7 @@ final class FileGateway implements WorkflowMessageHandler
      */
     private function processData(WorkflowMessage $workflowMessage)
     {
-        $metadata = $workflowMessage->getMetadata();
+        $metadata = $workflowMessage->metadata();
 
         if (isset($metadata[self::META_LOCATION]) && !isset($metadata[self::META_PATH])) {
             $metadata[self::META_PATH] = $this->locationTranslator->getPathFor($metadata[self::META_LOCATION]);
@@ -360,7 +360,7 @@ final class FileGateway implements WorkflowMessageHandler
         if (! is_dir($metadata[self::META_PATH])) throw new \InvalidArgumentException(sprintf('Directory %s is invalid', $metadata[self::META_PATH]));
         if (! is_writable($metadata[self::META_PATH])) throw new \InvalidArgumentException(sprintf('Directory %s is not writable', $metadata[self::META_PATH]));
 
-        $type = $workflowMessage->getPayload()->toType();
+        $type = $workflowMessage->payload()->toType();
         $fileTypeAdapter = $this->fileTypeAdapters->get($metadata[self::META_FILE_TYPE]);
 
         if ($type->description()->nativeType() === NativeType::COLLECTION && isset($metadata[self::META_WRITE_MULTI_FILES]) && $metadata[self::META_WRITE_MULTI_FILES]) {
@@ -371,7 +371,7 @@ final class FileGateway implements WorkflowMessageHandler
             $this->writeTypeToFile($type, $metadata, $fileTypeAdapter);
         }
 
-        $this->eventBus->dispatch($workflowMessage->answerWithDataProcessingCompleted($metadata));
+        return $workflowMessage->answerWithDataProcessingCompleted($metadata);
     }
 
     /**
@@ -415,28 +415,6 @@ final class FileGateway implements WorkflowMessageHandler
     private function dictionaryToArray(AbstractDictionary $dictionary)
     {
         return json_decode(json_encode($dictionary), true);
-    }
-
-    /**
-     * Register command bus that can be used to send new commands to the workflow processor
-     *
-     * @param CommandBus $commandBus
-     * @return void
-     */
-    public function useCommandBus(CommandBus $commandBus)
-    {
-        $this->commandBus = $commandBus;
-    }
-
-    /**
-     * Register event bus that can be used to send events to the workflow processor
-     *
-     * @param EventBus $eventBus
-     * @return void
-     */
-    public function useEventBus(EventBus $eventBus)
-    {
-        $this->eventBus = $eventBus;
     }
 }
  

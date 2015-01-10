@@ -361,7 +361,7 @@ final class GingerConfig implements SystemChangedEventRecorder
     {
         if (! is_string($messageName)) throw new \InvalidArgumentException('Message name must be a string');
 
-        if (! MessageNameUtils::isGingerMessage($messageName)) throw new \InvalidArgumentException(sprintf(
+        if (! MessageNameUtils::isWorkflowMessage($messageName)) throw new \InvalidArgumentException(sprintf(
             'Message name format -%s- is not valid',
             $messageName
         ));

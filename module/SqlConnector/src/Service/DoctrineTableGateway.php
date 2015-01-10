@@ -13,6 +13,8 @@ namespace SqlConnector\Service;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Query\QueryBuilder;
+use Ginger\Message\AbstractWorkflowMessageHandler;
+use Ginger\Message\GingerMessage;
 use Ginger\Message\LogMessage;
 use Ginger\Message\MessageNameUtils;
 use Ginger\Message\WorkflowMessage;
@@ -30,7 +32,7 @@ use Zend\XmlRpc\Value\AbstractCollection;
  * @package SqlConnector\src\Service
  * @author Alexander Miertsch <kontakt@codeliner.ws>
  */
-final class DoctrineTableGateway implements WorkflowMessageHandler
+final class DoctrineTableGateway extends AbstractWorkflowMessageHandler
 {
     /**
      * Key in collect-data single result metadata. If set to TRUE the TableGateway uses the identifier name of the ginger type to find a result
@@ -143,25 +145,37 @@ final class DoctrineTableGateway implements WorkflowMessageHandler
     }
 
     /**
-     * @param WorkflowMessage $aWorkflowMessage
-     * @return void
+     * If workflow message handler receives a collect-data message it forwards the message to this
+     * method and uses the returned GingerMessage as response
+     *
+     * @param WorkflowMessage $workflowMessage
+     * @return GingerMessage
      */
-    public function handleWorkflowMessage(WorkflowMessage $aWorkflowMessage)
+    protected function handleCollectData(WorkflowMessage $workflowMessage)
     {
         try {
-            switch ($aWorkflowMessage->getMessageType()) {
-                case MessageNameUtils::COLLECT_DATA:
-                    $this->collectData($aWorkflowMessage);
-                    break;
-                case MessageNameUtils::PROCESS_DATA:
-                    //@TODO: add handling of process_data messages
-                    //break;
-                default:
-                    $this->eventBus->dispatch(LogMessage::logUnsupportedMessageReceived($aWorkflowMessage, 'sqlconnector-' . $this->table));
-            }
+            return $this->collectData($workflowMessage);
         } catch (\Exception $ex) {
             ErrorHandler::stop();
-            $this->eventBus->dispatch(LogMessage::logException($ex, $aWorkflowMessage->getProcessTaskListPosition()));
+            return LogMessage::logException($ex, $workflowMessage->processTaskListPosition());
+        }
+    }
+
+    /**
+     * If workflow message handler receives a process-data message it forwards the message to this
+     * method and uses the returned GingerMessage as response
+     *
+     * @param WorkflowMessage $workflowMessage
+     * @return GingerMessage
+     */
+    protected function handleProcessData(WorkflowMessage $workflowMessage)
+    {
+        try {
+            //@TODO: Add handling of process-data
+            throw new \BadMethodCallException(__METHOD__ . " not supported by " . __CLASS__);
+        } catch (\Exception $ex) {
+            ErrorHandler::stop();
+            return LogMessage::logException($ex, $workflowMessage->processTaskListPosition());
         }
     }
 
@@ -170,28 +184,34 @@ final class DoctrineTableGateway implements WorkflowMessageHandler
      */
     private function collectData(WorkflowMessage $workflowMessage)
     {
-        $gingerType = $workflowMessage->getPayload()->getTypeClass();
+        $gingerType = $workflowMessage->payload()->getTypeClass();
 
         /** @var $desc Description */
         $desc = $gingerType::buildDescription();
 
         switch ($desc->nativeType()) {
             case NativeType::COLLECTION:
-                $this->collectResultSet($workflowMessage);
+                return $this->collectResultSet($workflowMessage);
                 break;
             case NativeType::DICTIONARY:
-                $this->collectSingleResult($workflowMessage);
+                return $this->collectSingleResult($workflowMessage);
                 break;
             default:
-                $this->eventBus->dispatch(LogMessage::logUnsupportedMessageReceived($workflowMessage, 'sqlconnector-' . $this->table));
+                return LogMessage::logUnsupportedMessageReceived($workflowMessage, 'sqlconnector-' . $this->table);
         }
     }
 
+    /**
+     * @param WorkflowMessage $workflowMessage
+     * @return WorkflowMessage
+     * @throws \RuntimeException
+     * @throws \InvalidArgumentException
+     */
     private function collectSingleResult(WorkflowMessage $workflowMessage)
     {
-        $itemType = $workflowMessage->getPayload()->getTypeClass();
+        $itemType = $workflowMessage->payload()->getTypeClass();
 
-        $metadata = $workflowMessage->getMetadata();
+        $metadata = $workflowMessage->metadata();
 
         if (! method_exists($itemType, 'fromDatabaseRow')) throw new \InvalidArgumentException(sprintf("Item type %s does not provide a static fromDatabaseRow factory method", $itemType));
         if (! method_exists($itemType, 'toDbColumnName')) throw new \InvalidArgumentException(sprintf("Item type %s does not provide a static toDbColumnName method", $itemType));
@@ -209,25 +229,25 @@ final class DoctrineTableGateway implements WorkflowMessageHandler
         $itemData = $query->execute()->fetch();
 
         if (is_null($itemData)) {
-            throw new \RuntimeException(sprintf("No %s found using metadata %s", $itemType, json_encode($workflowMessage->getMetadata())));
+            throw new \RuntimeException(sprintf("No %s found using metadata %s", $itemType, json_encode($workflowMessage->metadata())));
         }
 
-        $this->eventBus->dispatch($workflowMessage->answerWith($itemType::fromDatabaseRow($itemData)));
+        return $workflowMessage->answerWith($itemType::fromDatabaseRow($itemData));
     }
 
     private function collectResultSet(WorkflowMessage $workflowMessage)
     {
         /** @var $collectionType AbstractCollection */
-        $collectionType = $workflowMessage->getPayload()->getTypeClass();
+        $collectionType = $workflowMessage->payload()->getTypeClass();
 
         $itemType = $collectionType::prototype()->typeProperties()['item']->typePrototype()->of();
 
         if (! method_exists($itemType, 'fromDatabaseRow')) throw new \InvalidArgumentException(sprintf("Item type %s does not provide a static fromDatabaseRow factory method", $itemType));
         if (! method_exists($itemType, 'toDbColumnName')) throw new \InvalidArgumentException(sprintf("Item type %s does not provide a static toDbColumnName method", $itemType));
 
-        $count = $this->countRows($itemType, $workflowMessage->getMetadata());
+        $count = $this->countRows($itemType, $workflowMessage->metadata());
 
-        $query = $this->buildQueryFromMetadata($itemType, $workflowMessage->getMetadata());
+        $query = $this->buildQueryFromMetadata($itemType, $workflowMessage->metadata());
 
         $resultSet = $query->execute()->fetchAll();
 
@@ -240,7 +260,7 @@ final class DoctrineTableGateway implements WorkflowMessageHandler
 
         $collection = $collectionType::fromNativeValue($items);
 
-        $this->eventBus->dispatch($workflowMessage->answerWith($collection, ['total_items' => $count]));
+        return $workflowMessage->answerWith($collection, ['total_items' => $count]);
     }
 
     /**
@@ -369,28 +389,6 @@ final class DoctrineTableGateway implements WorkflowMessageHandler
         }
 
         $query->setParameter('__filter' . $filterCount, $value);
-    }
-
-    /**
-     * Register command bus that can be used to send new commands to the workflow processor
-     *
-     * @param CommandBus $commandBus
-     * @return void
-     */
-    public function useCommandBus(CommandBus $commandBus)
-    {
-        $this->commandBus = $commandBus;
-    }
-
-    /**
-     * Register event bus that can be used to send events to the workflow processor
-     *
-     * @param EventBus $eventBus
-     * @return void
-     */
-    public function useEventBus(EventBus $eventBus)
-    {
-        $this->eventBus = $eventBus;
     }
 }
  
