@@ -11,6 +11,7 @@ return array(
         'ProcessConfig',
         'FileConnector',
         'SqlConnector',
+        'ProcessorProxy',
         'Dashboard',
         'Application',
     ),

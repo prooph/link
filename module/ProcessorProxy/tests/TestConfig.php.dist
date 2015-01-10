@@ -1,0 +1,15 @@
+<?php
+return array(
+    'modules' => array(
+        'Application',
+        'ProcessorProxy',
+    ),
+    'module_listener_options' => array(
+        'config_glob_paths'    => array(
+        ),
+        'module_paths' => array(
+            'module',
+            'vendor',
+        ),
+    ),
+);
