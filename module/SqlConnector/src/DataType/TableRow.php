@@ -9,7 +9,7 @@
  * Date: 03.01.15 - 01:43
  */
 
-namespace SqlConnector\GingerType;
+namespace SqlConnector\DataType;
 
 use Ginger\Type\AbstractDictionary;
 use Ginger\Type\Description\NativeType;
@@ -17,7 +17,7 @@ use Ginger\Type\Description\NativeType;
 /**
  * Class TableRow
  *
- * @package SqlConnector\GingerType
+ * @package SqlConnector\DataType
  * @author Alexander Miertsch <kontakt@codeliner.ws>
  */
 abstract class TableRow extends AbstractDictionary

@@ -15,5 +15,21 @@ return array(
     'locations' => [
         'inbox'  => __DIR__ . '/../../data/inbox',
         'outbox' => __DIR__ . '/../../data/outbox',
-    ]
+    ],
+    //Ginger environment defaults
+    'service_manager' => [
+        'factories' => [
+            'ginger_environment' => 'Application\SharedKernel\Factory\GingerEnvironmentFactory',
+            \Ginger\Processor\Definition::SERVICE_WORKFLOW_PROCESSOR       => 'Ginger\Environment\Factory\WorkflowProcessorFactory',
+            \Ginger\Processor\Definition::SERVICE_PROCESS_FACTORY          => 'Ginger\Environment\Factory\ProcessFactoryFactory',
+            \Ginger\Processor\Definition::SERVICE_PROCESS_REPOSITORY       => 'Ginger\Environment\Factory\ProcessRepositoryFactory',
+        ],
+        'abstract_factories' => [
+            //ProophServiceBus section
+            //The factory creates the channels (ProophServiceBus buses) for the Ginger\Environment\ServicesAwareWorkflowEngine
+            //It listens on the requested names "ginger.command_bus.*" and "ginger.event_bus.*" and creates buses with
+            //special ginger environment plugins
+            'Ginger\Environment\Factory\AbstractServiceBusFactory'
+        ],
+    ],
 );

@@ -42,7 +42,7 @@ final class FileManagerController extends AbstractQueryController
         $viewModel = new ViewModel([
             'file_connectors' => $this->getFileConnectorsForClient(),
             'system_connectors' => $this->systemConfig->getConnectors(),
-            'available_data_types' => $this->getDataTypesForClient(),
+            'available_ginger_types' => $this->getGingerTypesForClient(),
             'available_file_types' => $this->availableFileTypes,
 
         ]);

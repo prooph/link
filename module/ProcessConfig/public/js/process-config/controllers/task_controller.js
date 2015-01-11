@@ -11,7 +11,7 @@ App.TaskController = Ember.ObjectController.extend(Ember.Evented, {
 
             if (m.task_type != Em.I18n.t("task.collect_data.value")) {
                 delete m["source"];
-                delete m["data_type"];
+                delete m["ginger_type"];
             }
 
             if (m.task_type != Em.I18n.t("task.process_data.value")) {
@@ -19,7 +19,7 @@ App.TaskController = Ember.ObjectController.extend(Ember.Evented, {
                 delete m["allowed_types"];
                 delete m["preferred_type"];
             } else {
-                m.set("allowed_types", this.get("availableDataTypes").map(function (data_type) { return data_type.value; }));
+                m.set("allowed_types", this.get("availableGingerTypes").map(function (ginger_type) { return ginger_type.value; }));
             }
 
             if (m.task_type != Em.I18n.t("task.manipulate_payload.value")) {
@@ -85,19 +85,19 @@ App.TaskController = Ember.ObjectController.extend(Ember.Evented, {
         return connector;
     }.property("isCollectDataTask", "isProcessDataTask", "source", "model.target"),
 
-    selectedDataType : function () {
+    selectedGingerType : function () {
         switch (this.get("task_type")) {
             case Em.I18n.t("task.collect_data.value"):
-                return this.get("data_type");
+                return this.get("ginger_type");
                 break;
             case Em.I18n.t("task.process_data.value"):
                 return this.get("preferred_type");
                 break;
         }
         return null;
-    }.property("data_type", "preferred_type", "task_type"),
+    }.property("ginger_type", "preferred_type", "task_type"),
 
-    isADataTypeSelected : Ember.computed.notEmpty("selectedDataType"),
+    isAGingerTypeSelected : Ember.computed.notEmpty("selectedGingerType"),
 
     isNotValid : function () {
         if (! this.get("isATaskTypeSelected")) return true;
@@ -105,11 +105,11 @@ App.TaskController = Ember.ObjectController.extend(Ember.Evented, {
         switch (this.get("task_type")) {
             case Em.I18n.t("task.collect_data.value"):
                 if (! this.get("isASourceSelected")) return true;
-                if (! this.get("isADataTypeSelected")) return true;
+                if (! this.get("isAGingerTypeSelected")) return true;
                 break;
             case Em.I18n.t("task.process_data.value"):
                 if (! this.get("isATargetSelected")) return true;
-                if (! this.get("isADataTypeSelected")) return true;
+                if (! this.get("isAGingerTypeSelected")) return true;
                 break;
             case Em.I18n.t("task.manipulate_payload.value"):
                 if (! this.get("isManipulationScriptSelected")) return true;
@@ -117,7 +117,7 @@ App.TaskController = Ember.ObjectController.extend(Ember.Evented, {
         }
 
         return false;
-    }.property("task_type", "source", "model.target", "data_type", "preferred_type", "manipulation_script"),
+    }.property("task_type", "source", "model.target", "ginger_type", "preferred_type", "manipulation_script"),
 
     availableTaskTypes : function () {
         var process = this.get("process"),
@@ -241,12 +241,12 @@ App.TaskController = Ember.ObjectController.extend(Ember.Evented, {
         return sources;
     },
 
-    availableDataTypes : function () {
-        var connectorName = null, dataTypes = [], setter = "";
+    availableGingerTypes : function () {
+        var connectorName = null, gingerTypes = [], setter = "";
         switch (this.get("task_type")) {
             case Em.I18n.t('task.collect_data.value'):
                 connectorName = this.get("source");
-                setter = "data_type";
+                setter = "ginger_type";
                 break;
             case Em.I18n.t('task.process_data.value'):
                 connectorName = this.get("model.target");
@@ -254,18 +254,18 @@ App.TaskController = Ember.ObjectController.extend(Ember.Evented, {
                 break;
         }
 
-        if (Em.isEmpty(connectorName)) return dataTypes;
+        if (Em.isEmpty(connectorName)) return gingerTypes;
 
         if (!Em.isEmpty(this.get("connectors")[connectorName])) {
-            dataTypes = this.get("connectors")[connectorName].allowed_types || [];
+            gingerTypes = this.get("connectors")[connectorName].allowed_types || [];
         }
 
-        if (dataTypes.length == 1) this.set(setter, dataTypes[0]);
-        var labeledDataTypes = dataTypes.map(function(dataType) {
-            return App.DataTypes.findBy('value', dataType);
+        if (gingerTypes.length == 1) this.set(setter, gingerTypes[0]);
+        var labeledGingerTypes = gingerTypes.map(function(gingerType) {
+            return App.GingerTypes.findBy('value', gingerType);
         });
 
-        return labeledDataTypes;
+        return labeledGingerTypes;
     }.property("task_type", "source", "model.target"),
 
     availableTargets : function () {

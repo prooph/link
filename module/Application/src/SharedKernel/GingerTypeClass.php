@@ -13,34 +13,34 @@ namespace Application\SharedKernel;
 use Ginger\Message\MessageNameUtils;
 
 /**
- * Class DataTypeClass
+ * Class GingerTypeClass
  *
  * Small helper to convert the data type part of a workflow message name back to the type class
  *
  * @package Application\SharedKernel
  * @author Alexander Miertsch <alexander.miertsch.extern@sixt.com>
  */
-final class DataTypeClass 
+final class GingerTypeClass
 {
-    public static function extractFromMessageName($messageName, array $knownDataTypes)
+    public static function extractFromMessageName($messageName, array $knownGingerTypes)
     {
         if (! is_string($messageName)) throw new \InvalidArgumentException("Message name must be string");
 
-        $dataType = MessageNameUtils::getTypePartOfMessageName($messageName);
+        $gingerType = MessageNameUtils::getTypePartOfMessageName($messageName);
 
-        if (empty($dataType)) throw new \InvalidArgumentException(sprintf(
+        if (empty($gingerType)) throw new \InvalidArgumentException(sprintf(
             "Invalid message name -%s- provided. Data type declaration could not be found.",
             $messageName
         ));
 
-        foreach ($knownDataTypes as $knownDataType) {
-            if (MessageNameUtils::normalize($knownDataType) === $dataType) return $knownDataType;
+        foreach ($knownGingerTypes as $knownGingerType) {
+            if (MessageNameUtils::normalize($knownGingerType) === $gingerType) return $knownGingerType;
         }
 
         throw new \InvalidArgumentException(sprintf(
             "The data type %s can not be resolved to a known class: %s",
-            $dataType,
-            implode(", ", $knownDataTypes)
+            $gingerType,
+            implode(", ", $knownGingerTypes)
         ));
     }
 } 

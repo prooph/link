@@ -11,10 +11,15 @@
 
 namespace ProcessorProxy\Api;
 
+use Application\Service\ActionController;
 use Ginger\Environment\Environment;
 use Ginger\Message\WorkflowMessage;
+use ProcessorProxy\Command\ForwardHttpMessage;
+use Prooph\ServiceBus\CommandBus;
 use Prooph\ServiceBus\Message\StandardMessage;
+use SqlConnector\DataType\GingerTestSource\TartikelCollection;
 use Zend\Mvc\Controller\AbstractRestfulController;
+use Zend\View\Model\JsonModel;
 
 /**
  * Class Message
@@ -22,15 +27,35 @@ use Zend\Mvc\Controller\AbstractRestfulController;
  * @package ProcessorProxy\Api
  * @author Alexander Miertsch <kontakt@codeliner.ws>
  */
-final class Message extends AbstractRestfulController
+final class Message extends AbstractRestfulController implements ActionController
 {
+    /**
+     * @var CommandBus
+     */
+    private $commandBus;
+
+    /**
+     * @param array $data
+     * @return mixed|void
+     */
     public function create(array $data)
     {
-        $message = WorkflowMessage::fromServiceBusMessage(StandardMessage::fromArray($data));
+        $message = StandardMessage::fromArray($data);
 
-        $env = Environment::setUp($this->getServiceLocator());
+        $this->commandBus->dispatch(ForwardHttpMessage::createWith($message));
 
-        $env->getWorkflowProcessor()->receiveMessage($message);
+        //@TODO: improve response, provide get service which returns status of the message including related actions
+        //@TODO: like started process etc.
+        return $message->toArray();
+    }
+
+    /**
+     * @param CommandBus $commandBus
+     * @return void
+     */
+    public function setCommandBus(CommandBus $commandBus)
+    {
+        $this->commandBus = $commandBus;
     }
 }
  

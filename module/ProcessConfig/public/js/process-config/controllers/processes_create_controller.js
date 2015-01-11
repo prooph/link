@@ -1,10 +1,10 @@
 App.ProcessesCreateController = Ember.ObjectController.extend({
     actions : {
-        setDataTypeSelectFocused : function () {
-            this.set("dataTypeSelectFocused", true);
+        setGingerTypeSelectFocused : function () {
+            this.set("gingerTypeSelectFocused", true);
         },
-        unsetDataTypeSelectFocused : function () {
-            this.set("dataTypeSelectFocused", false);
+        unsetGingerTypeSelectFocused : function () {
+            this.set("gingerTypeSelectFocused", false);
         },
         createProcess : function () {
 
@@ -13,7 +13,7 @@ App.ProcessesCreateController = Ember.ObjectController.extend({
                 "process_type" : this.get("process_type"),
                 "start_message" : {
                     message_type : this.get("message_type"),
-                    data_type : this.get("data_type")
+                    ginger_type : this.get("ginger_type")
                 },
                 "tasks" : []
             });
@@ -27,7 +27,7 @@ App.ProcessesCreateController = Ember.ObjectController.extend({
 
     processTypes : [],
     messageTypes : [],
-    dataTypes : [],
+    gingerTypes : [],
 
     isNonProcessSelected    : Ember.computed.empty("process_type"),
     isAProcessSelected      : Ember.computed.notEmpty("process_type"),
@@ -39,18 +39,18 @@ App.ProcessesCreateController = Ember.ObjectController.extend({
     isCollectDataMessage    : Ember.computed.equal("message_type", Em.I18n.t('message.collect_data.value')),
     isDataCollectedMessage  : Ember.computed.equal("message_type", Em.I18n.t('message.data_collected.value')),
 
-    isDataTypeSelected      : Ember.computed.notEmpty("data_type"),
+    isGingerTypeSelected      : Ember.computed.notEmpty("ginger_type"),
 
-    dataTypeSelectFocused : false,
-    isNotDataTypeSelectFocused : function () {
-        return !this.get("dataTypeSelectFocused");
-    }.property("dataTypeSelectFocused"),
+    gingerTypeSelectFocused : false,
+    isNotGingerTypeSelectFocused : function () {
+        return !this.get("gingerTypeSelectFocused");
+    }.property("gingerTypeSelectFocused"),
 
     isNotValid : function () {
         return this.get("isNonMessageSelected")
             || this.get("isNonProcessSelected")
-            || ! this.get("isDataTypeSelected");
-    }.property("isNonMessageSelected", "isNonProcessSelected", "isDataTypeSelected"),
+            || ! this.get("isGingerTypeSelected");
+    }.property("isNonMessageSelected", "isNonProcessSelected", "isGingerTypeSelected"),
 
     processName : function () {
         var name = "";
@@ -59,10 +59,10 @@ App.ProcessesCreateController = Ember.ObjectController.extend({
         if (this.get("process_type") == Em.I18n.t('process.foreach.value')) name = name + "Foreach ";
         if (this.get("message_type") == Em.I18n.t('message.collect_data.value')) name = name + "Collect ";
         if (this.get("message_type") == Em.I18n.t('message.data_collected.value')) name = name + "Process ";
-        if (this.get("data_type") != null) name = name + App.dataTypeName(this.get("data_type")) + " ";
+        if (this.get("ginger_type") != null) name = name + App.gingerTypeName(this.get("ginger_type")) + " ";
 
         return name;
-    }.property("process_type", "message_type", "data_type")
+    }.property("process_type", "message_type", "ginger_type")
 });
 
 App.ProcessesCreateRoute = Ember.Route.extend({
@@ -88,7 +88,7 @@ App.ProcessesCreateRoute = Ember.Route.extend({
                     label : Em.I18n.t('message.data_collected.label')
                 }
             ],
-            dataTypes : App.DataTypes,
+            gingerTypes : App.GingerTypes,
             model : model
         });
     },
@@ -96,7 +96,7 @@ App.ProcessesCreateRoute = Ember.Route.extend({
         return App.Object.create({
             process_type : null,
             message_type : null,
-            data_type    : null
+            ginger_type    : null
         });
     }
 });

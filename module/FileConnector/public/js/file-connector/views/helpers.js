@@ -1,3 +1,3 @@
-App.dataTypeName = function (dataType) {
-    return data_type_name(dataType, App.DataTypes);
+App.gingerTypeName = function (gingerType) {
+    return ginger_type_name(gingerType, App.GingerTypes);
 };

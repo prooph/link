@@ -1,0 +1,67 @@
+<?php
+/*
+ * This file is part of the Ginger Workflow Framework.
+ * (c) Alexander Miertsch <contact@prooph.de>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ * 
+ * Date: 10.01.15 - 22:57
+ */
+
+namespace ProcessorProxy\Api;
+
+use Application\Service\AbstractRestController;
+use Application\Service\ActionController;
+use Assert\Assertion;
+use Ginger\Message\WorkflowMessage;
+use ProcessorProxy\Command\ForwardHttpMessage;
+use Prooph\ServiceBus\CommandBus;
+use Zend\View\Model\JsonModel;
+use ZF\ApiProblem\ApiProblem;
+use ZF\ApiProblem\ApiProblemResponse;
+
+final class CollectDataTrigger extends AbstractRestController implements ActionController
+{
+    /**
+     * @var CommandBus
+     */
+    private $commandBus;
+
+    public function create(array $data)
+    {
+        if (! array_key_exists("collect-data-trigger", $data)) return new ApiProblemResponse(new ApiProblem(422, 'Root key collect-data-trigger missing in request data'));
+
+        $data = $data["collect-data-trigger"];
+
+        if (! array_key_exists('ginger_type', $data)) return new ApiProblemResponse(new ApiProblem(422, 'Key ginger_type is missing'));
+
+        $gingerType = $data['ginger_type'];
+
+        if (! class_exists($gingerType)) return new ApiProblemResponse(new ApiProblem(422, 'Provided data type is unknown'));
+
+        try {
+            Assertion::implementsInterface($gingerType, 'Ginger\Type\Type');
+        } catch (\InvalidArgumentException $ex) {
+            return new ApiProblemResponse(new ApiProblem(422, 'Provided data type is not valid'));
+        }
+
+        $wfMessage = WorkflowMessage::collectDataOf($gingerType::prototype());
+
+        $sbMessage = $wfMessage->toServiceBusMessage();
+
+        $this->commandBus->dispatch(ForwardHttpMessage::createWith($sbMessage));
+
+        return new JsonModel($sbMessage->toArray());
+    }
+
+    /**
+     * @param CommandBus $commandBus
+     * @return void
+     */
+    public function setCommandBus(CommandBus $commandBus)
+    {
+        $this->commandBus = $commandBus;
+    }
+}
+ 

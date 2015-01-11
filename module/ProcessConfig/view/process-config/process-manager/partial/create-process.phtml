@@ -40,18 +40,18 @@
                     optionLabelPath="content.label"
                     value=message_type}}
                     </div>
-                    <div {{bind-attr class=":form-group :has-feedback isDataTypeSelected:has-success"}}>
+                    <div {{bind-attr class=":form-group :has-feedback isGingerTypeSelected:has-success"}}>
                     {{data-type-select class="form-control form-control-with-desc"
                     prompt="- <?php echo $this->translate('Data  Type') ?> -"
-                    content=dataTypes
+                    content=gingerTypes
                     optionValuePath="content.value"
                     optionLabelPath="content.label"
-                    value=data_type}}
+                    value=ginger_type}}
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="well well-lg text-info process-desc">
-                        {{#if isNotDataTypeSelectFocused}}
+                        {{#if isNotGingerTypeSelectFocused}}
                         {{#if isNonMessageSelected}}
                         <?php echo $this->translate('Each process is triggered by a workflow message. Such a message consists of two parts: a message type and a data type.') ?>
                         {{/if}}
@@ -62,7 +62,7 @@
                         <?php echo $this->translate('A data-collected message is useful when a process should be started automatically as soon as such a message is received.') ?>
                         {{/if}}
                         {{/if}}
-                        {{#if dataTypeSelectFocused}}
+                        {{#if gingerTypeSelectFocused}}
                         <?php echo $this->translate('Data types are provided by system connectors or plugins. They define the structures a connected system can provide or process.') ?>
                         {{/if}}
                     </div>

@@ -13,7 +13,7 @@ namespace SystemConfig\Model;
 
 use Application\Event\RecordsSystemChangedEvents;
 use Application\Event\SystemChangedEventRecorder;
-use Application\SharedKernel\DataTypeClass;
+use Application\SharedKernel\GingerTypeClass;
 use Ginger\Environment\Environment;
 use Ginger\Message\MessageNameUtils;
 use Ginger\Processor\Definition;
@@ -26,7 +26,6 @@ use SystemConfig\Event\GingerConfigFileWasRemoved;
 use SystemConfig\Event\NewProcessWasAddedToConfig;
 use SystemConfig\Event\NodeNameWasChanged;
 use SystemConfig\Event\ProcessConfigWasChanged;
-use Zend\Stdlib\ArrayUtils;
 use Zend\Stdlib\ErrorHandler;
 
 /**
@@ -196,7 +195,7 @@ final class GingerConfig implements SystemChangedEventRecorder
     {
         $processConfig = ["name" => $name, "process_type" => $type, "tasks" => $tasks];
 
-        $this->assertMessageName($startMessage, $this->projection()->getAllAvailableDataTypes());
+        $this->assertMessageName($startMessage, $this->projection()->getAllAvailableGingerTypes());
         $this->assertStartMessageNotExists($startMessage);
         $this->assertProcessConfig($startMessage, $processConfig);
 
@@ -218,7 +217,7 @@ final class GingerConfig implements SystemChangedEventRecorder
      */
     public function replaceProcessTriggeredBy($startMessage, array $processConfig, ConfigWriter $configWriter)
     {
-        $this->assertMessageName($startMessage, $this->projection()->getAllAvailableDataTypes());
+        $this->assertMessageName($startMessage, $this->projection()->getAllAvailableGingerTypes());
         $this->assertProcessConfig($startMessage, $processConfig);
 
         if (! isset($this->config['ginger']['processes'][$startMessage])) throw new \InvalidArgumentException(sprintf('Can not find a process that is triggered by message %s', $startMessage));
@@ -315,7 +314,7 @@ final class GingerConfig implements SystemChangedEventRecorder
         $projection = new \SystemConfig\Projection\GingerConfig($config, $this->configLocation, true);
 
         foreach ($config['ginger']['processes'] as $startMessage => $processConfig) {
-            $this->assertMessageName($startMessage, $projection->getAllAvailableDataTypes());
+            $this->assertMessageName($startMessage, $projection->getAllAvailableGingerTypes());
             $this->assertProcessConfig($startMessage, $processConfig);
         }
 
@@ -368,7 +367,7 @@ final class GingerConfig implements SystemChangedEventRecorder
 
 
 
-        DataTypeClass::extractFromMessageName($messageName, $availableGingerTypes);
+        GingerTypeClass::extractFromMessageName($messageName, $availableGingerTypes);
     }
 
     /**
@@ -410,7 +409,7 @@ final class GingerConfig implements SystemChangedEventRecorder
         switch ($taskConfig['task_type']) {
             case Definition::TASK_COLLECT_DATA:
                 if (! array_key_exists('source', $taskConfig))              throw new \InvalidArgumentException('Missing source in config '. $configPath);
-                if (! array_key_exists('data_type', $taskConfig))           throw new \InvalidArgumentException('Missing data type in config '. $configPath);
+                if (! array_key_exists('ginger_type', $taskConfig))           throw new \InvalidArgumentException('Missing data type in config '. $configPath);
                 break;
             case Definition::TASK_PROCESS_DATA:
                 if (! array_key_exists('target', $taskConfig))              throw new \InvalidArgumentException('Missing target in config '. $configPath);
@@ -447,7 +446,7 @@ final class GingerConfig implements SystemChangedEventRecorder
         if (!is_array($connectorConfig['allowed_types'])) throw new \InvalidArgumentException('Allowed types must be an array in connector config '. $connectorId);
 
         array_walk($connectorConfig['allowed_types'], function ($allowedType) use ($connectorId, $config) {
-            if (! in_array($allowedType, $config->getAllAvailableDataTypes())) throw new \InvalidArgumentException(sprintf('Allowed data type %s is not known by the system in connector config %s', $allowedType, $connectorId));
+            if (! in_array($allowedType, $config->getAllAvailableGingerTypes())) throw new \InvalidArgumentException(sprintf('Allowed data type %s is not known by the system in connector config %s', $allowedType, $connectorId));
         });
 
         if (isset($connectorConfig['metadata'])) {
@@ -455,7 +454,7 @@ final class GingerConfig implements SystemChangedEventRecorder
         }
 
         if (isset($connectorConfig['preferred_type'])) {
-            if (! in_array($connectorConfig['preferred_type'], $config->getAllAvailableDataTypes())) throw new \InvalidArgumentException(sprintf('Preferred data type %s is not known by the system in connector config %s', $connectorConfig['preferred_type'], $connectorId));
+            if (! in_array($connectorConfig['preferred_type'], $config->getAllAvailableGingerTypes())) throw new \InvalidArgumentException(sprintf('Preferred data type %s is not known by the system in connector config %s', $connectorConfig['preferred_type'], $connectorId));
         }
     }
 

@@ -12,7 +12,7 @@
 namespace ProcessConfig\Controller;
 
 use Application\Service\AbstractQueryController;
-use Application\SharedKernel\DataTypeClass;
+use Application\SharedKernel\GingerTypeClass;
 use Application\SharedKernel\LocationTranslator;
 use Application\SharedKernel\ScriptLocation;
 use Ginger\Functional\Func;
@@ -55,10 +55,10 @@ final class ProcessManagerController extends AbstractQueryController
             'processes' => Func::map(
                     $this->systemConfig->getProcessDefinitions(),
                     function($definition, $message) {
-                        return $this->convertToClientProcess($message, $definition, $this->systemConfig->getAllAvailableDataTypes());
+                        return $this->convertToClientProcess($message, $definition, $this->systemConfig->getAllAvailableGingerTypes());
                     }
                 ),
-            'available_data_types' => $this->getDataTypesForClient(),
+            'available_ginger_types' => $this->getGingerTypesForClient(),
             'available_task_types' => \Ginger\Processor\Definition::getAllTaskTypes(),
             'available_manipulation_scripts' => $this->scriptLocation->getScriptNames(),
             'connectors' => $this->systemConfig->getConnectors(),
@@ -93,10 +93,10 @@ final class ProcessManagerController extends AbstractQueryController
     /**
      * @param string $startMessage
      * @param array $processDefinition
-     * @param array $knownDataTypes
+     * @param array $knownGingerTypes
      * @return array
      */
-    private function convertToClientProcess($startMessage, array $processDefinition, array $knownDataTypes)
+    private function convertToClientProcess($startMessage, array $processDefinition, array $knownGingerTypes)
     {
         $messageType = MessageNameUtils::getMessageSuffix($startMessage);
 
@@ -111,7 +111,7 @@ final class ProcessManagerController extends AbstractQueryController
             'process_type' => $processDefinition['process_type'],
             'start_message' => [
                 'message_type' => $messageType,
-                'data_type' => DataTypeClass::extractFromMessageName($startMessage, $knownDataTypes)
+                'ginger_type' => GingerTypeClass::extractFromMessageName($startMessage, $knownGingerTypes)
             ],
             'tasks' => array_map(
                 function ($task) {

@@ -89,7 +89,7 @@ final class GingerConfig
     /**
      * @return array
      */
-    public function getAllAvailableDataTypes()
+    public function getAllAvailableGingerTypes()
     {
         if (! is_null($this->availableTypes)) return $this->availableTypes;
 

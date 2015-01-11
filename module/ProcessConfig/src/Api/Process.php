@@ -140,7 +140,7 @@ final class Process extends AbstractRestController implements ActionController, 
      */
     private function generateStartMessage(array $data)
     {
-        return "ginger-message-" . MessageNameUtils::normalize($data["start_message"]["data_type"]) . '-' . $data["start_message"]["message_type"];
+        return "ginger-message-" . MessageNameUtils::normalize($data["start_message"]["ginger_type"]) . '-' . $data["start_message"]["message_type"];
     }
 
     private function validateProcessData(array $data)
@@ -150,7 +150,7 @@ final class Process extends AbstractRestController implements ActionController, 
         if (! array_key_exists("start_message", $data)) return new ApiProblemResponse(new ApiProblem(422, 'Start message missing in request data'));
         if (! is_array($data["start_message"])) return new ApiProblemResponse(new ApiProblem(422, 'Start message must be an array'));
         if (! array_key_exists("message_type", $data["start_message"])) return new ApiProblemResponse(new ApiProblem(422, 'Message type missing in start message definition'));
-        if (! array_key_exists("data_type", $data["start_message"])) return new ApiProblemResponse(new ApiProblem(422, 'Data type missing in start message definition'));
+        if (! array_key_exists("ginger_type", $data["start_message"])) return new ApiProblemResponse(new ApiProblem(422, 'Data type missing in start message definition'));
         if (! array_key_exists("tasks", $data)) return new ApiProblemResponse(new ApiProblem(422, 'Tasks missing in request data'));
         if (! is_array($data["tasks"])) return new ApiProblemResponse(new ApiProblem(422, 'Tasks must be an array'));
 

@@ -7,14 +7,14 @@
 <hr>
 <div class="row">
     <div class="col-sm-12 col-md-8 col-md-offset-2">
-        <div {{bind-attr class=":form-group :has-feedback isDataTypeSelected:has-success :text-left"}}>
-            <label for="data_type"><?php echo $this->translate('Choose data type for which you want to create a file connector.') ?></label>
-            {{view "select" name="data_type" class="form-control"
+        <div {{bind-attr class=":form-group :has-feedback isGingerTypeSelected:has-success :text-left"}}>
+            <label for="ginger_type"><?php echo $this->translate('Choose data type for which you want to create a file connector.') ?></label>
+            {{view "select" name="ginger_type" class="form-control"
             prompt="- <?php echo $this->translate('Data Type') ?> -"
-            content=availableDataTypes
+            content=availableGingerTypes
             optionValuePath="content.value"
             optionLabelPath="content.label"
-            value=data_type}}
+            value=ginger_type}}
         </div>
         <div {{bind-attr class=":form-group :has-feedback isFileTypeSelected:has-success :text-left"}}>
             <label for="file_type"><?php echo $this->translate('Select the type the file will have.') ?></label>

@@ -15,7 +15,7 @@ use Ginger\Type\Description\Description;
 use Ginger\Type\Description\NativeType;
 use Ginger\Type\Integer;
 use Ginger\Type\String;
-use SqlConnector\GingerType\TableRow;
+use SqlConnector\DataType\TableRow;
 
 /**
  * Class TestUser

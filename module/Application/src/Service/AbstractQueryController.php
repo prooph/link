@@ -44,32 +44,32 @@ class AbstractQueryController extends \Zend\Mvc\Controller\AbstractActionControl
      *
      * If optional data type array is passed as argument, this is used instead of all available types
      *
-     * @param array|null $dataTypes
+     * @param array|null $gingerTypes
      * @return array
      */
-    protected function getDataTypesForClient(array $dataTypes = null)
+    protected function getGingerTypesForClient(array $gingerTypes = null)
     {
-        if (is_null($dataTypes)) {
-            $dataTypes = $this->systemConfig->getAllAvailableDataTypes();
+        if (is_null($gingerTypes)) {
+            $gingerTypes = $this->systemConfig->getAllAvailableGingerTypes();
         }
 
-        return array_map(function($dataTypeClass) { return $this->prepareDataType($dataTypeClass); }, $dataTypes);
+        return array_map(function($gingerTypeClass) { return $this->prepareGingerType($gingerTypeClass); }, $gingerTypes);
     }
 
-    private function prepareDataType($dataTypeClass)
+    private function prepareGingerType($gingerTypeClass)
     {
         $properties = [];
 
         /** @var $typeProperty PrototypeProperty */
-        foreach ($dataTypeClass::prototype()->typeProperties() as $typeProperty) {
-            $properties[$typeProperty->propertyName()] = $this->prepareDataType($typeProperty->typePrototype()->of());
+        foreach ($gingerTypeClass::prototype()->typeProperties() as $typeProperty) {
+            $properties[$typeProperty->propertyName()] = $this->prepareGingerType($typeProperty->typePrototype()->of());
         }
 
         /** @var $description Description */
-        $description = $dataTypeClass::prototype()->typeDescription();
+        $description = $gingerTypeClass::prototype()->typeDescription();
 
         return [
-            'value' => $dataTypeClass,
+            'value' => $gingerTypeClass,
             'label' => $description->label(),
             'properties' => $properties,
             'native_type' => $description->nativeType()

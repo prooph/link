@@ -27,6 +27,9 @@ $settings = array(
         'prooph.psb.callback_invoke_strategy',
         //We force the rule -one handler per command- with a custom invoke strategy (Application\ProophPlugin\SingleHandleMethodInvokeStrategy)
         'application.psb.single_handle_method_invoke_strategy',
+        //This plugin extracts a service bus message out of a ProcessorProxy\Command\ForwardMessage command
+        //when the command is send to a message dispatcher
+        'processor_proxy.forward_message_extractor_translator',
     ),
     /**
      * Define a list of utils that should be used by the event bus.

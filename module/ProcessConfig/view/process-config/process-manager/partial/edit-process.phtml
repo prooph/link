@@ -40,13 +40,13 @@
             optionLabelPath="content.label"
             value=source}}
         </div>
-        <div {{bind-attr class=":form-group :has-feedback isADataTypeSelected:has-success"}}>
+        <div {{bind-attr class=":form-group :has-feedback isAGingerTypeSelected:has-success"}}>
             {{view "select" class="form-control form-control-with-desc"
             prompt="- <?php echo $this->translate('Data Type') ?> -"
-            content=availableDataTypes
+            content=availableGingerTypes
             optionValuePath="content.value"
             optionLabelPath="content.label"
-            value=data_type}}
+            value=ginger_type}}
         </div>
     {{/if}}
     {{#if isProcessDataTask}}
@@ -58,10 +58,10 @@
             optionLabelPath="content.label"
             value=model.target}}
         </div>
-        <div {{bind-attr class=":form-group :has-feedback isADataTypeSelected:has-success"}}>
+        <div {{bind-attr class=":form-group :has-feedback isAGingerTypeSelected:has-success"}}>
             {{view "select" class="form-control form-control-with-desc"
             prompt="- <?php echo $this->translate('Data Type') ?> -"
-            content=availableDataTypes
+            content=availableGingerTypes
             optionValuePath="content.value"
             optionLabelPath="content.label"
             value=preferred_type}}

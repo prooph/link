@@ -1,7 +1,7 @@
-window.data_type_name = function (dataType, availableDataTypes) {
-    var dataTypeObj = availableDataTypes.findBy('value', dataType);
+window.ginger_type_name = function (gingerType, availableGingerTypes) {
+    var gingerTypeObj = availableGingerTypes.findBy('value', gingerType);
 
-    return (typeof dataTypeObj !== "undefined")? dataTypeObj.label : dataType;
+    return (typeof gingerTypeObj !== "undefined")? gingerTypeObj.label : gingerType;
 };
 
 window.connector_name = function (connectorId, availableConnectors) {

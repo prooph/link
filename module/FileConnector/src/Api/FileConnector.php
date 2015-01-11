@@ -154,7 +154,7 @@ final class FileConnector extends AbstractRestController implements ActionContro
     private function validateConnectorData(array $data)
     {
         if (! array_key_exists("name", $data)) return new ApiProblemResponse(new ApiProblem(422, 'Connector name missing in request data'));
-        if (! array_key_exists("data_type", $data)) return new ApiProblemResponse(new ApiProblem(422, 'Data type missing in request data'));
+        if (! array_key_exists("ginger_type", $data)) return new ApiProblemResponse(new ApiProblem(422, 'Data type missing in request data'));
         if (! array_key_exists("writable", $data)) return new ApiProblemResponse(new ApiProblem(422, 'Writable missing in request data'));
         if (! array_key_exists("readable", $data)) return new ApiProblemResponse(new ApiProblem(422, 'Readable missing in request data'));
         if (! array_key_exists("metadata", $data)) return new ApiProblemResponse(new ApiProblem(422, 'Metadata missing in request data'));

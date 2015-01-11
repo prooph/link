@@ -1,8 +1,8 @@
 <?php
 return [
     'processes' => [
-        'ginger-message-sqlconnectordatatypegingertestsourcetartikelcollection-collect-data' => [
-            'id' => 'ginger-message-sqlconnectordatatypegingertestsourcetartikelcollection-collect-data',
+        'ginger-message-sqlconnectorgingertypegingertestsourcetartikelcollection-collect-data' => [
+            'id' => 'ginger-message-sqlconnectorgingertypegingertestsourcetartikelcollection-collect-data',
             'name' => 'Linear Collect TartikelCollection ',
             'processType' => 'linear_messaging',
             'startMessage' => [
@@ -24,7 +24,7 @@ return [
             ],
         ],
     ],
-    'available_data_types' => [
+    'available_ginger_types' => [
         [
             'value' => 'SqlConnector\\DataType\\GingerTestSource\\Tartikel',
             'label' => 'Tartikel Testsource',

@@ -98,12 +98,12 @@ PM.SqlconnectorMetadataController = Ember.ObjectController.extend({
     tempOrderByOrder : null,
 
     isSingleResultType : function () {
-        var dataTypeObj = PM.DataTypes.findBy("value", this.get("parentController.selectedDataType"));
+        var gingerTypeObj = PM.GingerTypes.findBy("value", this.get("parentController.selectedGingerType"));
 
-        if (Ember.isEmpty(dataTypeObj)) return false;
+        if (Ember.isEmpty(gingerTypeObj)) return false;
 
-        return dataTypeObj.native_type !== "collection";
-    }.property("parentController.selectedDataType"),
+        return gingerTypeObj.native_type !== "collection";
+    }.property("parentController.selectedGingerType"),
 
     metadataFilterList : function() {
         var filters = this.get("metadata").get("filter") || PM.Object.create({});
@@ -117,23 +117,23 @@ PM.SqlconnectorMetadataController = Ember.ObjectController.extend({
         return filterList;
     }.property('metadata.filter'),
 
-    availableDataTypeProperties : function () {
-        var dataTypeObj = PM.DataTypes.findBy("value", this.get("parentController.selectedDataType"));
+    availableGingerTypeProperties : function () {
+        var gingerTypeObj = PM.GingerTypes.findBy("value", this.get("parentController.selectedGingerType"));
 
-        if (Ember.isEmpty(dataTypeObj)) return [];
+        if (Ember.isEmpty(gingerTypeObj)) return [];
 
-        if (dataTypeObj.native_type === "collection") dataTypeObj = dataTypeObj.properties.item;
+        if (gingerTypeObj.native_type === "collection") gingerTypeObj = gingerTypeObj.properties.item;
 
         var properties = [];
 
-        for (prop in dataTypeObj.properties) {
+        for (prop in gingerTypeObj.properties) {
             properties.push(prop);
         }
 
         if (! properties.contains(this.get("tempFilter").get("column"))) this.get("tempFilter").set("column", null);
 
         return properties;
-    }.property("parentController.selectedDataType"),
+    }.property("parentController.selectedGingerType"),
 
     availableOperands : ["=", "<", "<=", ">", ">=", "like", "ilike"],
 
@@ -163,9 +163,9 @@ PM.SqlconnectorMetadataController = Ember.ObjectController.extend({
     }.property("tempFilter.column"),
 
     isIdentifier : function () {
-        var dataTypeObj = PM.DataTypes.findBy("value", this.get("parentController.selectedDataType"));
+        var gingerTypeObj = PM.GingerTypes.findBy("value", this.get("parentController.selectedGingerType"));
 
-        if (Ember.isEmpty(dataTypeObj) || dataTypeObj.native_type !== "collection") {
+        if (Ember.isEmpty(gingerTypeObj) || gingerTypeObj.native_type !== "collection") {
             var isIdentifier = this.get("metadata").get("identifier") || false;
 
             if (isIdentifier) this.get("metadata").set("filter", PM.Object.create({}));
@@ -173,24 +173,24 @@ PM.SqlconnectorMetadataController = Ember.ObjectController.extend({
             return isIdentifier;
         }
 
-        if (dataTypeObj.native_type === "collection") {
+        if (gingerTypeObj.native_type === "collection") {
             this.get("metadata").set("identifier", false);
         }
 
         return false;
-    }.property('parentController.selectedDataType', 'metadata.identifier'),
+    }.property('parentController.selectedGingerType', 'metadata.identifier'),
 
     availableOrderByProperties : function () {
-        var dataTypeProperties = this.get("availableDataTypeProperties");
+        var gingerTypeProperties = this.get("availableGingerTypeProperties");
 
         var orderByProps = this.get("orderByArr").map(function (order) {
             return order.split(" ")[0];
         });
 
-        return dataTypeProperties.filter(function (prop) {
+        return gingerTypeProperties.filter(function (prop) {
             return ! orderByProps.contains(prop);
         })
-    }.property("availableDataTypeProperties", "metadata.order_by"),
+    }.property("availableGingerTypeProperties", "metadata.order_by"),
 
     orderByArr : function () {
         var orderBy =  this.get("metadata").get("order_by");

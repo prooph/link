@@ -38,7 +38,7 @@ final class FileGatewayTranslator
 
         unset($connectorData['allowed_messages']);
 
-        $connectorData['data_type'] = $connectorData['allowed_types'][0];
+        $connectorData['ginger_type'] = $connectorData['allowed_types'][0];
 
         unset($connectorData['allowed_types']);
 
@@ -63,9 +63,9 @@ final class FileGatewayTranslator
         unset($connectorData['writable']);
         unset($connectorData['readable']);
 
-        $connectorData['allowed_types'] = [$connectorData['data_type']];
+        $connectorData['allowed_types'] = [$connectorData['ginger_type']];
 
-        unset($connectorData['data_type']);
+        unset($connectorData['ginger_type']);
 
         return $connectorData;
     }

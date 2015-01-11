@@ -16,7 +16,7 @@ $this->inlineScript()->captureStart();
 
 $apiUrl = ltrim($this->url('process_config/api'), '/');
 
-$availableDataTypes = json_encode($this->available_data_types);
+$availableGingerTypes = json_encode($this->available_ginger_types);
 $availableTaskTypes = json_encode($this->available_task_types);
 $availableManipulationScripts = json_encode($this->available_manipulation_scripts);
 $connectors = json_encode($this->connectors);
@@ -86,7 +86,7 @@ Em.I18n.translations = $clientTranslations;
 
 App.TaskTypes          = $availableTaskTypes;
 App.ManipulationScrits = $availableManipulationScripts;
-App.DataTypes          = $availableDataTypes;
+App.GingerTypes          = $availableGingerTypes;
 App.Connectors         = $connectors;
 App.Locations          = $locations;
 

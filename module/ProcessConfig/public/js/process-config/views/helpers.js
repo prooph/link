@@ -1,11 +1,11 @@
 Ember.Handlebars.helper('task-desc', function(task) {
     var prefix = Em.I18n.t('task.task') + " " +task.id + ": ";
-    var dataTypeName = App.dataTypeName;
+    var gingerTypeName = App.gingerTypeName;
 
     if (task.task_type === Em.I18n.t("task.collect_data.value")) {
 
         var source = (Em.isEmpty(task.source))? "source" : App.connectorName(task.source);
-        var sourceType = (typeof task.data_type === "undefined")? "data" : dataTypeName(task.data_type);
+        var sourceType = (typeof task.ginger_type === "undefined")? "data" : gingerTypeName(task.ginger_type);
         return prefix + Em.I18n.t('task.collect_data.name', {sourceType : sourceType, source : source});
     }
 
@@ -19,7 +19,7 @@ Ember.Handlebars.helper('task-desc', function(task) {
             preferredType = task.allowed_types[0];
         }
 
-        preferredType = dataTypeName(preferredType);
+        preferredType = gingerTypeName(preferredType);
 
         return  prefix + Em.I18n.t('task.process_data.name', {preferredType : preferredType, target : target});
     }
@@ -33,11 +33,11 @@ Ember.Handlebars.helper('task-desc', function(task) {
     }
 
     return prefix + Handlebars.Utils.escapeExpression(task.task_type);
-}, "task_type", "source", "target", "data_type", "allowed_types", "preferred_type", "manipulation_script");
+}, "task_type", "source", "target", "ginger_type", "allowed_types", "preferred_type", "manipulation_script");
 
 
-App.dataTypeName = function (dataType) {
-    return data_type_name(dataType, App.DataTypes);
+App.gingerTypeName = function (gingerType) {
+    return ginger_type_name(gingerType, App.GingerTypes);
 };
 
 App.connectorName = function (connectorId) {

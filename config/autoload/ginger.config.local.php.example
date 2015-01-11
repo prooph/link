@@ -11,7 +11,7 @@ return [
                     [
                         "task_type" => 'collect_data',
                         "source" => 'sqlconnector:::ginger_test_source',
-                        "data_type" => 'SqlConnector\DataType\GingerTestSource\ProductCollection'
+                        "ginger_type" => 'SqlConnector\DataType\GingerTestSource\ProductCollection'
                     ],
                     [
                         "task_type" => 'manipulate_payload',

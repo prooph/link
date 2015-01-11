@@ -11,8 +11,6 @@
 
 namespace ProcessorProxy\ProophPlugin;
 
-use Ginger\Message\MessageNameUtils;
-use Ginger\Message\WorkflowMessage;
 use Ginger\Processor\WorkflowEngine;
 use Prooph\ServiceBus\Message\MessageDispatcherInterface;
 use Prooph\ServiceBus\Message\MessageInterface;
@@ -32,6 +30,14 @@ final class InMemoryMessageForwarder implements MessageDispatcherInterface
      * @var WorkflowEngine
      */
     private $workflowEngine;
+
+    /**
+     * @param WorkflowEngine $workflowEngine
+     */
+    public function __construct(WorkflowEngine $workflowEngine)
+    {
+        $this->workflowEngine = $workflowEngine;
+    }
 
     /**
      * @param MessageInterface $message
