@@ -18,6 +18,8 @@
         "prooph/prooph-service-bus-module": "~1.0",
         "prooph/prooph-event-store-module": "~1.0",
         "prooph/event-store-doctrine-adapter": "~0.3",
+        "doctrine/doctrine-orm-module": "~0.8.0",
+        "doctrine/migrations": "v1.0-ALPHA1",
         "prooph/event-sourcing": "~1.0",
         "rwoverdijk/assetmanager": "~1.4",
         "league/csv": "~6.2",

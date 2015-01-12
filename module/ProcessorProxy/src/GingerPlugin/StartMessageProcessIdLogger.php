@@ -14,36 +14,38 @@ namespace ProcessorProxy\GingerPlugin;
 use Doctrine\DBAL\Connection;
 use Ginger\Environment\Environment;
 use Ginger\Environment\Plugin;
-use ProcessorProxy\Service\MessageProcessMap;
+use Ginger\Processor\ProcessId;
+use ProcessorProxy\Model\MessageLogger;
+use ProcessorProxy\Service\DbalMessageLogger;
+use Rhumsaa\Uuid\Uuid;
 use Zend\EventManager\Event;
 
 /**
- * Class StartMessageLogger
+ * Class StartMessageProcessIdLogger
  *
- * The StartMessageLogger listens on Ginger\Processor\Processor events to be able to log which
+ * The StartMessageProcessIdLogger listens on Ginger\Processor\Processor events to be able to log which
  * message has started which process. The information is required by the UI to redirect the user to
  * the process monitor after sending a start message.
  *
  * @package ProcessorProxy\GingerPlugin
  * @author Alexander Miertsch <kontakt@codeliner.ws>
  */
-final class StartMessageLogger implements Plugin
+final class StartMessageProcessIdLogger implements Plugin
 {
-    const PLUGIN_NAME = 'processor_proxy.start_message_logger';
+    const PLUGIN_NAME = 'processor_proxy.start_message_process_id_logger';
 
     /**
-     * @var MessageProcessMap
+     * @var MessageLogger
      */
-    private $messageProcessMap;
+    private $messageLogger;
 
     /**
-     * @param MessageProcessMap $messageProcessMap
+     * @param MessageLogger $messageLogger
      */
-    public function __construct(MessageProcessMap $messageProcessMap)
+    public function __construct(MessageLogger $messageLogger)
     {
-        $this->messageProcessMap = $messageProcessMap;
+        $this->messageLogger = $messageLogger;
     }
-
 
     /**
      * Return the name of the plugin
@@ -64,7 +66,6 @@ final class StartMessageLogger implements Plugin
     public function registerOn(Environment $workflowEnv)
     {
         $workflowEnv->getWorkflowProcessor()->events()->attach("process_was_started_by_message", [$this, "onProcessWasStartedByMessage"]);
-        $workflowEnv->getWorkflowProcessor()->events()->attach("start_process_from_message_failed", [$this, "onStartProcessFormMessageFailed"]);
     }
 
     /**
@@ -72,15 +73,10 @@ final class StartMessageLogger implements Plugin
      */
     public function onProcessWasStartedByMessage(Event $event)
     {
-        $this->messageProcessMap->addEntry($event->getParam('message_id'), $event->getParam('process_id'), true);
-    }
-
-    /**
-     * @param Event $event
-     */
-    public function onStartProcessFormMessageFailed(Event $event)
-    {
-        $this->messageProcessMap->addEntry($event->getParam('message_id'), $event->getParam('process_id'), false);
+        $this->messageLogger->logProcessStartedByMessage(
+            ProcessId::fromString($event->getParam('process_id')),
+            Uuid::fromString($event->getParam('message_id'))
+        );
     }
 }
  

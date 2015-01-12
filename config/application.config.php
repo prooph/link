@@ -7,6 +7,8 @@ return array(
         'ProophServiceBusModule',
         'ProophEventStoreModule',
         'AssetManager',
+        'DoctrineModule',
+        'DoctrineORMModule',
         'SystemConfig',
         'ProcessConfig',
         'FileConnector',

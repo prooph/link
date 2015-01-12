@@ -11,17 +11,17 @@
 
 namespace ProcessorProxy\GingerPlugin\Factory;
 
-use ProcessorProxy\GingerPlugin\StartMessageLogger;
+use ProcessorProxy\GingerPlugin\StartMessageProcessIdLogger;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
 /**
- * Class StartMessageLoggerFactory
+ * Class StartMessageProcessIdLoggerFactory
  *
  * @package ProcessorProxy\GingerPlugin\Factory
  * @author Alexander Miertsch <kontakt@codeliner.ws>
  */
-final class StartMessageLoggerFactory implements FactoryInterface
+final class StartMessageProcessIdLoggerFactory implements FactoryInterface
 {
     /**
      * Create service
@@ -31,7 +31,7 @@ final class StartMessageLoggerFactory implements FactoryInterface
      */
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
-        return new StartMessageLogger($serviceLocator->get('processor_proxy.message_process_map'));
+        return new StartMessageProcessIdLogger($serviceLocator->get('processor_proxy.message_logger'));
     }
 }
  

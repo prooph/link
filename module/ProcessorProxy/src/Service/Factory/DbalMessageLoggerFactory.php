@@ -9,18 +9,19 @@
  * Date: 12.01.15 - 01:26
  */
 
-namespace ProcessorProxy\Service;
+namespace ProcessorProxy\Service\Factory;
 
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
+use ProcessorProxy\Service\DbalMessageLogger;
 
 /**
- * Class MessageProcessMapFactory
+ * Class DbalMessageLoggerFactory
  *
  * @package ProcessorProxy\Service
  * @author Alexander Miertsch <kontakt@codeliner.ws>
  */
-final class MessageProcessMapFactory implements FactoryInterface
+final class DbalMessageLoggerFactory implements FactoryInterface
 {
 
     /**
@@ -31,7 +32,7 @@ final class MessageProcessMapFactory implements FactoryInterface
      */
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
-        return new MessageProcessMap($serviceLocator->get('application.db'));
+        return new DbalMessageLogger($serviceLocator->get('application.db'));
     }
 }
  

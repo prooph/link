@@ -16,6 +16,7 @@ use Application\Service\ActionController;
 use Assert\Assertion;
 use Ginger\Message\WorkflowMessage;
 use ProcessorProxy\Command\ForwardHttpMessage;
+use ProcessorProxy\Model\MessageLogger;
 use Prooph\ServiceBus\CommandBus;
 use Zend\View\Model\JsonModel;
 use ZF\ApiProblem\ApiProblem;
@@ -27,6 +28,16 @@ final class CollectDataTrigger extends AbstractRestController implements ActionC
      * @var CommandBus
      */
     private $commandBus;
+
+    /**
+     * @var MessageLogger
+     */
+    private $messageLogger;
+
+    public function __construct(MessageLogger $messageLogger)
+    {
+        $this->messageLogger = $messageLogger;
+    }
 
     public function create(array $data)
     {
@@ -47,6 +58,8 @@ final class CollectDataTrigger extends AbstractRestController implements ActionC
         }
 
         $wfMessage = WorkflowMessage::collectDataOf($gingerType::prototype());
+
+        $this->messageLogger->logIncomingMessage($wfMessage);
 
         $sbMessage = $wfMessage->toServiceBusMessage();
 

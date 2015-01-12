@@ -13,8 +13,10 @@ namespace ProcessorProxy\Api;
 
 use Application\Service\ActionController;
 use Ginger\Environment\Environment;
+use Ginger\Message\MessageNameUtils;
 use Ginger\Message\WorkflowMessage;
 use ProcessorProxy\Command\ForwardHttpMessage;
+use ProcessorProxy\Service\DbalMessageLogger;
 use Prooph\ServiceBus\CommandBus;
 use Prooph\ServiceBus\Message\StandardMessage;
 use SqlConnector\DataType\GingerTestSource\TartikelCollection;

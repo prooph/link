@@ -21,11 +21,14 @@ return array(
     //The value (the plugin) must be a service alias
     'ginger' => [
         'plugins' => [
-            \ProcessorProxy\GingerPlugin\StartMessageLogger::PLUGIN_NAME => 'processor_proxy.start_message_logger',
+            \ProcessorProxy\GingerPlugin\StartMessageProcessIdLogger::PLUGIN_NAME => \ProcessorProxy\GingerPlugin\StartMessageProcessIdLogger::PLUGIN_NAME,
         ]
     ],
     //Ginger environment defaults
     'service_manager' => [
+        'invokables' => array(
+            'Doctrine\\ORM\\Mapping\\UnderscoreNamingStrategy' => 'Doctrine\\ORM\\Mapping\\UnderscoreNamingStrategy',
+        ),
         'factories' => [
             'ginger_environment' => 'Application\Service\Factory\GingerEnvironmentFactory',
             \Ginger\Processor\Definition::SERVICE_WORKFLOW_PROCESSOR       => 'Ginger\Environment\Factory\WorkflowProcessorFactory',
@@ -39,5 +42,33 @@ return array(
             //special ginger environment plugins
             'Ginger\Environment\Factory\AbstractServiceBusFactory'
         ],
+        'aliases' => [
+            //We tell doctrine that it should use the application db connection instead of creating an own connection
+            'doctrine.connection.orm_default' => 'application.db',
+        ]
     ],
+    'doctrine' => array(
+        'configuration' => array(
+            'orm_default' => array(
+                'naming_strategy' => 'Doctrine\\ORM\\Mapping\\UnderscoreNamingStrategy',
+                // Generate proxies automatically (turn off for production)
+                'generate_proxies'  => false,
+                // metadata cache instance to use. The retrieved service name will
+                // be `doctrine.cache.$thisSetting`
+                'metadata_cache'    => 'filesystem',
+
+                // DQL queries parsing cache instance to use. The retrieved service
+                // name will be `doctrine.cache.$thisSetting`
+                'query_cache'       => 'filesystem',
+            ),
+        ),
+        'migrations_configuration' => array(
+            'orm_default' => array(
+                'directory' => 'data/migrations',
+                'name' => 'System Database Migrations',
+                'namespace' => 'Application\\Migrations',
+                'table' => 'migrations',
+            ),
+        ),
+    ),
 );

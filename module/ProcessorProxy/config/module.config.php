@@ -50,14 +50,16 @@ return [
         'factories' => [
             'processor_proxy.forward_message_extractor_translator' => 'ProcessorProxy\ProophPlugin\Factory\ForwardMessageExtractorTranslatorFactory',
             'processor_proxy.in_memory_message_forwarder' => 'ProcessorProxy\ProophPlugin\Factory\InMemoryMessageForwarderFactory',
-            \ProcessorProxy\GingerPlugin\StartMessageLogger::PLUGIN_NAME => 'ProcessorProxy\GingerPlugin\Factory\StartMessageLoggerFactory',
-            'processor_proxy.message_process_map' => 'ProcessorProxy\Service\MessageProcessMapFactory',
+            \ProcessorProxy\GingerPlugin\StartMessageProcessIdLogger::PLUGIN_NAME => 'ProcessorProxy\GingerPlugin\Factory\StartMessageProcessIdLoggerFactory',
+            'processor_proxy.message_logger' => 'ProcessorProxy\Service\Factory\DbalMessageLoggerFactory',
         ]
     ],
     'controllers' => array(
         'invokables' => [
             'ProcessorProxy\Api\Message' => 'ProcessorProxy\Api\Message',
-            'ProcessorProxy\Api\CollectDataTrigger' => 'ProcessorProxy\Api\CollectDataTrigger',
+        ],
+        'factories' => [
+            'ProcessorProxy\Api\CollectDataTrigger' => 'ProcessorProxy\Api\Factory\CollectDataTriggerFactory',
         ]
     ),
     'prooph.psb' => [
