@@ -30,9 +30,9 @@ final class CollectDataTrigger extends AbstractRestController implements ActionC
 
     public function create(array $data)
     {
-        if (! array_key_exists("collect-data-trigger", $data)) return new ApiProblemResponse(new ApiProblem(422, 'Root key collect-data-trigger missing in request data'));
+        if (! array_key_exists("collect_data_trigger", $data)) return new ApiProblemResponse(new ApiProblem(422, 'Root key collect_data_trigger missing in request data'));
 
-        $data = $data["collect-data-trigger"];
+        $data = $data["collect_data_trigger"];
 
         if (! array_key_exists('ginger_type', $data)) return new ApiProblemResponse(new ApiProblem(422, 'Key ginger_type is missing'));
 

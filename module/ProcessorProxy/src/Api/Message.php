@@ -34,6 +34,8 @@ final class Message extends AbstractRestfulController implements ActionControlle
      */
     private $commandBus;
 
+
+
     /**
      * @param array $data
      * @return mixed|void
@@ -56,6 +58,11 @@ final class Message extends AbstractRestfulController implements ActionControlle
     public function setCommandBus(CommandBus $commandBus)
     {
         $this->commandBus = $commandBus;
+    }
+
+    private function logMessage()
+    {
+
     }
 }
  

@@ -28,6 +28,7 @@ return array(
         ],
         'factories' => [
             'application.location_translator' => 'Application\SharedKernel\Factory\LocationTranslatorFactory',
+            'application.db'                  => 'Application\Service\Factory\ApplicationDbFactory',
         ],
         'abstract_factories' => array(
             'Zend\Cache\Service\StorageCacheAbstractServiceFactory',

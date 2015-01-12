@@ -9,7 +9,7 @@
  * Date: 10.01.15 - 22:34
  */
 
-namespace Application\SharedKernel\Factory;
+namespace Application\Service\Factory;
 
 use Ginger\Environment\Environment;
 use Zend\ServiceManager\FactoryInterface;

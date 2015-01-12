@@ -16,10 +16,18 @@ return array(
         'inbox'  => __DIR__ . '/../../data/inbox',
         'outbox' => __DIR__ . '/../../data/outbox',
     ],
+    //Default ginger plugins
+    //We work with key-value pairs to allow overriding plugins with custom implementations
+    //The value (the plugin) must be a service alias
+    'ginger' => [
+        'plugins' => [
+            \ProcessorProxy\GingerPlugin\StartMessageLogger::PLUGIN_NAME => 'processor_proxy.start_message_logger',
+        ]
+    ],
     //Ginger environment defaults
     'service_manager' => [
         'factories' => [
-            'ginger_environment' => 'Application\SharedKernel\Factory\GingerEnvironmentFactory',
+            'ginger_environment' => 'Application\Service\Factory\GingerEnvironmentFactory',
             \Ginger\Processor\Definition::SERVICE_WORKFLOW_PROCESSOR       => 'Ginger\Environment\Factory\WorkflowProcessorFactory',
             \Ginger\Processor\Definition::SERVICE_PROCESS_FACTORY          => 'Ginger\Environment\Factory\ProcessFactoryFactory',
             \Ginger\Processor\Definition::SERVICE_PROCESS_REPOSITORY       => 'Ginger\Environment\Factory\ProcessRepositoryFactory',

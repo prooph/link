@@ -50,6 +50,8 @@ return [
         'factories' => [
             'processor_proxy.forward_message_extractor_translator' => 'ProcessorProxy\ProophPlugin\Factory\ForwardMessageExtractorTranslatorFactory',
             'processor_proxy.in_memory_message_forwarder' => 'ProcessorProxy\ProophPlugin\Factory\InMemoryMessageForwarderFactory',
+            \ProcessorProxy\GingerPlugin\StartMessageLogger::PLUGIN_NAME => 'ProcessorProxy\GingerPlugin\Factory\StartMessageLoggerFactory',
+            'processor_proxy.message_process_map' => 'ProcessorProxy\Service\MessageProcessMapFactory',
         ]
     ],
     'controllers' => array(
