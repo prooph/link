@@ -18,6 +18,7 @@ use Ginger\Message\WorkflowMessage;
 use ProcessorProxy\Command\ForwardHttpMessage;
 use ProcessorProxy\Model\MessageLogger;
 use Prooph\ServiceBus\CommandBus;
+use Zend\Http\PhpEnvironment\Response;
 use Zend\View\Model\JsonModel;
 use ZF\ApiProblem\ApiProblem;
 use ZF\ApiProblem\ApiProblemResponse;
@@ -49,12 +50,12 @@ final class CollectDataTrigger extends AbstractRestController implements ActionC
 
         $gingerType = $data['ginger_type'];
 
-        if (! class_exists($gingerType)) return new ApiProblemResponse(new ApiProblem(422, 'Provided data type is unknown'));
+        if (! class_exists($gingerType)) return new ApiProblemResponse(new ApiProblem(422, 'Provided ginger type is unknown'));
 
         try {
             Assertion::implementsInterface($gingerType, 'Ginger\Type\Type');
         } catch (\InvalidArgumentException $ex) {
-            return new ApiProblemResponse(new ApiProblem(422, 'Provided data type is not valid'));
+            return new ApiProblemResponse(new ApiProblem(422, 'Provided ginger type is not valid'));
         }
 
         $wfMessage = WorkflowMessage::collectDataOf($gingerType::prototype());
@@ -65,7 +66,18 @@ final class CollectDataTrigger extends AbstractRestController implements ActionC
 
         $this->commandBus->dispatch(ForwardHttpMessage::createWith($sbMessage));
 
-        return new JsonModel($sbMessage->toArray());
+        /** @var $response Response */
+        $response = $this->getResponse();
+
+        $response->getHeaders()
+            ->addHeaderLine(
+                'Location',
+                $this->url()->fromRoute('processor_proxy/api/messages', ['id' => $sbMessage->header()->uuid()->toString()])
+            );
+
+        $response->setStatusCode(201);
+
+        return $response;
     }
 
     /**

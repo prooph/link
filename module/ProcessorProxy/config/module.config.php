@@ -48,10 +48,11 @@ return [
     ],
     'service_manager' => [
         'factories' => [
-            'processor_proxy.forward_message_extractor_translator' => 'ProcessorProxy\ProophPlugin\Factory\ForwardMessageExtractorTranslatorFactory',
-            'processor_proxy.in_memory_message_forwarder' => 'ProcessorProxy\ProophPlugin\Factory\InMemoryMessageForwarderFactory',
+            'processor_proxy.forward_message_extractor_translator'                => 'ProcessorProxy\ProophPlugin\Factory\ForwardMessageExtractorTranslatorFactory',
+            'processor_proxy.in_memory_message_forwarder'                         => 'ProcessorProxy\ProophPlugin\Factory\InMemoryMessageForwarderFactory',
+            'processor_proxy.message_logger'                                      => 'ProcessorProxy\Service\Factory\DbalMessageLoggerFactory',
             \ProcessorProxy\GingerPlugin\StartMessageProcessIdLogger::PLUGIN_NAME => 'ProcessorProxy\GingerPlugin\Factory\StartMessageProcessIdLoggerFactory',
-            'processor_proxy.message_logger' => 'ProcessorProxy\Service\Factory\DbalMessageLoggerFactory',
+            \ProcessorProxy\GingerPlugin\MessageFlowLogger::PLUGIN_NAME           => 'ProcessorProxy\GingerPlugin\Factory\MessageFlowLoggerFactory',
         ]
     ],
     'controllers' => array(
