@@ -6,10 +6,10 @@
 <?php else : ?>
     <?php
     $numberOfProcesses = count($this->gingerConfig->getProcessDefinitions());
-    $message = $this->translatePlural('You have one process defined', 'You have %s processes defined', $numberOfProcesses);
+    $message = $this->translatePlural('You\'ve one process defined', 'You\'ve %s processes defined', $numberOfProcesses);
     ?>
     <ul class="list-group">
-        <li class="list-group-item list-group-item-success"><?php echo sprintf($message, $numberOfProcesses) ?>&nbsp;<span class="glyphicon glyphicon-ok pull-right"></span></li>
+        <li class="list-group-item list-group-item-text text-info"><?php echo sprintf($message, $numberOfProcesses) ?>&nbsp;<span class="glyphicon glyphicon-ok pull-right"></span></li>
     </ul>
-    <p class="text-center"><a href="<?php echo $this->url('process_config/configurator') ?>" class="btn btn-success"><?php echo $this->translate('view processes') ?></a></p>
+    <p class="text-center"><a href="<?php echo $this->url('process_config/configurator') ?>" class="btn btn-info"><?php echo $this->translate('view processes') ?></a></p>
 <?php endif; ?>

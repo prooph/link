@@ -9,6 +9,10 @@ body {
 
 .form-control-with-desc {margin-top: 20px}
 
+.form-control-separator {
+    font-size: 30px;
+}
+
 .form-inline .form-control-inline-2 {
     width: 50px;
     max-width: 50px;
