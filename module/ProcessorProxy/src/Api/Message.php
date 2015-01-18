@@ -16,12 +16,16 @@ use Ginger\Environment\Environment;
 use Ginger\Message\MessageNameUtils;
 use Ginger\Message\WorkflowMessage;
 use ProcessorProxy\Command\ForwardHttpMessage;
+use ProcessorProxy\Model\MessageLogger;
 use ProcessorProxy\Service\DbalMessageLogger;
 use Prooph\ServiceBus\CommandBus;
 use Prooph\ServiceBus\Message\StandardMessage;
+use Rhumsaa\Uuid\Uuid;
 use SqlConnector\DataType\GingerTestSource\TartikelCollection;
 use Zend\Mvc\Controller\AbstractRestfulController;
 use Zend\View\Model\JsonModel;
+use ZF\ApiProblem\ApiProblem;
+use ZF\ApiProblem\ApiProblemResponse;
 
 /**
  * Class Message
@@ -36,7 +40,18 @@ final class Message extends AbstractRestfulController implements ActionControlle
      */
     private $commandBus;
 
+    /**
+     * @var MessageLogger
+     */
+    private $messageLogger;
 
+    /**
+     * @param MessageLogger $messageLogger
+     */
+    public function __construct(MessageLogger $messageLogger)
+    {
+        $this->messageLogger = $messageLogger;
+    }
 
     /**
      * @param array $data
@@ -54,17 +69,25 @@ final class Message extends AbstractRestfulController implements ActionControlle
     }
 
     /**
+     * @param string $id
+     * @return mixed
+     */
+    public function get($id)
+    {
+        $message = $this->messageLogger->getEntryForMessageId(Uuid::fromString($id));
+
+        if (is_null($message)) return new ApiProblemResponse(new ApiProblem(404, "Message can not be found"));
+
+        return ["message" => $message->toArray()];
+    }
+
+    /**
      * @param CommandBus $commandBus
      * @return void
      */
     public function setCommandBus(CommandBus $commandBus)
     {
         $this->commandBus = $commandBus;
-    }
-
-    private function logMessage()
-    {
-
     }
 }
  

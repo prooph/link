@@ -56,11 +56,9 @@ return [
         ]
     ],
     'controllers' => array(
-        'invokables' => [
-            'ProcessorProxy\Api\Message' => 'ProcessorProxy\Api\Message',
-        ],
         'factories' => [
             'ProcessorProxy\Api\CollectDataTrigger' => 'ProcessorProxy\Api\Factory\CollectDataTriggerFactory',
+            'ProcessorProxy\Api\Message' => 'ProcessorProxy\Api\Factory\MessageResourceFactory',
         ]
     ),
     'prooph.psb' => [
