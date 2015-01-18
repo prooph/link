@@ -136,7 +136,7 @@ App.TaskController = Ember.ObjectController.extend(Ember.Evented, {
         }
 
         return taskTypes;
-    }.property("process", "saveTask"),
+    }.property("model"),
 
     __deriveAvailableTaskTypesFromPrevTask : function (prevTask) {
         var taskTypes = [];
