@@ -1,17 +1,18 @@
 {
-    "name": "gingerframework/app-core",
+    "name": "gingerwork/app-core",
     "description": "Application Core for Ginger WfMS",
     "license": "BSD-3-Clause",
     "keywords": [
-        "gingerframework",
+        "gingerwork",
         "workflow",
+        "interface",
         "prooph",
         "zf2"
     ],
-    "homepage": "https://github.com/gingerframework",
+    "homepage": "https://github.com/gingerwork",
     "require": {
         "php": ">=5.4.8",
-        "gingerframework/gingerframework" : "dev-master",
+        "gingerwork/gingerframework" : "dev-master",
         "zendframework/zendframework": "~2.3",
         "zfcampus/zf-api-problem": "~1.0",
         "zfcampus/zf-content-negotiation": "~1.0",
