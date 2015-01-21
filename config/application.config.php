@@ -14,6 +14,7 @@ return array(
         'FileConnector',
         'SqlConnector',
         'ProcessorProxy',
+        'Gingerwork\Monitor',
         'Dashboard',
         'Application',
     ),

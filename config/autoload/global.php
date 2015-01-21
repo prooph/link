@@ -23,6 +23,7 @@ return array(
         'plugins' => [
             \ProcessorProxy\GingerPlugin\StartMessageProcessIdLogger::PLUGIN_NAME => \ProcessorProxy\GingerPlugin\StartMessageProcessIdLogger::PLUGIN_NAME,
             \ProcessorProxy\GingerPlugin\MessageFlowLogger::PLUGIN_NAME   => \ProcessorProxy\GingerPlugin\MessageFlowLogger::PLUGIN_NAME,
+            \Gingerwork\Monitor\GingerPlugin\ProcessLogListener::PLUGIN_NAME => \Gingerwork\Monitor\GingerPlugin\ProcessLogListener::PLUGIN_NAME,
         ]
     ],
     //Ginger environment defaults
