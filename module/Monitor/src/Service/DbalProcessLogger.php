@@ -192,5 +192,29 @@ final class DbalProcessLogger implements ProcessLogger
 
         return $entry;
     }
+
+    /**
+     * Orders process logs by started_at DESC
+     * Returns array of process log entry arrays.
+     * Each process log contains the information:
+     *
+     * - process_id => UUID string
+     * - status => running|succeed|failed
+     * - start_message => string|null
+     * - started_at => \DateTime::ISO8601 formatted
+     * - finished_at =>  \DateTime::ISO8601 formatted
+     *
+     * @param int $offset
+     * @param int $limit
+     * @return array
+     */
+    public function getLastLoggedProcesses($offset = 0, $limit = 10)
+    {
+        $query = $this->connection->createQueryBuilder();
+
+        $query->select('*')->from(self::TABLE)->orderBy('started_at', 'DESC')->setFirstResult($offset)->setMaxResults($limit);
+
+        return $query->execute()->fetchAll();
+    }
 }
  
