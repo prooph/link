@@ -1,20 +1,20 @@
-<div class="row text-center">
+<div class="row">
     <div id="app" class="col-md-12">
-        <h1><?php echo $this->translate('Process Manager') ?></h1>
-        <script type="text/x-handlebars" data-template-name="manager">
+        <h1 class="text-center"><?php echo $this->translate('Process Monitor') ?></h1>
+        <script type="text/x-handlebars" data-template-name="app">
             {{outlet}}
         </script>
     </div>
 </div>
+
 <?php
-foreach ($this->view_addons as $viewAddon) {
-    echo $this->partial($viewAddon);
-}
+
+echo $this->partial('gingerwork/monitor/process-view/partial/process-details');
 
 //Bootstrap ember app
 $this->inlineScript()->captureStart();
 
-$apiUrl = ltrim($this->url('process_config/api'), '/');
+$apiUrl = ltrim($this->url('monitor/api'), '/');
 
 $availableGingerTypes = json_encode($this->available_ginger_types);
 $availableTaskTypes = json_encode($this->available_task_types);
@@ -63,6 +63,16 @@ $clientTranslations = json_encode([
             'label' => $this->translate('Run Manipulation Script'),
         ]
     ],
+    'event' => [
+        'started_event' => $this->translate('Task was started'),
+        'done_event' => $this->translate('Task successfully done'),
+        'failed_event' => $this->translate('Task failed'),
+        'unknown' => $this->translate('Unknown event logged: '),
+        'log_message' => [
+            'system_error' => $this->translate('A system error occurred!'),
+            'unknown' => $this->translate('Unknown log message received with msg code: '),
+        ]
+    ],
     'metadata_not_available' => $this->translate('Metadata configuration is not available for the selected connector')
 ]);
 
@@ -83,7 +93,7 @@ Em.I18n.translations = $clientTranslations;
 
 App.TaskTypes          = $availableTaskTypes;
 App.ManipulationScrits = $availableManipulationScripts;
-App.GingerTypes          = $availableGingerTypes;
+App.GingerTypes        = $availableGingerTypes;
 App.Connectors         = $connectors;
 App.Locations          = $locations;
 
@@ -91,26 +101,18 @@ App.Object = Ember.Object.extend(Em.Serializable);
 
 //Route Config
 App.Router.map(function() {
-    this.resource('processes', { path: '/' }, function() {
-        this.route('create');
-        this.resource('process', {path: '/process/:process_id'}, function() {
-            this.resource('tasks', function () {
-                this.resource('task', {path: '/:task_id'}, function() {
-                    this.route('delete');
-                });
-                this.route('create');
-            });
-            this.route('edit');
-        });
-    });
+    this.resource('process', { path: '/' }, function () {});
 });
 
 App.ApplicationRoute = Ember.Route.extend({
     model : function() {
-        {$this->emberPushToStore('process', $this->processes)}
+        {$this->emberPushToStore('process', [$this->process])}
+
+        return this.store.find("process", "{$this->process['id']}");
     }
 });
+
 JS;
 $this->inlineScript()->captureEnd();
-$this->inlineScript()->appendFile($this->basePath() . '/js/process-config/app.js');
+$this->inlineScript()->appendFile($this->basePath() . '/js/process-monitor/app.js');
 ?>

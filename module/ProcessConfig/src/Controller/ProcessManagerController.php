@@ -14,6 +14,7 @@ namespace ProcessConfig\Controller;
 use Application\Service\AbstractQueryController;
 use Application\SharedKernel\GingerTypeClass;
 use Application\SharedKernel\LocationTranslator;
+use Application\SharedKernel\ProcessToClientTranslator;
 use Application\SharedKernel\ScriptLocation;
 use Ginger\Functional\Func;
 use Ginger\Message\MessageNameUtils;
@@ -98,32 +99,7 @@ final class ProcessManagerController extends AbstractQueryController
      */
     private function convertToClientProcess($startMessage, array $processDefinition, array $knownGingerTypes)
     {
-        $messageType = MessageNameUtils::getMessageSuffix($startMessage);
-
-        foreach($processDefinition['tasks'] as $i => &$task) {
-            $task['id'] = $i+1;
-        }
-
-
-        return [
-            'id'  => $startMessage,
-            'name' => $processDefinition['name'],
-            'process_type' => $processDefinition['process_type'],
-            'start_message' => [
-                'message_type' => $messageType,
-                'ginger_type' => GingerTypeClass::extractFromMessageName($startMessage, $knownGingerTypes)
-            ],
-            'tasks' => array_map(
-                function ($task) {
-                    if ($task['task_type'] === Definition::TASK_MANIPULATE_PAYLOAD) {
-                        $task['manipulation_script'] = str_replace($this->scriptLocation->toString() . DIRECTORY_SEPARATOR, "", $task['manipulation_script']);
-                    }
-
-                    return $task;
-                },
-                $processDefinition['tasks']
-            )
-        ];
+        return ProcessToClientTranslator::translate($startMessage, $processDefinition, $knownGingerTypes, $this->scriptLocation);
     }
 
     /**

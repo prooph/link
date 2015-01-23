@@ -85,5 +85,11 @@ interface ProcessLogger
      * @return array
      */
     public function getLastLoggedProcesses($offset = 0, $limit = 10);
+
+    /**
+     * @param ProcessId $processId
+     * @return null|array process log, see {@method getLastLoggedProcesses} for structure
+     */
+    public function getLoggedProcess(ProcessId $processId);
 }
  

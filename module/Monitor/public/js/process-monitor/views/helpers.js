@@ -9,3 +9,4 @@ App.connectorName = function (connectorId) {
 App.connectorIcon = function (connectorId, defaultIcon) {
     return connector_icon(connectorId, App.Connectors, defaultIcon);
 }
+

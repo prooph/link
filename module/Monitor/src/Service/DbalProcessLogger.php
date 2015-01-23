@@ -144,6 +144,39 @@ final class DbalProcessLogger implements ProcessLogger
     }
 
     /**
+     * Orders process logs by started_at DESC
+     * Returns array of process log entry arrays.
+     * Each process log contains the information:
+     *
+     * - process_id => UUID string
+     * - status => running|succeed|failed
+     * - start_message => string|null
+     * - started_at => \DateTime::ISO8601 formatted
+     * - finished_at =>  \DateTime::ISO8601 formatted
+     *
+     * @param int $offset
+     * @param int $limit
+     * @return array
+     */
+    public function getLastLoggedProcesses($offset = 0, $limit = 10)
+    {
+        $query = $this->connection->createQueryBuilder();
+
+        $query->select('*')->from(self::TABLE)->orderBy('started_at', 'DESC')->setFirstResult($offset)->setMaxResults($limit);
+
+        return $query->execute()->fetchAll();
+    }
+
+    /**
+     * @param ProcessId $processId
+     * @return null|array process log, see {@method getLastLoggedProcesses} for structure
+     */
+    public function getLoggedProcess(ProcessId $processId)
+    {
+        return $this->loadProcessEntryIfExists($processId);
+    }
+
+    /**
      * @param ProcessId $processId
      * @param array $data
      */
@@ -191,30 +224,6 @@ final class DbalProcessLogger implements ProcessLogger
         $this->entries[$processId->toString()] = $entry;
 
         return $entry;
-    }
-
-    /**
-     * Orders process logs by started_at DESC
-     * Returns array of process log entry arrays.
-     * Each process log contains the information:
-     *
-     * - process_id => UUID string
-     * - status => running|succeed|failed
-     * - start_message => string|null
-     * - started_at => \DateTime::ISO8601 formatted
-     * - finished_at =>  \DateTime::ISO8601 formatted
-     *
-     * @param int $offset
-     * @param int $limit
-     * @return array
-     */
-    public function getLastLoggedProcesses($offset = 0, $limit = 10)
-    {
-        $query = $this->connection->createQueryBuilder();
-
-        $query->select('*')->from(self::TABLE)->orderBy('started_at', 'DESC')->setFirstResult($offset)->setMaxResults($limit);
-
-        return $query->execute()->fetchAll();
     }
 }
  

@@ -11,7 +11,9 @@
 
 namespace Gingerwork\Monitor\Controller\Factory;
 
+use Application\SharedKernel\ScriptLocation;
 use Gingerwork\Monitor\Controller\ProcessViewController;
+use SystemConfig\Definition;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
@@ -31,7 +33,12 @@ final class ProcessViewControllerFactory implements FactoryInterface
      */
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
-        return new ProcessViewController($serviceLocator->getServiceLocator()->get('gingerwork.monitor.process_logger'));
+        return new ProcessViewController(
+            $serviceLocator->getServiceLocator()->get('gingerwork.monitor.process_logger'),
+            $serviceLocator->getServiceLocator()->get('gingerwork.monitor.process_stream_reader'),
+            ScriptLocation::fromPath(Definition::getScriptsDir()),
+            $serviceLocator->getServiceLocator()->get('application.location_translator')
+        );
     }
 }
  

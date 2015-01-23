@@ -40,7 +40,7 @@ final class EmberPushToStore extends AbstractHelper
     {
         $output = "";
         foreach ($resources as $resourceData) {
-            $output.= "this.store.push('" . $resourceName . "', " . json_encode($resourceData) . ");\n";
+            $output.= "this.store.push('" . $resourceName . "', this.store.normalize('" . $resourceName . "', " . json_encode($resourceData) . "));\n";
         }
 
         return $output;

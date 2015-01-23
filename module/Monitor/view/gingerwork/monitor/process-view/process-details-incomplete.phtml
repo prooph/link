@@ -1,0 +1,23 @@
+<div class="row">
+    <div id="app" class="col-md-12">
+        <h1 class="text-center"><?php echo $this->translate('Process Monitor') ?></h1>
+        <h3 class="text-center"><?php echo $this->translate('Failed/Unknown Process') ?>: <?php echo $this->process['process_id'] ?></h3>
+        <hr>
+        <div class="list-group">
+            <?php foreach ($this->process['events'] as $event): ?>
+            <div class="list-group-item">
+                <div class="row">
+                    <div class="col-md-12">
+                        <?php echo $event['name'] ?>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <pre><?php echo json_encode($event['payload'], JSON_PRETTY_PRINT) ?></pre>
+                    </div>
+                </div>
+            </div>
+            <?php endforeach ?>
+        </div>
+    </div>
+</div>

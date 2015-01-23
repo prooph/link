@@ -10,6 +10,14 @@ window.connector_name = function (connectorId, availableConnectors) {
     return (typeof  connector != "undefined")? connector.name : connectorId;
 };
 
+window.connector_icon = function (connectorId, availableConnectors, defaultIcon) {
+    if (typeof defaultIcon == "undefined") defaultIcon = "glyphicon-cog";
+
+    var connector = availableConnectors[connectorId];
+
+    return (typeof  connector != "undefined" && typeof connector['icon'] != "undefined")? connector.icon : defaultIcon;
+};
+
 window.hash_find_by = function(hash, key, value) {
     var found = null;
 
