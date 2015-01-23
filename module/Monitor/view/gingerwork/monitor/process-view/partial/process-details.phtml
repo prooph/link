@@ -41,6 +41,12 @@
             </div>
         {{/each}}
     </div>
+    <hr>
+    <div class="row">
+        <div class="col-md-12">
+            <a {{bind-attr href="configUrl"}} class="btn btn-default pull-right"><?php echo $this->translate('Edit') ?></a>
+        </div>
+    </div>
 </script>
 <script type="text/x-handlebars" data-template-name="taskEvent">
 <div {{bind-attr class=":list-group-item :event-container isInfoEvent:text-info isWarningEvent:text-warning isErrorEvent:text-danger"}}>

@@ -15,7 +15,7 @@ echo $this->partial('gingerwork/monitor/process-view/partial/process-details');
 $this->inlineScript()->captureStart();
 
 $apiUrl = ltrim($this->url('monitor/api'), '/');
-
+$processConfigUrl = $this->url('process_config/configurator');
 $availableGingerTypes = json_encode($this->available_ginger_types);
 $availableTaskTypes = json_encode($this->available_task_types);
 $availableManipulationScripts = json_encode($this->available_manipulation_scripts);
@@ -96,6 +96,8 @@ App.ManipulationScrits = $availableManipulationScripts;
 App.GingerTypes        = $availableGingerTypes;
 App.Connectors         = $connectors;
 App.Locations          = $locations;
+App.ProcessConfigUrl   = '$processConfigUrl';
+
 
 App.Object = Ember.Object.extend(Em.Serializable);
 

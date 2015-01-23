@@ -12,5 +12,8 @@ App.ProcessController = Ember.ObjectController.extend({
         }
 
         return this.get("model.finished_at").toLocaleString();
-    }.property("model.finished_at")
+    }.property("model.finished_at"),
+    configUrl : function () {
+        return App.ProcessConfigUrl + "#/process/" + this.get("model.id");
+    }.property("model.id")
 });
