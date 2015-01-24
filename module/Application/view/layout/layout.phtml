@@ -60,6 +60,7 @@
                 <?php if (isset($this->sidebar_right)) echo $this->sidebar_right; ?>
             </div>
         </div>
+        <?php if ($this->includeEmberJs) : ?>
         <?php echo $this->inlineScript()
             ->prependFile($this->basePath() . '/js/ember.helpers.js')
             ->prependFile($this->basePath() . '/js/i18n-plurals.js')
@@ -68,5 +69,6 @@
             ->prependFile($this->basePath() . '/js/ember.js')
             ->prependFile($this->basePath() . '/js/handlebars.js')
         ?>
+        <?php endif; ?>
     </body>
 </html>

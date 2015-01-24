@@ -69,6 +69,8 @@ final class ProcessManagerController extends AbstractQueryController
 
         $viewModel->setTemplate('process-config/process-manager/app');
 
+        $this->layout()->setVariable('includeEmberJs', true);
+
         return $viewModel;
     }
 

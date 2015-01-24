@@ -49,6 +49,8 @@ final class FileManagerController extends AbstractQueryController
 
         $viewModel->setTemplate('file-connector/file-manager/app');
 
+        $this->layout()->setVariable('includeEmberJs', true);
+
         return $viewModel;
     }
 

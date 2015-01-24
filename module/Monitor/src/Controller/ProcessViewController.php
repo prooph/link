@@ -115,6 +115,8 @@ final class ProcessViewController extends AbstractQueryController implements Tra
 
         $view->setTemplate('gingerwork/monitor/process-view/process-details-app');
 
+        $this->layout()->setVariable('includeEmberJs', true);
+
         return $view;
     }
 
