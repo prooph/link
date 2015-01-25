@@ -63,12 +63,19 @@
         <?php if ($this->includeEmberJs) : ?>
         <?php echo $this->inlineScript()
             ->prependFile($this->basePath() . '/js/ember.helpers.js')
-            ->prependFile($this->basePath() . '/js/i18n-plurals.js')
-            ->prependFile($this->basePath() . '/js/i18n.js')
+            ->prependFile($this->basePath() . '/js/ember.i18n-plurals.js')
+            ->prependFile($this->basePath() . '/js/ember.i18n.js')
             ->prependFile($this->basePath() . '/js/ember.data.js')
             ->prependFile($this->basePath() . '/js/ember.js')
             ->prependFile($this->basePath() . '/js/handlebars.js')
         ?>
+        <?php elseif ($this->includeRiotJs) : ?>
+            <?php echo $this->inlineScript()
+                ->prependFile($this->basePath() . '/js/ginger.riot.app.js')
+                ->prependFile($this->basePath() . '/js/riot.js')
+            ?>
+        <?php else: ?>
+            <?php echo $this->inlineScript(); ?>
         <?php endif; ?>
     </body>
 </html>

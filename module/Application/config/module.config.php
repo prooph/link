@@ -29,6 +29,7 @@ return array(
         'factories' => [
             'application.location_translator' => 'Application\SharedKernel\Factory\LocationTranslatorFactory',
             'application.db'                  => 'Application\Service\Factory\ApplicationDbFactory',
+            'application.riot_tag.collection.resolver' => 'Application\Service\Factory\RiotTagCollectionResolverFactory',
         ],
         'abstract_factories' => array(
             'Zend\Cache\Service\StorageCacheAbstractServiceFactory',
@@ -65,9 +66,15 @@ return array(
     ),
     'view_helpers' => array(
         'invokables'=> array(
-            'emberPushToStore' => 'Application\View\Helper\EmberPushToStore'
+            'emberPushToStore' => 'Application\View\Helper\EmberPushToStore',
+            'riotTag'          => 'Application\View\Helper\RiotTag'
         )
     ),
+    'asset_manager' => [
+        'resolvers' => [
+            'application.riot_tag.collection.resolver' => 2000
+        ]
+    ],
     'zf-content-negotiation' => [
         //Application wide selectors for the content negotiation module
         'selectors'   => array(
