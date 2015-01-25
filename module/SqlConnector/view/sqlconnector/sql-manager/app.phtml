@@ -1,0 +1,35 @@
+<div class="row">
+    <div class="col-md-12">
+        <h1 class="text-center"><?php echo $this->translate('Sql Connector Manager') ?></h1>
+        <sql-manager></sql-manager>
+    </div>
+</div>
+<?php
+
+$this->partial('sqlconnector/sql-manager/partial/sidebar-left');
+
+$sqlConnectors = json_encode($this->sql_connectors);
+$dbalConnections = json_encode($this->dbal_connections);
+
+//Bootstrap riot app
+$this->inlineScript()->captureStart();
+
+echo <<<JS
+
+//Set up translations
+
+
+window.SqlM = Ginger.App.create(
+    {
+        connectors : {$sqlConnectors},
+        dbalConnections : {$dbalConnections}
+    }
+);
+
+$(function () {
+    SqlM.bootstrap("sql-manager").ready();
+});
+JS;
+$this->inlineScript()->captureEnd();
+$this->inlineScript()->prependFile($this->basePath() . '/js/sqlconnector/app.js');
+?>

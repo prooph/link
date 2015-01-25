@@ -6,23 +6,22 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  * 
- * Date: 08.01.15 - 23:50
+ * Date: 25.01.15 - 22:57
  */
 
-namespace SystemConfig\Service;
+namespace Application\Service\Factory;
 
 use Application\SharedKernel\ConfigLocation;
-use SystemConfig\Definition;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
 /**
- * Class SystemConfigFactory
+ * Class ConfigLocationFactory
  *
- * @package SystemConfig\Service
+ * @package Application\Service\Factory
  * @author Alexander Miertsch <kontakt@codeliner.ws>
  */
-final class SystemConfigFactory implements FactoryInterface
+final class ConfigLocationFactory implements FactoryInterface
 {
 
     /**
@@ -33,7 +32,9 @@ final class SystemConfigFactory implements FactoryInterface
      */
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
-        return \SystemConfig\Model\GingerConfig::asProjectionFrom($serviceLocator->get('application.config_location'));
+        $config = $serviceLocator->get('config');
+
+        return ConfigLocation::fromPath($config['system_config_dir']);
     }
 }
  

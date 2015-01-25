@@ -1,0 +1,166 @@
+<div class="row">
+    <div class="col-md-12">
+        <div id="connectionConfig" class="well well-lg">
+            <h4 if="{ isNew }"><?php echo $this->translate('New Database Configuration') ?></h4>
+            <h4 if="{ !isNew }"><?php echo $this->translate('Database Configuration') ?></h4>
+            <form id="connection_form" onsubmit="{ saveConnection }">
+                <div class="{ form-group: true, has-success: isValidDbName() }">
+                    <label class="control-label" for="dbname"><?php echo $this->translate('Database Name') ?>*</label>
+                    <input name="dbname" type="text" class="form-control" onkeyup="{ update }">
+                </div>
+                <div class="{ form-group: true, has-success: driver.value }">
+                    <label class="control-label" for="driver"><?php echo $this->translate('Driver') ?>*</label>
+                    <select name="driver" class="form-control" onchange="{ update }">
+                        <option value="">- <?php echo $this->translate('Select a driver') ?> -</option>
+                        <option>pdo_mysql</option>
+                    </select>
+                </div>
+                <div class="{ form-group: true, has-success: host.value }">
+                    <label class="control-label" for="host"><?php echo $this->translate('Host') ?></label>
+                    <input name="host" type="text" class="form-control" onkeyup="{ update }" >
+                </div>
+                <div class="{ form-group: true, has-success: port.value }">
+                    <label class="control-label" for="port"><?php echo $this->translate('Port') ?></label>
+                    <input name="port" type="text" class="form-control" onkeyup="{ update }" >
+                </div>
+                <div class="{ form-group: true, has-success: user.value }">
+                    <label class="control-label" for="user"><?php echo $this->translate('User') ?></label>
+                    <input name="user" type="text" class="form-control" onkeyup="{ update }" >
+                </div>
+                <div class="{ form-group: true, has-success: password.value }">
+                    <label class="control-label" for="password"><?php echo $this->translate('Password') ?></label>
+                    <input name="password" type="password" class="form-control" onkeyup="{ update }" >
+                </div>
+                <div class="{ form-group: true, has-success: charset.value }">
+                    <label class="control-label" for="charset"><?php echo $this->translate('Charset') ?></label>
+                    <input name="charset" type="text" class="form-control" onkeyup="{ update }" value="{ charset.value || 'utf8' }" >
+                </div>
+                <div class="form-group">
+                    <button class="btn btn-default" onclick="{ testConnection }"><?php echo $this->translate('Test Connection') ?></button>
+                    <div class="pull-right">
+                        <button class="btn btn-default" onclick="{ hideConnectionConfig }">
+                            <?php echo $this->translate('Cancel') ?>
+                        </button>&nbsp;&nbsp;
+                        <input type="submit" class="{ btn: true, btn-success: true, disabled: !isConnectionEstablished }" value="<?php echo $this->translate('Save') ?>">
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    function () {
+        var self = this,
+            p = this.parent,
+            context = p.context,
+            connections = context.app.dbalConnections,
+            set_values = function(con) {
+                return Ginger.Helpers.merge_tag_elements_with_obj(self, con);
+            },
+            get_connection_values = function () {
+                return _.pick(
+                    Ginger.Helpers.form_to_plain_obj(self.connection_form),
+                    function (val) {
+                        return val;
+                    }
+                );
+            },
+            conApiUrl = "<?php echo $this->url('sql_connector/api/connection') ?>",
+            testConApiUrl = "<?php echo $this->url('sql_connector/api/test-connection') ?>";
+
+        this.updateConnectionData = function () {
+
+            self.isNew = ! p.dbal_connection.value;
+            self.isConnectionEstablished = false;
+
+            if (self.isNew) {
+                self.connection = {
+                    dbname : null,
+                    driver : null,
+                    host : 'localhost',
+                    port : null,
+                    user : null,
+                    password : null,
+                    charset : 'utf8'
+                };
+
+                $(self.dbname).prop("readonly", false);
+            } else {
+                self.connection = _.clone(_.find(connections, {dbname : p.dbal_connection.value}));
+                $(self.dbname).prop("readonly", true);
+            }
+
+            set_values(self.connection);
+        };
+
+
+        this.isValidDbName = function () {
+
+            if (! this.dbname.value) return false;
+
+            var con = _.find(connections, {dbname : this.dbname.value});
+
+            if (! con) return true;
+
+            return con.dbname === this.connection.dbname;
+        }
+
+        this.testConnection = function () {
+            var tempCon = get_connection_values();
+
+            $.postJSON(testConApiUrl, tempCon)
+                .then(
+                    function () {
+                        self.isConnectionEstablished = true;
+                        self.update();
+                        $.notify("<?php echo $this->translate('Database connection established') ?>", 'success')
+                    },
+                    function (xhr) {
+                        self.isConnectionEstablished = false;
+                        $.failNotify(xhr);
+                    }
+                );
+        };
+
+        this.hideConnectionConfig = function () {
+            $(self.connectionConfig).fadeOut("slow", function () {
+                p.showConnectionConfig = false;
+                p.update();
+                $(self.connectionConfig).show();
+            });
+        }
+
+        this.saveConnection = function () {
+            var tmpCon = get_connection_values();
+
+            if (this.isNew) {
+                $.postJSON(conApiUrl, tmpCon).then(
+                    function (data) {
+                        $.notify("<?php echo $this->translate('New connection created') ?>", "success");
+                        self.hideConnectionConfig();
+                        context.app.dbalConnections.push(data);
+                        riot.update();
+                    },
+                    $.failNotify
+                )
+            } else {
+                $.putJSON(conApiUrl + "/" + tmpCon.dbname, tmpCon).then(
+                    function () {
+                        $.notify("<?php echo $this->translate('Connection updated') ?>", "success");
+                        self.hideConnectionConfig();
+                    },
+                    $.failNotify
+                );
+            }
+        };
+
+
+
+        p.on("DbalConnectionDidChange", this.updateConnectionData);
+
+        p.on("mount", function () {
+            self.updateConnectionData();
+        });
+
+    }
+</script>

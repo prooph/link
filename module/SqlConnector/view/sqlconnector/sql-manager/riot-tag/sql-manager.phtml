@@ -1,0 +1,20 @@
+<div class="content"></div>
+<script type="text/javascript">
+    function (context) {
+        var self = this;
+
+        context.app.on("route", function (con) {
+
+            if (!con.routeMatch.index) {
+                con.app.renderInto(self, ".content", "connector-list");
+            } else if (con.routeMatch.index == "create") {
+                con.routeMatch.action = con.routeMatch.index;
+                con.app.renderInto(self, ".content", "connector-details", {isNew : true});
+            } else {
+                if (! con.routeMatch.action) {
+                    con.app.renderInto(self, ".content", "connector-details");
+                }
+            }
+        });
+    };
+</script>

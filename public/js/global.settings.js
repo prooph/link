@@ -40,7 +40,25 @@ window.hash_find_by = function(hash, key, value) {
             contentType : 'application/json; charset=UTF-8',
             type: "POST",
             data : JSON.stringify(data),
-            dataType : 'json'
+            dataType : 'json',
+            dataFilter : function (data, dataType) {
+                if (! data && dataType == "json") return "{}";
+                return data;
+            }
+        }, settings))
+    }
+
+    $.putJSON = function(url, data, settings) {
+        if (typeof settings == 'undefined') settings = {};
+        return $.ajax(url, $.extend({
+            contentType : 'application/json; charset=UTF-8',
+            type: "PUT",
+            data : JSON.stringify(data),
+            dataType : 'json',
+            dataFilter : function (data, dataType) {
+                if (! data && dataType == "json") return "{}";
+                return data;
+            }
         }, settings))
     }
 
@@ -49,7 +67,11 @@ window.hash_find_by = function(hash, key, value) {
             xhr.responseJSON = {status : 500, title : 'Unknown Server Error', detail : 'Unknown Server response received'}
         }
 
-        $.notify('['+ xhr.responseJSON.status +' '+xhr.responseJSON.title+'] '+xhr.responseJSON.detail,'error');
+        $.notify('['+ xhr.responseJSON.status +' '+xhr.responseJSON.title+'] '+xhr.responseJSON.detail, {
+            className : 'error',
+            clickToHide: true,
+            autoHide: false
+        });
     }
 
 })( jQuery );

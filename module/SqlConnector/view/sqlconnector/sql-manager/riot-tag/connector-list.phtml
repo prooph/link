@@ -1,0 +1,8 @@
+<div class="list-group">
+    <a each="{ connectors }" class="list-group-item" href="#connectors/{ id }">{ name }</a>
+</div>
+<script type="text/javascript">
+    function (context) {
+        this.connectors = context.app.connectors;
+    }
+</script>

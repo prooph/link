@@ -34,7 +34,7 @@ final class SystemConfigChangesHandlerProvider implements InitializerInterface
     {
         if ($instance instanceof HandlesSystemConfigChanges) {
             $instance->setEventBus($serviceLocator->get('prooph.psb.event_bus'));
-            $instance->setConfigWriter(new ZendPhpArrayWriter());
+            $instance->setConfigWriter($serviceLocator->get('system_config.config_writer'));
         }
     }
 }

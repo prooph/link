@@ -58,5 +58,20 @@ window.Ginger = {
 
             current = current[parts[i]];
         }
+    },
+    Helpers : {
+        merge_tag_elements_with_obj : function(tag, obj) {
+            _.forIn(obj, function (value, key) {
+                this[key].value = value;
+            }, tag);
+        },
+        form_to_plain_obj : function (formEl) {
+            return _.mapValues(
+                _.indexBy($(formEl).serializeArray(), "name"),
+                function (valObj) {
+                    return valObj.value;
+                }
+            )
+        }
     }
 }

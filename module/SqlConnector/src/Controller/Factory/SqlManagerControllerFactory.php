@@ -6,25 +6,23 @@
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  * 
- * Date: 08.01.15 - 23:50
+ * Date: 25.01.15 - 00:42
  */
 
-namespace SystemConfig\Service;
+namespace SqlConnector\Controller\Factory;
 
-use Application\SharedKernel\ConfigLocation;
-use SystemConfig\Definition;
+use SqlConnector\Controller\SqlManagerController;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
 /**
- * Class SystemConfigFactory
+ * Class SqlManagerControllerFactory
  *
- * @package SystemConfig\Service
+ * @package SqlConnector\Controller\Factory
  * @author Alexander Miertsch <kontakt@codeliner.ws>
  */
-final class SystemConfigFactory implements FactoryInterface
+final class SqlManagerControllerFactory implements FactoryInterface
 {
-
     /**
      * Create service
      *
@@ -33,7 +31,7 @@ final class SystemConfigFactory implements FactoryInterface
      */
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
-        return \SystemConfig\Model\GingerConfig::asProjectionFrom($serviceLocator->get('application.config_location'));
+        return new SqlManagerController($serviceLocator->getServiceLocator()->get('sqlconnector.dbal_connections'));
     }
 }
  

@@ -1,0 +1,16 @@
+<?php
+$this->layout()->sidebar_left = <<<SIDEBAR
+
+<ul class="sidebar-nav">
+    <li>
+        <a href="{$this->url('home')}">{$this->translate('Dashboard')}</a>
+    </li>
+    <li>
+        <a href="#">{$this->translate('Overview')}</a>
+    </li>
+    <li>
+        <a href="#connectors/create">{$this->translate('Add New Connector')}</a>
+    </li>
+</ul>
+
+SIDEBAR;

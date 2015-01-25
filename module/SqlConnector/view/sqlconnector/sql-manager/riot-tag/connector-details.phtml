@@ -1,0 +1,62 @@
+<h2 if="{ isNew }" class="text-center"><?php echo $this->translate('New Sql Connector') ?></h2>
+<h2 if="{ !isNew }" class="text-center">{ connector.name }</h2>
+<hr>
+<div class="row">
+    <div class="col-sm-11 col-md-7 col-md-offset-2">
+        <div class="{ form-group: true, has-success: connector.dbal_connection }">
+            <select name="dbal_connection" class="form-control" onchange="{ onConnectionChange }">
+                <option value="">- <?php echo $this->translate('Select a database') ?> -</option>
+                <option each="{ dbalConnections }">{ dbname }</option>
+            </select>
+        </div>
+    </div>
+    <div class="col-sm-1">
+        <button class="btn btn-default" onclick="{ onAddOrEditConnection }">
+            <span class="{ glyphicon: true, glyphicon-plus: !dbal_connection.value, glyphicon-edit: dbal_connection.value }"></span>
+        </button>
+    </div>
+</div>
+<div if="{ showConnectionConfig }" class="row">
+    <div class="col-sm-12 col-md-8 col-md-offset-2">
+        <connection-config ></connection-config>
+    </div>
+</div>
+<script type="text/javascript">
+    function (context) {
+
+        var self = this;
+
+        this.context = context;
+
+        if (context.opts.isNew) {
+            this.isNew = true;
+
+            this.connector = {
+                name : "<?php echo $this->translate('New Connector') ?>",
+                dbal_connection : ""
+            };
+        } else {
+            this.isNew = false;
+
+            this.connector = $.grep(context.app.connectors, function (con) { return con.id == context.routeMatch.index})[0];
+        }
+
+        this.showConnectionConfig = false;
+
+        this.dbalConnections = context.app.dbalConnections;
+
+        this.onConnectionChange = function (e) {
+            this.connector.dbal_connection = this.dbal_connection.value;
+            this.trigger("DbalConnectionDidChange", this.connector.dbal_connection);
+        };
+
+        this.onAddOrEditConnection = function (e) {
+            self.showConnectionConfig = true;
+        }
+
+        this.on('mount', function() {
+            self.dbal_connection.value = this.connector.dbal_connection;
+            self.update();
+        })
+    }
+</script>

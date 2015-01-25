@@ -61,6 +61,8 @@ return array(
     ),
     'service_manager' => [
         'invokables' => [
+            //System config writer
+            'system_config.config_writer' => 'SystemConfig\Service\ConfigWriter\ZendPhpArrayWriter',
             //Command handlers
             'SystemConfig\Model\GingerConfig\CreateDefaultConfigFileHandler' => 'SystemConfig\Model\GingerConfig\CreateDefaultConfigFileHandler',
             'SystemConfig\Model\GingerConfig\InitializeEventStoreHandler'    => 'SystemConfig\Model\GingerConfig\InitializeEventStoreHandler',

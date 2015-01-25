@@ -27,6 +27,7 @@ return array(
             'application.psb.single_handle_method_invoke_strategy' => 'Application\ProophPlugin\SingleHandleMethodInvokeStrategy',
         ],
         'factories' => [
+            'application.config_location'     => 'Application\Service\Factory\ConfigLocationFactory',
             'application.location_translator' => 'Application\SharedKernel\Factory\LocationTranslatorFactory',
             'application.db'                  => 'Application\Service\Factory\ApplicationDbFactory',
             'application.riot_tag.collection.resolver' => 'Application\Service\Factory\RiotTagCollectionResolverFactory',

@@ -11,19 +11,13 @@
 
 namespace ProcessorProxy\Api;
 
+use Application\Service\AbstractRestController;
 use Application\Service\ActionController;
-use Ginger\Environment\Environment;
-use Ginger\Message\MessageNameUtils;
-use Ginger\Message\WorkflowMessage;
 use ProcessorProxy\Command\ForwardHttpMessage;
 use ProcessorProxy\Model\MessageLogger;
-use ProcessorProxy\Service\DbalMessageLogger;
 use Prooph\ServiceBus\CommandBus;
 use Prooph\ServiceBus\Message\StandardMessage;
 use Rhumsaa\Uuid\Uuid;
-use SqlConnector\DataType\GingerTestSource\TartikelCollection;
-use Zend\Mvc\Controller\AbstractRestfulController;
-use Zend\View\Model\JsonModel;
 use ZF\ApiProblem\ApiProblem;
 use ZF\ApiProblem\ApiProblemResponse;
 
@@ -33,7 +27,7 @@ use ZF\ApiProblem\ApiProblemResponse;
  * @package ProcessorProxy\Api
  * @author Alexander Miertsch <kontakt@codeliner.ws>
  */
-final class Message extends AbstractRestfulController implements ActionController
+final class Message extends AbstractRestController implements ActionController
 {
     /**
      * @var CommandBus

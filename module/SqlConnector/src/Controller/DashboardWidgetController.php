@@ -9,7 +9,7 @@
  * Date: 02.01.15 - 18:11
  */
 
-namespace SqlConnector\src\Controller;
+namespace SqlConnector\Controller;
 
 use Dashboard\Controller\AbstractWidgetController;
 use Dashboard\View\DashboardWidget;
