@@ -62,7 +62,9 @@ window.Ginger = {
     Helpers : {
         merge_tag_elements_with_obj : function(tag, obj) {
             _.forIn(obj, function (value, key) {
-                this[key].value = value;
+                if (_.has(this, key)) {
+                    this[key].value = value;
+                }
             }, tag);
         },
         form_to_plain_obj : function (formEl) {

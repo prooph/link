@@ -67,6 +67,19 @@ return array(
                                     ]
                                 ]
                             ],
+                            'table' => [
+                                'type' => 'Segment',
+                                'options' => [
+                                    'route' => '/connections/:dbname/tables[/:name]',
+                                    'constraints' => array(
+                                        'dbname' => '.+',
+                                        'name' => '.+',
+                                    ),
+                                    'defaults' => [
+                                        'controller' => 'SqlConnector\Api\Table',
+                                    ]
+                                ]
+                            ],
                         ],
                     ]
                 ],
@@ -134,6 +147,7 @@ return array(
         'factories' => [
             'SqlConnector\Controller\SqlManager' => 'SqlConnector\Controller\Factory\SqlManagerControllerFactory',
             'SqlConnector\Api\Connection'        => 'SqlConnector\Api\Factory\ConnectionResourceFactory',
+            'SqlConnector\Api\Table'             => 'SqlConnector\Api\Factory\TableResourceFactory',
         ]
     ),
     'prooph.psb' => [
@@ -145,14 +159,17 @@ return array(
         'controllers' => [
             'SqlConnector\Api\TestConnection' => 'Json',
             'SqlConnector\Api\Connection' => 'Json',
+            'SqlConnector\Api\Table' => 'Json',
         ],
         'accept_whitelist' => [
             'SqlConnector\Api\TestConnection' => ['application/json'],
             'SqlConnector\Api\Connection' => ['application/json'],
+            'SqlConnector\Api\Table' => ['application/json'],
         ],
         'content_type_whitelist' => [
             'SqlConnector\Api\TestConnection' => ['application/json'],
             'SqlConnector\Api\Connection' => ['application/json'],
+            'SqlConnector\Api\Table' => ['application/json'],
         ],
     ]
 );

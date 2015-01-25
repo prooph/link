@@ -171,4 +171,17 @@ class AbstractRestController extends AbstractRestfulController
     {
         return new ApiProblemResponse(new ApiProblem(405, 'Method not allowed'));
     }
+
+    /**
+     * @param $status
+     * @param $detail
+     * @param null|string $type
+     * @param null|string $title
+     * @param array $additional
+     * @return ApiProblemResponse
+     */
+    protected function getApiProblemResponse($status, $detail, $type = null, $title = null, array $additional = array())
+    {
+        return new ApiProblemResponse(new ApiProblem($status, $detail, $type, $title, $additional));
+    }
 } 

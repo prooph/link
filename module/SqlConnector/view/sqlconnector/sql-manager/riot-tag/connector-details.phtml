@@ -2,52 +2,107 @@
 <h2 if="{ !isNew }" class="text-center">{ connector.name }</h2>
 <hr>
 <div class="row">
-    <div class="col-sm-11 col-md-7 col-md-offset-2">
-        <div class="{ form-group: true, has-success: connector.dbal_connection }">
+    <div class="col-xs-12 col-md-8 col-md-offset-2">
+        <div class="{ form-group: true, has-success: dbal_connection.value }">
+            <label for="dbal_connection" class="control-label"><?php echo $this->translate('Database') ?></label>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-xs-11 col-md-7 col-md-offset-2">
+
+        <div class="{ form-group: true, has-success: dbal_connection.value }">
             <select name="dbal_connection" class="form-control" onchange="{ onConnectionChange }">
                 <option value="">- <?php echo $this->translate('Select a database') ?> -</option>
                 <option each="{ dbalConnections }">{ dbname }</option>
             </select>
         </div>
     </div>
-    <div class="col-sm-1">
+    <div class="col-xs-1">
         <button class="btn btn-default" onclick="{ onAddOrEditConnection }">
             <span class="{ glyphicon: true, glyphicon-plus: !dbal_connection.value, glyphicon-edit: dbal_connection.value }"></span>
         </button>
     </div>
 </div>
 <div if="{ showConnectionConfig }" class="row">
-    <div class="col-sm-12 col-md-8 col-md-offset-2">
+    <div class="col-xs-12 col-md-8 col-md-offset-2">
         <connection-config ></connection-config>
+    </div>
+</div>
+<div class="row">
+    <div class="col-xs-12 col-md-8 col-md-offset-2">
+        <div class="{ form-group: true, has-success: isValidConnectorName() }">
+            <label for="name" class="control-label"><?php echo $this->translate('Connector Name') ?></label>
+            <input name="name" class="form-control" >
+        </div>
+        <div class="{ form-group: true, has-success: table.value }">
+            <label for="table" class="control-label"><?php echo $this->translate('DB Table') ?></label>
+            <select name="table" class="form-control">
+                <option if="{ isTablesLoading }" value=""><?php echo $this->translate('Loading Tables') ?> ...</option>
+                <option if="{ !isTablesLoading }" value="">- <?php echo $this->translate('Select a Table') ?> -</option>
+                <option each="{ tables }">{ name }</option>
+            </select>
+        </div>
     </div>
 </div>
 <script type="text/javascript">
     function (context) {
 
-        var self = this;
+        var self = this,
+            connectionApiUrl = "<?php echo $this->url('sql_connector/api/connection') ?>",
+            set_values = function (values) {
+                Ginger.Helpers.merge_tag_elements_with_obj(self, values);
+            };
 
         this.context = context;
+        this.tables = [];
+        this.isTablesLoading = false;
 
         if (context.opts.isNew) {
             this.isNew = true;
 
             this.connector = {
-                name : "<?php echo $this->translate('New Connector') ?>",
-                dbal_connection : ""
+                dbname : "",
+                name : ""
             };
         } else {
             this.isNew = false;
 
-            this.connector = $.grep(context.app.connectors, function (con) { return con.id == context.routeMatch.index})[0];
+            this.connector = _.find(context.app.connectors, {id : context.routeMatch.index});
         }
 
         this.showConnectionConfig = false;
 
         this.dbalConnections = context.app.dbalConnections;
 
+        this.isValidConnectorName = function () {
+            if (! this.name.value) return false;
+
+            var con = _.find(context.app.connectors, {name : this.name.value});
+
+            if (! con) return true;
+
+            return con.name === this.connector.name;
+        };
+
+        this.loadTables = function () {
+            if (! this.dbal_connection.value) return;
+
+            var url = connectionApiUrl + "/" + this.dbal_connection.value + "/tables";
+
+            this.isTablesLoading = true;
+            this.update();
+
+            $.getJSON(url).then(function (data) {
+                self.tables = data;
+                this.isTablesLoading = false;
+                self.update();
+            }, $.failNotify);
+        }
+
         this.onConnectionChange = function (e) {
-            this.connector.dbal_connection = this.dbal_connection.value;
-            this.trigger("DbalConnectionDidChange", this.connector.dbal_connection);
+            this.trigger("DbalConnectionDidChange", this.dbal_connection.value);
+            this.loadTables();
         };
 
         this.onAddOrEditConnection = function (e) {
@@ -55,8 +110,9 @@
         }
 
         this.on('mount', function() {
-            self.dbal_connection.value = this.connector.dbal_connection;
+            set_values(self.connector);
             self.update();
+            this.loadTables();
         })
     }
 </script>
