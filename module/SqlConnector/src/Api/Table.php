@@ -13,6 +13,8 @@ namespace SqlConnector\Api;
 
 use Application\Service\AbstractRestController;
 use Doctrine\DBAL\DriverManager;
+use SqlConnector\Service\DbalConnectionCollection;
+use ZF\ContentNegotiation\JsonModel;
 
 /**
  * Class Table
@@ -23,14 +25,14 @@ use Doctrine\DBAL\DriverManager;
 final class Table extends AbstractRestController
 {
     /**
-     * @var \ArrayObject
+     * @var DbalConnectionCollection
      */
     private $dbalConnections;
 
     /**
-     * @param \ArrayObject $connections
+     * @param DbalConnectionCollection $connections
      */
-    public function __construct(\ArrayObject $connections)
+    public function __construct(DbalConnectionCollection $connections)
     {
         $this->dbalConnections = $connections;
     }
@@ -39,19 +41,17 @@ final class Table extends AbstractRestController
     {
         $connectionDb = $this->params('dbname');
 
-        if (! isset($this->dbalConnections[$connectionDb])) {
+        if (! $this->dbalConnections->containsKey($connectionDb)) {
             return $this->getApiProblemResponse(404, 'Dbal connection can not be found');
         }
 
-        $connectionConfig = $this->dbalConnections[$connectionDb];
+        $connection = $this->dbalConnections->get($connectionDb);
 
-        $con = DriverManager::getConnection($connectionConfig);
+        $tables = $connection->connection()->getSchemaManager()->listTableNames();
 
-        $tables = $con->getSchemaManager()->listTableNames();
-
-        return array_map(function ($tablename) {
+        return new JsonModel([ 'payload' => array_map(function ($tablename) {
             return ["name" => $tablename];
-        }, $tables);
+        }, $tables)]);
     }
 }
  

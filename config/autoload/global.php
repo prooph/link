@@ -12,6 +12,8 @@
  */
 
 return array(
+    'system_config_dir' => \SystemConfig\Definition::getSystemConfigDir(),
+    'system_data_dir' => \SystemConfig\Definition::getDataDir(),
     'locations' => [
         'inbox'  => __DIR__ . '/../../data/inbox',
         'outbox' => __DIR__ . '/../../data/outbox',

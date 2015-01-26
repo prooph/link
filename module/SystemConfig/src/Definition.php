@@ -22,6 +22,14 @@ final class Definition
     /**
      * @return string
      */
+    public static function getDataDir()
+    {
+        return getcwd() . DIRECTORY_SEPARATOR . 'data';
+    }
+
+    /**
+     * @return string
+     */
     public static function getSystemConfigDir()
     {
         return getcwd() . DIRECTORY_SEPARATOR . 'config' . DIRECTORY_SEPARATOR . 'autoload';

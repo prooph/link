@@ -9,7 +9,6 @@
  * Date: 06.12.14 - 22:26
  */
 return array(
-    'system_config_dir' => \SystemConfig\Definition::getSystemConfigDir(),
     'dashboard' => [
         'system_config_widget' => [
             'controller' => 'SystemConfig\Controller\DashboardWidget',

@@ -43,6 +43,18 @@ return array(
                         ],
                         'may_terminate' => true,
                         'child_routes' => [
+                            'connector' => [
+                                'type' => 'Segment',
+                                'options' => [
+                                    'route' => '/connectors[/:id]',
+                                    'constraints' => array(
+                                        'id' => '.+',
+                                    ),
+                                    'defaults' => [
+                                        'controller' => 'SqlConnector\Api\Connector',
+                                    ]
+                                ]
+                            ],
                             'test-connection' => [
                                 'type' => 'Segment',
                                 'options' => [
@@ -86,12 +98,30 @@ return array(
             ]
         ]
     ],
-    //Placeholder for configured connections. The UI creates a sqlconnector.local.php in config/autoload and puts
-    //all connections there. The connections are aliased and only the alias is put in the metadata
-    //of a connector definition. This ensures that sensitive connection params are not available in the UI except the
-    //sqlconnector UI itself.
     'sqlconnector' => [
-        'connections' => []
+        //Placeholder for configured connections. The UI creates a sqlconnector.local.php in config/autoload and puts
+        //all connections there. The connections are aliased and only the alias is put in the metadata
+        //of a connector definition. This ensures that sensitive connection params are not available in the UI except the
+        //sqlconnector UI itself.
+        'connections' => [],
+        //Doctrine type to GingerType map
+        'doctrine_ginger_type_map' => [
+            'string' => 'Ginger\Type\String',
+            'text' => 'Ginger\Type\String',
+            'binary' => 'Ginger\Type\String',
+            'blob' => 'Ginger\Type\String',
+            'guid' => 'Ginger\Type\String',
+            'integer' => 'Ginger\Type\Integer',
+            'smallint' => 'Ginger\Type\Integer',
+            'bigint' => 'Ginger\Type\Integer',
+            'float' => 'Ginger\Type\Float',
+            'decimal' => 'Ginger\Type\Float',
+            'boolean' => 'Ginger\Type\Boolean',
+            'datetime' => 'Ginger\Type\DateTime',
+            'datetimetz' => 'Ginger\Type\DateTime',
+            'date' => 'Ginger\Type\DateTime',
+            'time' => 'Ginger\Type\DateTime',
+        ]
     ],
     'view_manager' => array(
         'template_map' => [
@@ -146,6 +176,7 @@ return array(
         ],
         'factories' => [
             'SqlConnector\Controller\SqlManager' => 'SqlConnector\Controller\Factory\SqlManagerControllerFactory',
+            'SqlConnector\Api\Connector'        => 'SqlConnector\Api\Factory\ConnectorResourceFactory',
             'SqlConnector\Api\Connection'        => 'SqlConnector\Api\Factory\ConnectionResourceFactory',
             'SqlConnector\Api\Table'             => 'SqlConnector\Api\Factory\TableResourceFactory',
         ]
@@ -159,16 +190,19 @@ return array(
         'controllers' => [
             'SqlConnector\Api\TestConnection' => 'Json',
             'SqlConnector\Api\Connection' => 'Json',
+            'SqlConnector\Api\Connector' => 'Json',
             'SqlConnector\Api\Table' => 'Json',
         ],
         'accept_whitelist' => [
             'SqlConnector\Api\TestConnection' => ['application/json'],
             'SqlConnector\Api\Connection' => ['application/json'],
+            'SqlConnector\Api\Connector' => ['application/json'],
             'SqlConnector\Api\Table' => ['application/json'],
         ],
         'content_type_whitelist' => [
             'SqlConnector\Api\TestConnection' => ['application/json'],
             'SqlConnector\Api\Connection' => ['application/json'],
+            'SqlConnector\Api\Connector' => ['application/json'],
             'SqlConnector\Api\Table' => ['application/json'],
         ],
     ]

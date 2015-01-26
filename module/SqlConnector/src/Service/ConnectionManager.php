@@ -36,16 +36,16 @@ final class ConnectionManager
     private $configWriter;
 
     /**
-     * @var \ArrayObject
+     * @var DbalConnectionCollection
      */
     private $connections;
 
     /**
      * @param ConfigLocation $configLocation
      * @param ConfigWriter $configWriter
-     * @param \ArrayObject $connections
+     * @param DbalConnectionCollection $connections
      */
-    public function __construct(ConfigLocation $configLocation, ConfigWriter $configWriter, \ArrayObject $connections)
+    public function __construct(ConfigLocation $configLocation, ConfigWriter $configWriter, DbalConnectionCollection $connections)
     {
         $this->configLocation = $configLocation;
         $this->configWriter = $configWriter;
@@ -58,11 +58,9 @@ final class ConnectionManager
      */
     public function addConnection(array $connection)
     {
-        $this->assertConnection($connection);
+        if ($this->connections->containsKey($connection['dbname'])) throw new \InvalidArgumentException(sprintf('A connection for DB %s already exists', $connection['dbname']));
 
-        if (isset($this->connections[$connection['dbname']])) throw new \InvalidArgumentException(sprintf('A connection for DB %s already exists', $connection['dbname']));
-
-        $this->connections[$connection['dbname']] = $connection;
+        $this->connections->add(DbalConnection::fromConfiguration($connection));
 
         $this->saveConnections(true);
     }
@@ -73,11 +71,9 @@ final class ConnectionManager
      */
     public function updateConnection(array $connection)
     {
-        $this->assertConnection($connection);
+        if (! $this->connections->containsKey($connection['dbname'])) throw new \InvalidArgumentException(sprintf('Connection for DB %s can not be found', $connection['dbname']));
 
-        if (! isset($this->connections[$connection['dbname']])) throw new \InvalidArgumentException(sprintf('Connection for DB %s can not be found', $connection['dbname']));
-
-        $this->connections[$connection['dbname']] = $connection;
+        $this->connections->set($connection['dbname'], DbalConnection::fromConfiguration($connection));
 
         $this->saveConnections();
     }
@@ -88,7 +84,7 @@ final class ConnectionManager
 
         $config = [
             'sqlconnector' => [
-                'connections' => $this->connections->getArrayCopy()
+                'connections' => $this->connections->toArray()
             ]
         ];
 
@@ -97,16 +93,6 @@ final class ConnectionManager
         } else {
             $this->configWriter->replaceConfigInDirectory($config, $path);
         }
-    }
-
-    /**
-     * @param array $connection
-     * @throws \InvalidArgumentException
-     */
-    private function assertConnection(array $connection)
-    {
-        if (! array_key_exists('dbname', $connection)) throw new \InvalidArgumentException('Missing dbname in connection');
-        if (! array_key_exists('driver', $connection)) throw new \InvalidArgumentException('Missing driver in connection');
     }
 }
  

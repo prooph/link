@@ -11,6 +11,8 @@
 
 namespace SqlConnector\DataType;
 
+use Doctrine\DBAL\Platforms\AbstractPlatform;
+use Doctrine\DBAL\Types\Type;
 use Ginger\Type\AbstractDictionary;
 use Ginger\Type\Description\NativeType;
 
@@ -22,6 +24,21 @@ use Ginger\Type\Description\NativeType;
  */
 abstract class TableRow extends AbstractDictionary
 {
+    /**
+     * @var array list of doctrine types indexed by property name
+     */
+    protected static $propertyDbTypes = [];
+
+    /**
+     * @var string Doctrine database platform class
+     */
+    protected static $platformClass;
+
+    /**
+     * @var AbstractPlatform[] cache
+     */
+    private static $platforms = [];
+
     /**
      * @param array $row
      * @return static
@@ -61,6 +78,11 @@ abstract class TableRow extends AbstractDictionary
 
     public static function toNativeValue($property, $value)
     {
+        if (isset(static::$propertyDbTypes[$property]) && static::$platformClass) {
+            $doctrineType = Type::getType(static::$propertyDbTypes[$property]);
+            return $doctrineType->convertToPHPValue($value, self::getPlatform(static::$platformClass));
+        }
+
         $typeProperties = static::prototype()->typeProperties();
 
         if (! isset($typeProperties[$property])) throw new \InvalidArgumentException(sprintf("Column %s can not be mapped to a property of ginger type %s", $property, __CLASS__));
@@ -79,6 +101,19 @@ abstract class TableRow extends AbstractDictionary
             default:
                 return $value;
         }
+    }
+
+    /**
+     * @param string $platformClass
+     * @return AbstractPlatform
+     */
+    protected static function getPlatform($platformClass)
+    {
+        if (! isset(self::$platforms[$platformClass])) {
+            self::$platforms[$platformClass] = new $platformClass();
+        }
+
+        return self::$platforms[$platformClass];
     }
 }
  

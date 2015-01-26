@@ -9,7 +9,8 @@
  * Date: 24.01.15 - 21:24
  */
 
-namespace SqlConnector\SqlManager;
+namespace SqlConnector\Service;
+
 use Rhumsaa\Uuid\Uuid;
 
 /**

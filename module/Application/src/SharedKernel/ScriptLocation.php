@@ -19,43 +19,8 @@ namespace Application\SharedKernel;
  * @package Application\SharedKernel
  * @author Alexander Miertsch <kontakt@codeliner.ws>
  */
-final class ScriptLocation 
+final class ScriptLocation extends AbstractLocation
 {
-    /**
-     * @var string
-     */
-    private $path;
-
-    /**
-     * @param string $path
-     * @return ScriptLocation
-     */
-    public static function fromPath($path)
-    {
-        return new self($path);
-    }
-
-    /**
-     * @param string $path
-     * @throws \InvalidArgumentException
-     */
-    private function __construct($path)
-    {
-        if (! is_string($path)) throw new \InvalidArgumentException('Path must be a string');
-        if (! is_dir($path)) throw new \InvalidArgumentException(sprintf('Script location %s must be a valid directory path'));
-        if (!is_readable($path)) throw new \InvalidArgumentException(sprintf('Script location %s must be readable', $path));
-
-        $this->path = rtrim($path, DIRECTORY_SEPARATOR);
-    }
-
-    /**
-     * @return string
-     */
-    public function toString()
-    {
-        return $this->path;
-    }
-
     /**
      * @return array
      */
@@ -64,6 +29,11 @@ final class ScriptLocation
         $files = scandir($this->path);
 
         return array_values(array_filter($files, function($file) { return (bool)preg_match('/\.php$/', $file); }));
+    }
+
+    protected function additionalAssertPath($path)
+    {
+        if (!is_readable($path)) throw new \InvalidArgumentException(sprintf('Script location %s must be readable', $path));
     }
 }
  

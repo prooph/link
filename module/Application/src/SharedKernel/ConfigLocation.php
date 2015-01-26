@@ -14,48 +14,13 @@ namespace Application\SharedKernel;
 /**
  * Class ConfigLocation
  *
- * This class represents the directory where the proophessor config file is located.
+ * This class represents the directory where the ginger config file is located.
  *
- * @package SystemConfig\Model\GingerConfig
+ * @package Application\SharedKernel
  * @author Alexander Miertsch <kontakt@codeliner.ws>
  */
-final class ConfigLocation 
+final class ConfigLocation extends AbstractLocation
 {
-    /**
-     * @var string
-     */
-    private $path;
-
-    /**
-     * @param string $path
-     * @return ConfigLocation
-     */
-    public static function fromPath($path)
-    {
-        return new self($path);
-    }
-
-    /**
-     * @param string $path
-     * @throws \InvalidArgumentException
-     */
-    private function __construct($path)
-    {
-        if (! is_string($path)) throw new \InvalidArgumentException('Path must be a string');
-        if (! is_dir($path)) throw new \InvalidArgumentException(sprintf('Config location %s must be a valid directory path'));
-        if (!is_writable($path)) throw new \InvalidArgumentException(sprintf('Config location %s must be writable', $path));
-
-        $this->path = rtrim($path, DIRECTORY_SEPARATOR);
-    }
-
-    /**
-     * @return string
-     */
-    public function toString()
-    {
-        return $this->path;
-    }
-
     /**
      * @param $fileName
      * @return array
@@ -75,12 +40,10 @@ final class ConfigLocation
         return $config;
     }
 
-    /**
-     * @return string
-     */
-    public function __toString()
+
+    protected function additionalAssertPath($path)
     {
-        return $this->toString();
+        if (!is_writable($path)) throw new \InvalidArgumentException(sprintf('Config location %s must be writable', $path));
     }
 }
  

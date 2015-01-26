@@ -11,6 +11,7 @@
 
 namespace SqlConnector\Service\Factory;
 
+use SqlConnector\Service\DbalConnectionCollection;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
@@ -33,7 +34,7 @@ final class ConnectionsProvider implements FactoryInterface
     {
         $appConfig = $serviceLocator->get('config');
 
-        return new \ArrayObject($appConfig['sqlconnector']['connections']);
+        return  DbalConnectionCollection::fromConnectionConfigs($appConfig['sqlconnector']['connections']);
     }
 }
  

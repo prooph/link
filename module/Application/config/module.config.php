@@ -28,6 +28,7 @@ return array(
         ],
         'factories' => [
             'application.config_location'     => 'Application\Service\Factory\ConfigLocationFactory',
+            'application.data_location'       => 'Application\Service\Factory\DataLocationFactory',
             'application.location_translator' => 'Application\SharedKernel\Factory\LocationTranslatorFactory',
             'application.db'                  => 'Application\Service\Factory\ApplicationDbFactory',
             'application.riot_tag.collection.resolver' => 'Application\Service\Factory\RiotTagCollectionResolverFactory',

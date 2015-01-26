@@ -12,20 +12,21 @@
 namespace SqlConnector\Controller;
 
 use Application\Service\AbstractQueryController;
-use SqlConnector\SqlManager\SqlConnectorTranslator;
+use SqlConnector\Service\DbalConnectionCollection;
+use SqlConnector\Service\SqlConnectorTranslator;
 use Zend\View\Model\ViewModel;
 
 final class SqlManagerController extends AbstractQueryController
 {
     /**
-     * @var \ArrayObject
+     * @var DbalConnectionCollection
      */
     private $dbalConnections;
 
     /**
-     * @param \ArrayObject $dbalConnections
+     * @param DbalConnectionCollection $dbalConnections
      */
-    public function __construct(\ArrayObject $dbalConnections)
+    public function __construct(DbalConnectionCollection $dbalConnections)
     {
         $this->dbalConnections = $dbalConnections;
     }
@@ -34,7 +35,7 @@ final class SqlManagerController extends AbstractQueryController
     {
         $view = new ViewModel([
             'sql_connectors' => $this->getSqlConnectorsForClient(),
-            'dbal_connections' => array_values($this->dbalConnections->getArrayCopy()),
+            'dbal_connections' => array_values($this->dbalConnections->toArray()),
         ]);
 
         $view->setTemplate('sqlconnector/sql-manager/app');

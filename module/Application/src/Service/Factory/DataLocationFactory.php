@@ -1,27 +1,26 @@
 <?php
 /*
- * This file is part of the Ginger Workflow Framework.
+ * This file is part of Ginger Workflow Framework.
  * (c) Alexander Miertsch <contact@prooph.de>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  * 
- * Date: 25.01.15 - 22:57
+ * Date: 1/26/15 - 8:07 PM
  */
-
 namespace Application\Service\Factory;
 
-use Application\SharedKernel\ConfigLocation;
+use Application\SharedKernel\DataLocation;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
 /**
- * Class ConfigLocationFactory
+ * Class DataLocationFactory
  *
  * @package Application\Service\Factory
- * @author Alexander Miertsch <kontakt@codeliner.ws>
+ * @author Alexander Miertsch <alexander.miertsch.extern@sixt.com>
  */
-final class ConfigLocationFactory implements FactoryInterface
+final class DataLocationFactory implements FactoryInterface
 {
 
     /**
@@ -32,7 +31,6 @@ final class ConfigLocationFactory implements FactoryInterface
      */
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
-        return ConfigLocation::fromPath($serviceLocator->get('config')['system_config_dir']);
+        return DataLocation::fromPath($serviceLocator->get('config')['system_data_dir']);
     }
 }
- 

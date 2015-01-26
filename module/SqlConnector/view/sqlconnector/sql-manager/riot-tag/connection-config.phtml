@@ -86,7 +86,7 @@
 
                 $(self.dbname).prop("readonly", false);
             } else {
-                self.connection = _.clone(_.find(connections, {dbname : p.dbal_connection.value}));
+                self.connection = _.find(connections, {dbname : p.dbal_connection.value});
                 $(self.dbname).prop("readonly", true);
             }
 
@@ -147,6 +147,7 @@
                 $.putJSON(conApiUrl + "/" + tmpCon.dbname, tmpCon).then(
                     function () {
                         $.notify("<?php echo $this->translate('Connection updated') ?>", "success");
+                        _.merge(self.connection, tmpCon);
                         self.hideConnectionConfig();
                     },
                     $.failNotify
