@@ -41,6 +41,7 @@ class Module
             'Zend\Loader\StandardAutoloader' => array(
                 'namespaces' => array(
                     __NAMESPACE__ => __DIR__ . '/src',
+                    __NAMESPACE__ . '\DataType' => __DIR__ . '/../../data/Application/DataType',
                 ),
             ),
         );

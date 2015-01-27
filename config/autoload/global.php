@@ -14,6 +14,7 @@
 return array(
     'system_config_dir' => \SystemConfig\Definition::getSystemConfigDir(),
     'system_data_dir' => \SystemConfig\Definition::getDataDir(),
+    'system_data_type_dir' => \SystemConfig\Definition::getDataDir() . DIRECTORY_SEPARATOR . "Application" . DIRECTORY_SEPARATOR . "DataType",
     'locations' => [
         'inbox'  => __DIR__ . '/../../data/inbox',
         'outbox' => __DIR__ . '/../../data/outbox',

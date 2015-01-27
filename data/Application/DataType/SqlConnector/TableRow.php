@@ -9,7 +9,7 @@
  * Date: 03.01.15 - 01:43
  */
 
-namespace SqlConnector\DataType;
+namespace Application\DataType\SqlConnector;
 
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\Type;
