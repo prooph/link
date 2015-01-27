@@ -57,6 +57,9 @@ abstract class TableRow extends AbstractDictionary
     }
 
     /**
+     * If column does not directly match with a property name a case insensitive compare is performed to
+     * detect the correct property name.
+     *
      * Override method to implement custom property translation
      *
      * @param string $property
@@ -64,6 +67,16 @@ abstract class TableRow extends AbstractDictionary
      */
     public static function toNativePropertyName($property)
     {
+        $propertyNames = array_keys(static::getPropertyPrototypes());
+
+        if (! in_array($property, $propertyNames)) {
+            foreach ($propertyNames as $propertyName) {
+                if (strtolower($propertyName) === strtolower($property)) {
+                    return $propertyName;
+                }
+            }
+        }
+
         return $property;
     }
 
@@ -80,7 +93,10 @@ abstract class TableRow extends AbstractDictionary
     {
         if (isset(static::$propertyDbTypes[$property]) && static::$platformClass) {
             $doctrineType = Type::getType(static::$propertyDbTypes[$property]);
-            return $doctrineType->convertToPHPValue($value, self::getPlatform(static::$platformClass));
+            $convertedValue = $doctrineType->convertToPHPValue($value, self::getPlatform(static::$platformClass));
+
+            //Doctrine converts empty strings to null, so we can not fully rely on doctrine's conversion
+            if (! is_null($convertedValue)) return $convertedValue;
         }
 
         $typeProperties = static::prototype()->typeProperties();
@@ -98,6 +114,8 @@ abstract class TableRow extends AbstractDictionary
                 return (float)$value;
             case NativeType::DATETIME:
                 return new \DateTime($value);
+            case NativeType::STRING:
+                return (string)$value;
             default:
                 return $value;
         }

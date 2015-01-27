@@ -49,12 +49,12 @@ final class ApplicationDataTypeLocation extends AbstractLocation
             throw new \InvalidArgumentException("Provided data type FQCN contains no class name: " . $dataTypeFQCN);
         }
 
-        $currentPath = $this->toString() . DIRECTORY_SEPARATOR;
+        $currentPath = $this->toString();
 
         if (! empty($nsDirs)) {
             foreach ($nsDirs as $nsDir) {
-                if (! is_dir($nsDir)) mkdir($nsDir);
                 $currentPath .= DIRECTORY_SEPARATOR . $nsDir;
+                if (! is_dir($currentPath)) mkdir($currentPath);
             }
         }
 
