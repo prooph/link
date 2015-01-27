@@ -11,10 +11,13 @@
 namespace SqlConnector\Service;
 
 use Application\SharedKernel\ApplicationDataTypeLocation;
+use Application\SharedKernel\ConfigLocation;
 use Assert\Assertion;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Schema\Column;
+use Ginger\Message\MessageNameUtils;
 use Prooph\ServiceBus\CommandBus;
+use SystemConfig\Command\AddConnectorToConfig;
 
 /**
  * Class TableConnectorGenerator
@@ -29,6 +32,9 @@ use Prooph\ServiceBus\CommandBus;
 final class TableConnectorGenerator 
 {
     const TAB = "    ";
+    const ICON = "glyphicon-hdd";
+    const METADATA_UI_KEY = "SqlconnectorMetadata";
+
     /**
      * @var CommandBus
      */
@@ -38,6 +44,11 @@ final class TableConnectorGenerator
      * @var ApplicationDataTypeLocation
      */
     private $dataTypeLocation;
+
+    /**
+     * @var ConfigLocation
+     */
+    private $configLocation;
 
     /**
      * @var DbalConnectionCollection
@@ -52,17 +63,20 @@ final class TableConnectorGenerator
     /**
      * @param DbalConnectionCollection $dbalConnections
      * @param ApplicationDataTypeLocation $dataTypeLocation
+     * @param \Application\SharedKernel\ConfigLocation $configLocation
      * @param CommandBus $commandBus
      * @param array $doctrineGingerTypeMap
      */
     public function __construct(
         DbalConnectionCollection $dbalConnections,
         ApplicationDataTypeLocation $dataTypeLocation,
+        ConfigLocation $configLocation,
         CommandBus $commandBus,
         array $doctrineGingerTypeMap
     ) {
         $this->dbalConnections = $dbalConnections;
         $this->dataTypeLocation = $dataTypeLocation;
+        $this->configLocation = $configLocation;
         $this->commandBus = $commandBus;
         $this->doctrineGingerTypeMap = $doctrineGingerTypeMap;
     }
@@ -82,7 +96,28 @@ final class TableConnectorGenerator
 
         $connection = $this->dbalConnections->get($connector['dbal_connection']);
 
-        $this->generateGingerTypesIfNotExist($connection->config()['dbname'], $connector['table'], $connection->connection());
+        $generatedTypes = $this->generateGingerTypesIfNotExist($connection->config()['dbname'], $connector['table'], $connection->connection());
+
+        $connectorName = $connector['name'];
+
+        unset($connector['name']);
+
+        $connector['icon'] = self::ICON;
+        $connector['ui_metadata_key'] = self::METADATA_UI_KEY;
+
+        $addConnector = AddConnectorToConfig::fromDefinition(
+            $id,
+            $connectorName,
+            [
+                MessageNameUtils::COLLECT_DATA,
+                MessageNameUtils::PROCESS_DATA
+            ],
+            $generatedTypes,
+            $this->configLocation,
+            $connector
+        );
+
+        $this->commandBus->dispatch($addConnector);
     }
 
     /**
@@ -121,6 +156,11 @@ final class TableConnectorGenerator
             $namespace . '\\' . $collectionClassName,
             $this->generateRowCollectionTypeClass($namespace, $collectionClassName, $rowClassName)
         );
+
+        return [
+            $namespace . '\\' . $rowClassName,
+            $namespace . '\\' . $collectionClassName
+        ];
     }
 
     /**

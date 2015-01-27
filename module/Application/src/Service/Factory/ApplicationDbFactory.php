@@ -12,7 +12,6 @@
 namespace Application\Service\Factory;
 
 use Doctrine\DBAL\DriverManager;
-use Prooph\EventStore\Adapter\Doctrine\DoctrineEventStoreAdapter;
 use Prooph\EventStore\EventStore;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;

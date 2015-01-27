@@ -10,17 +10,20 @@
  */
 namespace SqlConnectorTest\Service;
 
+use SqlConnectorTest\Mock\CommandBusMock;
 use Application\SharedKernel\ApplicationDataTypeLocation;
+use Application\SharedKernel\ConfigLocation;
 use Application\SharedKernel\DataLocation;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Schema\Table;
-use Prooph\ServiceBus\CommandBus;
+use Ginger\Message\MessageNameUtils;
 use SqlConnector\Service\DbalConnection;
 use SqlConnector\Service\DbalConnectionCollection;
 use SqlConnector\Service\SqlConnectorTranslator;
 use SqlConnector\Service\TableConnectorGenerator;
 use SqlConnectorTest\Bootstrap;
 use SqlConnectorTest\TestCase;
+use SystemConfig\Command\AddConnectorToConfig;
 
 /**
  * Class TableConnectorGeneratorTest
@@ -45,6 +48,11 @@ final class TableConnectorGeneratorTest extends TestCase
      */
     private $tableConnectorGenerator;
 
+    /**
+     * @var CommandBusMock
+     */
+    private $commandBus;
+
 
     protected function setUp()
     {
@@ -67,6 +75,8 @@ final class TableConnectorGeneratorTest extends TestCase
 
         $this->dataTypeLocation = ApplicationDataTypeLocation::fromPath(sys_get_temp_dir());
 
+        $this->commandBus = new CommandBusMock();
+
         if (! is_dir(sys_get_temp_dir() . "/SqlConnector")) {
             mkdir(sys_get_temp_dir() . "/SqlConnector");
             mkdir(sys_get_temp_dir() . "/SqlConnector/DataType");
@@ -79,7 +89,8 @@ final class TableConnectorGeneratorTest extends TestCase
         $this->tableConnectorGenerator = new TableConnectorGenerator(
             $connections,
             $this->dataTypeLocation,
-            new CommandBus(),
+            ConfigLocation::fromPath(sys_get_temp_dir()),
+            $this->commandBus,
             Bootstrap::getServiceManager()->get("config")['sqlconnector']['doctrine_ginger_type_map']
         );
     }
@@ -90,6 +101,7 @@ final class TableConnectorGeneratorTest extends TestCase
         @unlink(sys_get_temp_dir() . "/SqlConnector/TestDb/TestDataCollection.php");
         @unlink(sys_get_temp_dir() . "/SqlConnector/TestDb");
         @unlink(sys_get_temp_dir() . "/SqlConnector");
+        $this->commandBus->reset();
     }
 
     /**
@@ -116,5 +128,24 @@ final class TableConnectorGeneratorTest extends TestCase
 
         $this->assertEquals($expectedRowClassString, $generatedRowClassString);
         $this->assertEquals($expectedCollectionClassString, $generatedCollectionClassString);
+
+        /** @var $lastMessage AddConnectorToConfig */
+        $lastMessage = $this->commandBus->getLastMessage();
+
+        $this->assertInstanceOf('SystemConfig\Command\AddConnectorToConfig', $lastMessage);
+
+        $this->assertTrue(strpos($lastMessage->connectorId(), "sqlconnector:::") === 0);
+        $this->assertEquals('Test Db Data', $lastMessage->connectorName());
+        $this->assertEquals([MessageNameUtils::COLLECT_DATA, MessageNameUtils::PROCESS_DATA], $lastMessage->allowedMessage());
+        $this->assertEquals([
+            'Application\DataType\SqlConnector\TestDb\TestData',
+            'Application\DataType\SqlConnector\TestDb\TestDataCollection'
+        ], $lastMessage->allowedTypes());
+        $this->assertEquals([
+            'dbal_connection' => 'test_db',
+            'table' => 'test_data',
+            'icon' => TableConnectorGenerator::ICON,
+            'ui_metadata_key' => TableConnectorGenerator::METADATA_UI_KEY,
+        ], $lastMessage->additionalData());
     }
 } 
