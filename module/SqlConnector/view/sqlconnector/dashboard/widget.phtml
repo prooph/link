@@ -1,0 +1,11 @@
+<?php
+$numberOfConnectors = count($this->sqlConnectors);
+$message = $this->translatePlural('You\'ve one table connected', 'You\'ve %s tables connected', $numberOfConnectors);
+
+if ($numberOfConnectors === 0) $numberOfConnectors = 'no';
+?>
+<ul class="list-group">
+    <li class="list-group-item list-group-item-text text-info"><?php echo sprintf($message, $numberOfConnectors) ?>&nbsp;<span class="glyphicon glyphicon-<?php echo ($numberOfConnectors > 0)? 'ok' : 'ban-circle' ?> pull-right"></span></li>
+</ul>
+<p class="text-center"><a href="<?php echo $this->url('sql_connector/configurator') ?>" class="btn btn-inverse"><?php echo $this->translate('manage table connections') ?>&nbsp;<span class="glyphicon glyphicon-list-alt"></span></a></p>
+

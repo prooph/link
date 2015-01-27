@@ -29,7 +29,20 @@ final class DashboardWidgetController extends AbstractWidgetController
      */
     public function widgetAction()
     {
+        if (! $this->systemConfig->isConfigured()) return false;
 
+        $connectors = [];
+
+        foreach ($this->systemConfig->getConnectors() as $connectorId => $connector) {
+            if (strpos($connectorId, 'sqlconnector:::') !== false) $connectors[$connectorId] = $connector;
+        }
+
+        return DashboardWidget::initialize(
+            'sqlconnector/dashboard/widget',
+            'Sql Table Connector',
+            4,
+            ['gingerConfig' => $this->systemConfig, 'sqlConnectors' => $connectors]
+        );
     }
 }
  

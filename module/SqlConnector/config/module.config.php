@@ -10,12 +10,10 @@
  */
 return array(
     'dashboard' => [
-        /*
         'sqlconnector_config_widget' => [
             'controller' => 'SqlConnector\Controller\DashboardWidget',
             'order' => 90 //50 - 99 connectors range
         ]
-        */
     ],
     'router' => [
         'routes' => [
@@ -125,7 +123,7 @@ return array(
     ],
     'view_manager' => array(
         'template_map' => [
-            'sqlconnector/dashboard/widget' => __DIR__ . '/../view/sqlconnector/sql-manager/app.phtml',
+            'sqlconnector/dashboard/widget' => __DIR__ . '/../view/sqlconnector/dashboard/widget.phtml',
             'sqlconnector/partials/pm-metadata-config' => __DIR__ . '/../view/sqlconnector/partials/pm-metadata-config.phtml',
             'sqlconnector/sql-manager/app' => __DIR__ . '/../view/sqlconnector/sql-manager/app.phtml',
             'sqlconnector/sql-manager/partial/sidebar-left' => __DIR__ . '/../view/sqlconnector/sql-manager/partial/sidebar-left.phtml',
@@ -175,6 +173,7 @@ return array(
     'controllers' => array(
         'invokables' => [
             'SqlConnector\Api\TestConnection' => 'SqlConnector\Api\TestConnection',
+            'SqlConnector\Controller\DashboardWidget' => 'SqlConnector\Controller\DashboardWidgetController',
         ],
         'factories' => [
             'SqlConnector\Controller\SqlManager' => 'SqlConnector\Controller\Factory\SqlManagerControllerFactory',
