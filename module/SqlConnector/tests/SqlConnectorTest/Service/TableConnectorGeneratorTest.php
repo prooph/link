@@ -10,6 +10,7 @@
  */
 namespace SqlConnectorTest\Service;
 
+use Application\SharedKernel\ApplicationDataTypeLocation;
 use Application\SharedKernel\DataLocation;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Schema\Table;
@@ -37,7 +38,7 @@ final class TableConnectorGeneratorTest extends TestCase
     /**
      * @var DataLocation
      */
-    private $dataLocation;
+    private $dataTypeLocation;
 
     /**
      * @var TableConnectorGenerator
@@ -64,7 +65,7 @@ final class TableConnectorGeneratorTest extends TestCase
 
         $this->connection->connection()->getSchemaManager()->createTable($testDataTable);
 
-        $this->dataLocation = DataLocation::fromPath(sys_get_temp_dir());
+        $this->dataTypeLocation = ApplicationDataTypeLocation::fromPath(sys_get_temp_dir());
 
         if (! is_dir(sys_get_temp_dir() . "/SqlConnector")) {
             mkdir(sys_get_temp_dir() . "/SqlConnector");
@@ -77,7 +78,7 @@ final class TableConnectorGeneratorTest extends TestCase
 
         $this->tableConnectorGenerator = new TableConnectorGenerator(
             $connections,
-            $this->dataLocation,
+            $this->dataTypeLocation,
             new CommandBus(),
             Bootstrap::getServiceManager()->get("config")['sqlconnector']['doctrine_ginger_type_map']
         );
@@ -85,9 +86,10 @@ final class TableConnectorGeneratorTest extends TestCase
 
     protected function tearDown()
     {
-        @unlink(sys_get_temp_dir() . "/SqlConnector/DataType/TestDb/TestData.php");
-        @unlink(sys_get_temp_dir() . "/SqlConnector/DataType/TestDb");
-        @unlink(sys_get_temp_dir() . "/SqlConnector/DataType");
+        @unlink(sys_get_temp_dir() . "/SqlConnector/TestDb/TestData.php");
+        @unlink(sys_get_temp_dir() . "/SqlConnector/TestDb/TestDataCollection.php");
+        @unlink(sys_get_temp_dir() . "/SqlConnector/TestDb");
+        @unlink(sys_get_temp_dir() . "/SqlConnector");
     }
 
     /**
@@ -103,12 +105,16 @@ final class TableConnectorGeneratorTest extends TestCase
 
         $this->tableConnectorGenerator->addConnector(SqlConnectorTranslator::generateConnectorId(), $connectorData);
 
-        $expectedClassString = file_get_contents(getcwd() . "/SqlConnectorTest/Mock/TestRow.php");
+        $expectedRowClassString = file_get_contents(getcwd() . "/SqlConnectorTest/Mock/TestData.php");
+        $expectedCollectionClassString = file_get_contents(getcwd() . "/SqlConnectorTest/Mock/TestDataCollection.php");
 
-        $pathToGenerateFile = sys_get_temp_dir() . "/SqlConnector/DataType/TestDb/TestData.php";
+        $pathToGeneratedRowFile = sys_get_temp_dir() . "/SqlConnector/TestDb/TestData.php";
+        $pathToGeneratedCollectionFile = sys_get_temp_dir() . "/SqlConnector/TestDb/TestDataCollection.php";
 
-        $generatedClassString = file_get_contents($pathToGenerateFile);
+        $generatedRowClassString = file_get_contents($pathToGeneratedRowFile);
+        $generatedCollectionClassString = file_get_contents($pathToGeneratedCollectionFile);
 
-        $this->assertEquals($expectedClassString, $generatedClassString);
+        $this->assertEquals($expectedRowClassString, $generatedRowClassString);
+        $this->assertEquals($expectedCollectionClassString, $generatedCollectionClassString);
     }
 } 

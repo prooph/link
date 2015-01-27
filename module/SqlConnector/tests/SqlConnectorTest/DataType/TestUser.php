@@ -11,11 +11,11 @@
 
 namespace SqlConnectorTest\DataType;
 
+use Application\DataType\SqlConnector\TableRow;
 use Ginger\Type\Description\Description;
 use Ginger\Type\Description\NativeType;
 use Ginger\Type\Integer;
 use Ginger\Type\String;
-use SqlConnector\DataType\TableRow;
 
 /**
  * Class TestUser
