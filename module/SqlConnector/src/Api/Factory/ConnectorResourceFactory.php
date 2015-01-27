@@ -31,6 +31,8 @@ final class ConnectorResourceFactory implements FactoryInterface
      */
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
-        return new Connector();
+        return new Connector(
+            $serviceLocator->getServiceLocator()->get('sqlconnector.table_connector_generator')
+        );
     }
 }

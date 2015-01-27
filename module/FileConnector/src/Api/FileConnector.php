@@ -30,6 +30,8 @@ use ZF\ApiProblem\ApiProblemResponse;
  */
 final class FileConnector extends AbstractRestController implements ActionController, NeedsSystemConfig
 {
+    const ICON = 'glyphicon-file';
+    const UI_METADATA_KEY = 'FileConnectorMetadata';
     /**
      * @var CommandBus
      */
@@ -79,7 +81,8 @@ final class FileConnector extends AbstractRestController implements ActionContro
             $this->systemConfig->getConfigLocation(),
             [
                 'metadata' => $data['metadata'],
-                'ui_metadata_key' => 'FileConnectorMetadata',
+                'ui_metadata_key' => self::UI_METADATA_KEY,
+                'icon' => self::ICON,
             ]
         ));
 

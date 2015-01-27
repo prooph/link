@@ -125,6 +125,7 @@ return array(
     ],
     'view_manager' => array(
         'template_map' => [
+            'sqlconnector/dashboard/widget' => __DIR__ . '/../view/sqlconnector/sql-manager/app.phtml',
             'sqlconnector/partials/pm-metadata-config' => __DIR__ . '/../view/sqlconnector/partials/pm-metadata-config.phtml',
             'sqlconnector/sql-manager/app' => __DIR__ . '/../view/sqlconnector/sql-manager/app.phtml',
             'sqlconnector/sql-manager/partial/sidebar-left' => __DIR__ . '/../view/sqlconnector/sql-manager/partial/sidebar-left.phtml',
@@ -165,6 +166,7 @@ return array(
         'factories' => [
             'sqlconnector.dbal_connections' => 'SqlConnector\Service\Factory\ConnectionsProvider',
             'sqlconnector.connection_manager' => 'SqlConnector\Service\Factory\ConnectionManagerFactory',
+            'sqlconnector.table_connector_generator' => 'SqlConnector\Service\Factory\TableConnectorGeneratorFactory',
         ],
         'abstract_factories' => [
             'SqlConnector\Service\Factory\AbstractDoctrineTableGatewayFactory'

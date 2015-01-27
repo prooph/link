@@ -251,7 +251,7 @@ final class GingerConfig implements SystemChangedEventRecorder
             'allowed_types' => $allowedTypes,
         ], $additionConfig);
 
-        $this->assertConnectorConfig($connectorId, $connectorConfig, $this->projection());
+        $this->assertConnectorConfig($connectorId, $connectorConfig, $this->projection(), true);
 
         if (in_array($connectorId, $this->projection()->getConnectors())) throw new \InvalidArgumentException(sprintf("A connector with id %s is already configured", $connectorId));
 
@@ -275,7 +275,7 @@ final class GingerConfig implements SystemChangedEventRecorder
     {
         if (! isset($this->config['ginger']['connectors'][$connectorId])) throw new \InvalidArgumentException(sprintf('Connector with id %s can not be found', $connectorId));
 
-        $this->assertConnectorConfig($connectorId, $connectorConfig, $this->projection());
+        $this->assertConnectorConfig($connectorId, $connectorConfig, $this->projection(), false);
 
         $oldConfig = $this->config['ginger']['connectors'][$connectorId];
 
@@ -321,7 +321,7 @@ final class GingerConfig implements SystemChangedEventRecorder
         foreach ($config['ginger']['connectors'] as $connectorId => $connectorConfig)
         {
             if (! is_array($connectorConfig)) throw new \InvalidArgumentException(sprintf('Connector config for connector %s must be an array', $connectorId));
-            $this->assertConnectorConfig($connectorId, $connectorConfig, $projection);
+            $this->assertConnectorConfig($connectorId, $connectorConfig, $projection, false);
         }
 
         $this->config = $config;
@@ -427,9 +427,10 @@ final class GingerConfig implements SystemChangedEventRecorder
      * @param string $connectorId
      * @param array $connectorConfig
      * @param \SystemConfig\Projection\GingerConfig $config
+     * @param bool $isNewConnector
      * @throws \InvalidArgumentException
      */
-    private function assertConnectorConfig($connectorId, array $connectorConfig, \SystemConfig\Projection\GingerConfig $config)
+    private function assertConnectorConfig($connectorId, array $connectorConfig, \SystemConfig\Projection\GingerConfig $config, $isNewConnector = false)
     {
         if (! is_string($connectorId) || empty($connectorId)) throw new \InvalidArgumentException("Connector id must a non empty string");
 
@@ -445,16 +446,20 @@ final class GingerConfig implements SystemChangedEventRecorder
         if (! array_key_exists('allowed_types', $connectorConfig))       throw new \InvalidArgumentException('Missing allowed types in connector config '. $connectorId);
         if (!is_array($connectorConfig['allowed_types'])) throw new \InvalidArgumentException('Allowed types must be an array in connector config '. $connectorId);
 
-        array_walk($connectorConfig['allowed_types'], function ($allowedType) use ($connectorId, $config) {
-            if (! in_array($allowedType, $config->getAllAvailableGingerTypes())) throw new \InvalidArgumentException(sprintf('Allowed data type %s is not known by the system in connector config %s', $allowedType, $connectorId));
-        });
+        if (! $isNewConnector) {
+            array_walk($connectorConfig['allowed_types'], function ($allowedType) use ($connectorId, $config) {
+                if (! in_array($allowedType, $config->getAllAvailableGingerTypes())) throw new \InvalidArgumentException(sprintf('Allowed data type %s is not known by the system in connector config %s', $allowedType, $connectorId));
+            });
+        }
 
         if (isset($connectorConfig['metadata'])) {
             if (!is_array($connectorConfig['metadata'])) throw new \InvalidArgumentException('Metadata must be an array in connector config '. $connectorId);
         }
 
-        if (isset($connectorConfig['preferred_type'])) {
-            if (! in_array($connectorConfig['preferred_type'], $config->getAllAvailableGingerTypes())) throw new \InvalidArgumentException(sprintf('Preferred data type %s is not known by the system in connector config %s', $connectorConfig['preferred_type'], $connectorId));
+        if (! $isNewConnector) {
+            if (isset($connectorConfig['preferred_type'])) {
+                if (! in_array($connectorConfig['preferred_type'], $config->getAllAvailableGingerTypes())) throw new \InvalidArgumentException(sprintf('Preferred data type %s is not known by the system in connector config %s', $connectorConfig['preferred_type'], $connectorId));
+            }
         }
     }
 

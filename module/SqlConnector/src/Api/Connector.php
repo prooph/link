@@ -11,6 +11,8 @@
 namespace SqlConnector\Api;
 
 use Application\Service\AbstractRestController;
+use SqlConnector\Service\SqlConnectorTranslator;
+use SqlConnector\Service\TableConnectorGenerator;
 
 /**
  * Class Connector
@@ -20,8 +22,27 @@ use Application\Service\AbstractRestController;
  */
 final class Connector extends AbstractRestController
 {
+    /**
+     * @var TableConnectorGenerator
+     */
+    private $tableConnectorGenerator;
+
+    public function __construct(TableConnectorGenerator $tableConnectorGenerator)
+    {
+        $this->tableConnectorGenerator = $tableConnectorGenerator;
+    }
+
     public function create(array $data)
     {
+        $connectorId = SqlConnectorTranslator::generateConnectorId();
 
+        $this->tableConnectorGenerator->addConnector(
+            $connectorId,
+            $data
+        );
+
+        $data['id'] = $connectorId;
+
+        return $data;
     }
 } 

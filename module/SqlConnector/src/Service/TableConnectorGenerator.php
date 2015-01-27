@@ -280,6 +280,18 @@ final class TableConnectorGenerator
         $properties = $this->loadPropertiesForTable($table, $connection);
         $primaryKey = $this->loadPrimaryKeyforTable($table, $connection);
         $hasPrimaryKey = ($primaryKey)? "true" : "false";
+        $propertyNames = array_keys($properties);
+
+        //Try to match primary key by performing case insensitive compare
+        if ($hasPrimaryKey && !in_array($primaryKey, $propertyNames)) {
+            foreach ($propertyNames as $propertyName) {
+                if (strtolower($propertyName) === strtolower($primaryKey)) {
+                    $primaryKey = $propertyName;
+                    break;
+                }
+            }
+        }
+
         $primaryKeyStr = ($primaryKey)? '"' . $primaryKey . '"' : 'null';
 
         $gingerProperties = $this->propertiesToGingerPropString($properties);
