@@ -122,7 +122,10 @@ class LeagueCsvTypeAdapter implements FileTypeAdapter
                     $writeHeader = false;
                 }
 
-                $writer->insertOne($this->convertToCsvRow($item));
+
+                    $writer->insertOne($this->convertToCsvRow($item));
+
+
             }
         } else {
             if ($writeHeader) {

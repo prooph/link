@@ -139,6 +139,7 @@ final class TableConnectorGenerator
      * @param string $dbname
      * @param string $table
      * @param Connection $connection
+     * @return array
      */
     private function generateGingerTypesIfNotExist($dbname, $table, Connection $connection)
     {
@@ -220,6 +221,7 @@ final class TableConnectorGenerator
 
     /**
      * @param Column $column
+     * @return string
      * @throws \RuntimeException
      */
     private function doctrineColumnToGingerType(Column $column)
@@ -229,6 +231,16 @@ final class TableConnectorGenerator
         }
 
         $gingerType = $this->doctrineGingerTypeMap[$column->getType()->getName()];
+
+        if (! $column->getNotnull()) {
+            $gingerType.= "OrNull";
+
+            if (! class_exists($gingerType)) {
+                throw new \RuntimeException(
+                    "Missing null type: for nullable column: " . $column->getName()
+                );
+            }
+        }
 
         Assertion::implementsInterface($gingerType, 'Ginger\Type\Type');
 

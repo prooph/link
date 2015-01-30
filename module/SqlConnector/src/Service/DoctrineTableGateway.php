@@ -13,12 +13,11 @@ namespace SqlConnector\Service;
 
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Query\QueryBuilder;
+use Ginger\Functional\Iterator\MapIterator;
 use Ginger\Message\AbstractWorkflowMessageHandler;
 use Ginger\Message\GingerMessage;
 use Ginger\Message\LogMessage;
-use Ginger\Message\MessageNameUtils;
 use Ginger\Message\WorkflowMessage;
-use Ginger\Message\WorkflowMessageHandler;
 use Ginger\Type\Description\Description;
 use Ginger\Type\Description\NativeType;
 use Prooph\ServiceBus\CommandBus;
@@ -249,16 +248,14 @@ final class DoctrineTableGateway extends AbstractWorkflowMessageHandler
 
         $query = $this->buildQueryFromMetadata($itemType, $workflowMessage->metadata());
 
-        $resultSet = $query->execute()->fetchAll();
+        $stmt = $query->execute();
 
+        //Premap row, so that factory fromDatabaseRow is used to construct the TableRow type
+        $mapIterator = new MapIterator($stmt, function ($item) use ($itemType) {
+            return $itemType::fromDatabaseRow($item);
+        });
 
-        $items = [];
-
-        foreach ( $resultSet as $itemData) {
-            $items[] = $itemType::fromDatabaseRow($itemData);
-        }
-
-        $collection = $collectionType::fromNativeValue($items);
+        $collection = $collectionType::fromNativeValue($mapIterator);
 
         return $workflowMessage->answerWith($collection, ['total_items' => $count]);
     }

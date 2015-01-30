@@ -11,6 +11,7 @@
 
 namespace Application\DataType\SqlConnector;
 
+use Assert\Assertion;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\Type;
 use Ginger\Type\AbstractDictionary;
@@ -41,6 +42,8 @@ abstract class TableRow extends AbstractDictionary
 
     /**
      * @param array $row
+     * @throws \Exception
+     * @throws \Ginger\Type\Exception\InvalidTypeException
      * @return static
      */
     public static function fromDatabaseRow(array $row)
@@ -53,7 +56,29 @@ abstract class TableRow extends AbstractDictionary
             if ($newProperty != $property) unset($row[$property]);
         }
 
-        return static::fromNativeValue($row);
+        try {
+            return static::fromNativeValue($row);
+        } catch (\Exception $e) {
+            if (static::buildDescription()->hasIdentifier()) {
+                $identifier = static::buildDescription()->identifierName();
+
+                if (isset($row[$identifier])) {
+                    throw new \RuntimeException(
+                        sprintf(
+                            'Failed to process data set: %s = %s. Reason: %s',
+                            $identifier,
+                            $row[$identifier],
+                            $e->getMessage()
+                        ),
+                        null,
+                        $e
+                    );
+                }
+            }
+
+            throw $e;
+        }
+
     }
 
     /**
@@ -97,6 +122,10 @@ abstract class TableRow extends AbstractDictionary
 
             //Doctrine converts empty strings to null, so we can not fully rely on doctrine's conversion
             if (! is_null($convertedValue)) return $convertedValue;
+        }
+
+        if (is_null($value)) {
+            return null;
         }
 
         $typeProperties = static::prototype()->typeProperties();

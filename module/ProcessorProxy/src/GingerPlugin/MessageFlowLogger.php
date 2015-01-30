@@ -152,7 +152,7 @@ final class MessageFlowLogger extends AbstractListenerAggregate implements Plugi
         $messageId = null;
 
         if ($message instanceof MessageInterface) $messageId = $message->header()->uuid();
-        elseif ($message instanceof GingerMessage) $messageId = $message->toServiceBusMessage()->header()->uuid();
+        elseif ($message instanceof GingerMessage) $messageId = $message->uuid();
 
         if (! $messageId) return;
 

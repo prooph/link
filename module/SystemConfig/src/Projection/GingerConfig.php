@@ -105,7 +105,8 @@ final class GingerConfig
             }
         }
 
-        $this->availableTypes = array_unique($availableTypes);
+        //Reindex array
+        $this->availableTypes = array_values(array_unique($availableTypes));
 
         return $this->availableTypes;
     }

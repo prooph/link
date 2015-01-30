@@ -111,7 +111,7 @@ return array(
             'guid' => 'Ginger\Type\String',
             'integer' => 'Ginger\Type\Integer',
             'smallint' => 'Ginger\Type\Integer',
-            'bigint' => 'Ginger\Type\Integer',
+            'bigint' => 'Ginger\Type\String',
             'float' => 'Ginger\Type\Float',
             'decimal' => 'Ginger\Type\Float',
             'boolean' => 'Ginger\Type\Boolean',
