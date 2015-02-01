@@ -75,6 +75,14 @@ window.hash_find_by = function(hash, key, value) {
         });
     }
 
+    $.appErrorNotify = function(msg) {
+        $.notify(msg, {
+            className : 'error',
+            clickToHide: true,
+            autoHide: false
+        });
+    }
+
 })( jQuery );
 
 

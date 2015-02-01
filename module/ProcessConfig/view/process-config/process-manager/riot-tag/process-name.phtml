@@ -1,11 +1,67 @@
-<h3 class="text-center">{ process.name } <a href="#" class="btn btn-default pull-right"><?php echo $this->translate('edit') ?></a></h3>
+<h3 class="text-center">{ process.name } <span class="pull-right"><a href="#" class="btn btn-default"><?php echo $this->translate('edit') ?></a><span if="{ isCollectDataProcess() }">&nbsp;&nbsp;<button class="btn btn-default" onclick="{ runProcess }"><span class="glyphicon glyphicon-play"></span></button></span></span></h3>
 <hr>
 <script type="text/javascript">
     function (context) {
+        var self = this,
+            loadStartMessageRetries = {};
+
         if (context.opts.process) {
             this.process = context.opts.process;
         } else {
             this.process = { name : "<?php echo $this->translate('Unknown')  ?>" };
+        }
+
+        this.isCollectDataProcess = function () {
+            if (! this.process.start_message) return false;
+
+            return this.process.start_message.message_type == '<?php echo \Ginger\Message\MessageNameUtils::COLLECT_DATA  ?>';
+        }
+
+
+
+        this.loadStartMessage = function (location) {
+            if (! loadStartMessageRetries[location]) loadStartMessageRetries[location] = 0;
+
+            if (loadStartMessageRetries[location] > 3) {
+                $.appErrorNotify(s.sprintf('<?php echo $this->translate('Unable to load process id from: %s. Please contact the support!')  ?>', location));
+                return;
+            }
+
+            $.getJSON(location).then(function (data) {
+                var message = data.message;
+
+                if (! message.process_id) {
+                    loadStartMessageRetries[location]++;
+                    window.setTimeout(function () {
+                        self.loadStartMessage(location);
+                    }, 3000);
+                    return;
+                }
+
+                window.location.href = '<?php echo $this->url('monitor/process_details')  ?>' + message.process_id;
+            }, $.failNotify);
+        }
+
+        this.runProcess = function () {
+            if (! this.process.start_message) return false;
+
+            var command = {
+                collect_data_trigger : {
+                    ginger_type : this.process.start_message.ginger_type
+                }
+            };
+
+            $.postJSON('<?php echo $this->url('processor_proxy/api/collect_data_triggers')  ?>', command)
+                .then(function (data, status, xhr) {
+                    var messageLocation = xhr.getResponseHeader('Location');
+
+                    if (! messageLocation) {
+                        $.appErrorNotify('<?php echo $this->translate('Location header for start message is missing. Please contact the support!')  ?>');
+                        return;
+                    }
+
+                    self.loadStartMessage(messageLocation);
+                }, $.failNotify);
         }
     }
 </script>
