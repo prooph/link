@@ -18,6 +18,7 @@ use Doctrine\DBAL\Schema\Column;
 use Ginger\Message\MessageNameUtils;
 use Prooph\ServiceBus\CommandBus;
 use SystemConfig\Command\AddConnectorToConfig;
+use SystemConfig\Command\ChangeConnectorConfig;
 
 /**
  * Class TableConnectorGenerator
@@ -120,6 +121,35 @@ final class TableConnectorGenerator
         $this->commandBus->dispatch($addConnector);
     }
 
+    public function updateConnector($id, array $connector, $regenerateType = false)
+    {
+        $this->assertConnector($connector);
+
+        if (! $this->dbalConnections->containsKey($connector['dbal_connection'])) {
+            throw new \InvalidArgumentException(sprintf("Dbal connection %s for connector %s does not exists", $connector['dbal_connection'], $connector['name']));
+        }
+
+        $connection = $this->dbalConnections->get($connector['dbal_connection']);
+
+        if ($regenerateType) {
+            $generatedTypes = $this->replaceGingerTypes($connection->config()['dbname'], $connector['table'], $connection->connection());
+        } else {
+            $generatedTypes = $this->generateTypeClassFQCNs($connection->config()['dbname'], $connector['table']);
+        }
+
+        $connector['icon'] = self::ICON;
+        $connector['ui_metadata_riot_tag'] = self::METADATA_UI_KEY;
+        $connector['allowed_types'] = $generatedTypes;
+        $connector['allowed_messages'] = [
+            MessageNameUtils::COLLECT_DATA,
+            MessageNameUtils::PROCESS_DATA
+        ];
+
+        $command = ChangeConnectorConfig::ofConnector($id, $connector, $this->configLocation);
+
+        $this->commandBus->dispatch($command);
+    }
+
     /**
      * @param array $connector
      */
@@ -148,15 +178,62 @@ final class TableConnectorGenerator
         $collectionClassName = $rowClassName . "Collection";
         $namespace = 'Application\DataType\SqlConnector\\' . $dbNsName;
 
-        $this->dataTypeLocation->addDataTypeClassIfNotExists(
+        $this->dataTypeLocation->addDataTypeClass(
             $namespace . '\\' . $rowClassName,
             $this->generateRowTypeClass($namespace, $rowClassName, $table, $connection)
         );
 
-        $this->dataTypeLocation->addDataTypeClassIfNotExists(
+        $this->dataTypeLocation->addDataTypeClass(
             $namespace . '\\' . $collectionClassName,
             $this->generateRowCollectionTypeClass($namespace, $collectionClassName, $rowClassName)
         );
+
+        return [
+            $namespace . '\\' . $rowClassName,
+            $namespace . '\\' . $collectionClassName
+        ];
+    }
+
+    /**
+     * Does the same like generateGingerTypesIfNotExist but overrides any existing type classes.
+     * Use this method with care.
+     *
+     * @param string $dbname
+     * @param string $table
+     * @param Connection $connection
+     * @return array
+     */
+    private function replaceGingerTypes($dbname, $table, Connection $connection)
+    {
+        $dbNsName = $this->titleize($dbname);
+        $rowClassName = $this->titleize($table);
+        $collectionClassName = $rowClassName . "Collection";
+        $namespace = 'Application\DataType\SqlConnector\\' . $dbNsName;
+
+        $this->dataTypeLocation->addDataTypeClass(
+            $namespace . '\\' . $rowClassName,
+            $this->generateRowTypeClass($namespace, $rowClassName, $table, $connection),
+            $forceReplace = true
+        );
+
+        $this->dataTypeLocation->addDataTypeClass(
+            $namespace . '\\' . $collectionClassName,
+            $this->generateRowCollectionTypeClass($namespace, $collectionClassName, $rowClassName),
+            $forceReplace = true
+        );
+
+        return [
+            $namespace . '\\' . $rowClassName,
+            $namespace . '\\' . $collectionClassName
+        ];
+    }
+
+    private function generateTypeClassFQCNs($dbname, $table)
+    {
+        $dbNsName = $this->titleize($dbname);
+        $rowClassName = $this->titleize($table);
+        $collectionClassName = $rowClassName . "Collection";
+        $namespace = 'Application\DataType\SqlConnector\\' . $dbNsName;
 
         return [
             $namespace . '\\' . $rowClassName,

@@ -45,4 +45,19 @@ final class Connector extends AbstractRestController
 
         return $data;
     }
+
+    public function update($id, $data)
+    {
+        unset($data['id']);
+
+        $regenerateTypes = isset($data['regenerate_type'])? (bool)$data['regenerate_type'] : false;
+
+        unset($data['regenerate_type']);
+
+        $this->tableConnectorGenerator->updateConnector($id, $data, $regenerateTypes);
+
+        $data['id'] = $id;
+
+        return $data;
+    }
 } 

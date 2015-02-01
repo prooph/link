@@ -83,7 +83,7 @@ Ember.Handlebars.helper('process-status', function (process) {
  * - task.new
  */
 Ember.Handlebars.helper('task-desc', function(task) {
-    var prefix = Em.I18n.t('task.task') + " " +task.id + ": ";
+    var prefix = Em.I18n.t('task.task') + " " +(parseInt(task.id) + 1) + ": ";
     var gingerTypeName = App.gingerTypeName;
 
     if (task.task_type === Em.I18n.t("task.collect_data.value")) {

@@ -32,11 +32,15 @@ final class ApplicationDataTypeLocation extends AbstractLocation
      * If more sub namespaces are defined, the method creates a directory for each
      * namespace part if not already exists.
      *
+     * By default a new class is only generated if it does not exist already.
+     * You can force an override by setting the replace flag to true.
+     *
      * @param $dataTypeFQCN
      * @param $classContent
+     * @param bool $replace
      * @throws \InvalidArgumentException
      */
-    public function addDataTypeClassIfNotExists($dataTypeFQCN, $classContent)
+    public function addDataTypeClass($dataTypeFQCN, $classContent, $replace = false)
     {
         if (strpos($dataTypeFQCN, "Application\\DataType\\") !== 0) {
             throw new \InvalidArgumentException("Namespace of data type should start with Application\\DataType\\. Got " . $dataTypeFQCN);
@@ -60,7 +64,7 @@ final class ApplicationDataTypeLocation extends AbstractLocation
 
         $filename = $currentPath . DIRECTORY_SEPARATOR . $className . ".php";
 
-        if (file_exists($filename)) return;
+        if (!$replace && file_exists($filename)) return;
 
         file_put_contents($filename, $classContent);
     }

@@ -16,8 +16,7 @@ use Application\Service\TranslatorAwareController;
 use Application\SharedKernel\LocationTranslator;
 use Application\SharedKernel\ProcessToClientTranslator;
 use Application\SharedKernel\ScriptLocation;
-use Dashboard\Controller\AbstractWidgetController;
-use Dashboard\View\DashboardWidget;
+use Ginger\Functional\Func;
 use Ginger\Processor\ProcessId;
 use Ginger\Processor\Task\TaskListPosition;
 use Gingerwork\Monitor\Model\ProcessLogger;
@@ -108,8 +107,13 @@ final class ProcessViewController extends AbstractQueryController implements Tra
                 'available_ginger_types' => $this->getGingerTypesForClient(),
                 'available_task_types' => \Ginger\Processor\Definition::getAllTaskTypes(),
                 'available_manipulation_scripts' => $this->scriptLocation->getScriptNames(),
-                'connectors' => $this->systemConfig->getConnectors(),
                 'locations'  => $this->locationTranslator->getLocations(),
+                'connectors' => array_values(
+                    Func::map($this->systemConfig->getConnectors(), function ($connector, $id) {
+                        $connector['id'] = $id;
+                        return $connector;
+                    })
+                ),
             ]
         );
 
