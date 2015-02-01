@@ -88,8 +88,10 @@ return array(
             'file-connector/file-manager/partial/connectors'        => __DIR__ . '/../view/file-connector/file-manager/partial/connectors.phtml',
             'file-connector/file-manager/partial/connector-edit'    => __DIR__ . '/../view/file-connector/file-manager/partial/connector-edit.phtml',
             'file-connector/file-manager/partial/sidebar-left'      => __DIR__ . '/../view/file-connector/file-manager/partial/sidebar-left.phtml',
-            'file-connector/file-manager/partial/pm-metadata-config'=> __DIR__ . '/../view/file-connector/file-manager/partial/pm-metadata-config.phtml',
         ],
+        'template_path_stack' => array(
+            __DIR__ . '/../view',
+        ),
     ),
     'process_manager' => [
         'view_addons' => [
@@ -106,12 +108,13 @@ return array(
                     'js/file-connector/models/connector.js',
                     'js/file-connector/views/helpers.js',
                 ),
+            ),
+            'riot-tags' => [
                 //Inject process manager metadata configurator for file connectors
                 'js/process-config/app.js' => [
-                    'js/file-connector/controllers/pm-metadata.js',
-                    'js/file-connector/views/pm-metadata.js',
-                ]
-            ),
+                    'file-connector/pm/riot-tag/fileconnector-metadata',
+                ],
+            ],
             'paths' => array(
                 __DIR__ . '/../public',
             ),

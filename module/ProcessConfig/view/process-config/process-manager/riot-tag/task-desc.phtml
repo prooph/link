@@ -1,0 +1,59 @@
+<span></span>
+<script type="text/javascript">
+    function (context) {
+
+        this.task = context.opts.task;
+
+        this.generateTaskDesc = function () {
+
+            if (! this.task) return "<?php echo $this->translate('Unknown')  ?>"
+
+            var prefix = '<?php echo $this->translate('Task')  ?>' + ' ' + (parseInt(this.task.id) + 1) + ': ';
+
+            if (this.task.task_type == '<?php echo \Ginger\Processor\Definition::TASK_COLLECT_DATA  ?>') {
+                var source = this.task.source ? connector_name(this.task.source, context.app.connectors) : "<?php echo $this->translate('Source')  ?>";
+                var sourceType = this.task.ginger_type ? ginger_type_name(this.task.ginger_type, context.app.gingerTypes) : "<?php echo $this->translate('Data')  ?>";
+
+                return prefix +
+                    ' <span class="glyphicon ' + connector_icon(this.task.source, context.app.connectors, 'glyphicon-import') + '" title="' + source + '"></span> ' +
+                    ' <span class="glyphicon glyphicon-arrow-right"></span>' +
+                    ' ' + sourceType;
+            }
+
+            if (this.task.task_type == '<?php echo \Ginger\Processor\Definition::TASK_PROCESS_DATA  ?>') {
+                var target = (_.isEmpty(this.task.target))? "target" : connector_name(this.task.target, context.app.connectors);
+                var preferredType = 'data';
+
+                if (typeof this.task.preferred_type != "undefined") {
+                    preferredType = this.task.preferred_type;
+                } else if (typeof  this.task.allowed_types != "undefined") {
+                    preferredType = this.task.allowed_types[0];
+                }
+
+                preferredType = ginger_type_name(preferredType, context.app.gingerTypes);
+
+                return prefix +
+                    ' ' + preferredType +
+                    ' <span class="glyphicon glyphicon-arrow-right"></span>' +
+                    ' <span class="glyphicon ' + connector_icon(this.task.target, context.app.connectors, 'glyphicon-export')
+                    + '" title="' + target + '"></span> ';
+            }
+
+            if (this.task.task_type == '<?php echo \Ginger\Processor\Definition::TASK_MANIPULATE_PAYLOAD  ?>') {
+                return prefix +
+                    ' <span class="glyphicon glyphicon-play"></span> ' +
+                    (this.task.manipulation_script || '<?php echo $this->translate('Script')  ?>');
+            }
+
+            if (! this.task.task_type) {
+                return prefix + "<?php echo $this->translate('New Task')  ?>"
+            }
+
+            return prefix + this.task.task_type;
+        }
+
+        this.on("mount", function () {
+           $(this.root).children("span").html(this.generateTaskDesc());
+        });
+    }
+</script>

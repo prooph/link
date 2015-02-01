@@ -132,20 +132,8 @@ return array(
             __DIR__ . '/../view',
         ),
     ),
-    'process_manager' => [
-        'view_addons' => [
-            'sqlconnector/partials/pm-metadata-config'
-        ]
-    ],
     'asset_manager' => array(
         'resolver_configs' => array(
-            'collections' => array(
-                //Inject process manager metadata configurator for sql connectors
-                'js/process-config/app.js' => [
-                    'js/sqlconnector/controllers/pm-metadata.js',
-                    'js/sqlconnector/views/pm-metadata.js',
-                ],
-            ),
             //Riot tags are resolved by the Application\Service\RiotTagCollectionResolver
             'riot-tags' => [
                 'js/sqlconnector/app.js' => [
@@ -153,7 +141,11 @@ return array(
                     'sqlconnector/sql-manager/riot-tag/connector-list',
                     'sqlconnector/sql-manager/riot-tag/connector-details',
                     'sqlconnector/sql-manager/riot-tag/connection-config',
-                ]
+                ],
+                //Inject process manager metadata configurator for sql connectors
+                'js/process-config/app.js' => [
+                    'sqlconnector/pm/riot-tag/sqlconnector-metadata',
+                ],
             ],
             'paths' => array(
                 __DIR__ . '/../public',

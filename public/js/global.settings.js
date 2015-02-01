@@ -1,11 +1,12 @@
 window.ginger_type_name = function (gingerType, availableGingerTypes) {
-    var gingerTypeObj = availableGingerTypes.findBy('value', gingerType);
+
+    var gingerTypeObj = _.findWhere(availableGingerTypes, {value : gingerType});
 
     return (typeof gingerTypeObj !== "undefined")? gingerTypeObj.label : gingerType;
 };
 
 window.connector_name = function (connectorId, availableConnectors) {
-    var connector = availableConnectors[connectorId];
+    var connector = _.findWhere(availableConnectors, {id : connectorId});
 
     return (typeof  connector != "undefined")? connector.name : connectorId;
 };
@@ -13,7 +14,7 @@ window.connector_name = function (connectorId, availableConnectors) {
 window.connector_icon = function (connectorId, availableConnectors, defaultIcon) {
     if (typeof defaultIcon == "undefined") defaultIcon = "glyphicon-cog";
 
-    var connector = availableConnectors[connectorId];
+    var connector = _.findWhere(availableConnectors, {id : connectorId});
 
     return (typeof  connector != "undefined" && typeof connector['icon'] != "undefined")? connector.icon : defaultIcon;
 };

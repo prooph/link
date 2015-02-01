@@ -1,0 +1,9 @@
+<div class="list-group text-center">
+    <a each="{ processes }" class="list-group-item" href="#processes/{ id }">{ name }</a>
+    <a href="#processes/create" class="list-group-item list-group-item-success text-uppercase"><strong><?php echo $this->translate('configure new process')?></strong></a>
+</div>
+<script type="text/javascript">
+    function (context) {
+        this.processes = context.app.processes;
+    }
+</script>

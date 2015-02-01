@@ -1,114 +1,46 @@
-<div class="row text-center">
+<div class="row">
     <div id="app" class="col-md-12">
-        <h1><?php echo $this->translate('Process Manager') ?></h1>
-        <script type="text/x-handlebars" data-template-name="manager">
-            {{outlet}}
-        </script>
+        <h1 class="text-center"><?php echo $this->translate('Process Manager') ?></h1>
+        <process-manager></process-manager>
     </div>
 </div>
 <?php
-foreach ($this->view_addons as $viewAddon) {
-    echo $this->partial($viewAddon);
-}
+
+$this->partial('process-config/process-manager/partial/sidebar-left');
 
 //Bootstrap ember app
 $this->inlineScript()->captureStart();
 
 $apiUrl = ltrim($this->url('process_config/api'), '/');
 
-$availableGingerTypes = json_encode($this->available_ginger_types);
-$availableTaskTypes = json_encode($this->available_task_types);
-$availableManipulationScripts = json_encode($this->available_manipulation_scripts);
-$connectors = json_encode($this->connectors);
-$locations  = json_encode($this->locations);
-$shortLocale = explode("_", $this->plugin('translate')->getTranslator()->getLocale())[0];
-$clientTranslations = json_encode([
-    'process' => [
-        'linear' => [
-            'value' => \Ginger\Processor\Definition::PROCESS_LINEAR_MESSAGING,
-            'label' => $this->translate('Linear Process'),
-        ],
-        'foreach' => [
-            'value' => \Ginger\Processor\Definition::PROCESS_PARALLEL_FOR_EACH,
-            'label' => $this->translate('Foreach Process'),
-        ]
-    ],
-    'message' => [
-        'collect_data' => [
-            'value' => 'collect-data',
-            'label' => $this->translate('Collect Data Message'),
-        ],
-        'data_collected' => [
-            'value' => 'data-collected',
-            'label' => $this->translate('Data Collected Message'),
-        ],
-        'process_data' => [
-            'value' => 'process-data',
-            'label' => $this->translate('Process Data Message'),
-        ]
-    ],
-    'task' => [
-        'task' => $this->translate('Task'),
-        'new' => $this->translate('New Task'),
-        'collect_data' => [
-            'value' => \Ginger\Processor\Definition::TASK_COLLECT_DATA,
-            'label' => $this->translate('Collect Data'),
-        ],
-        'process_data' => [
-            'value' => \Ginger\Processor\Definition::TASK_PROCESS_DATA,
-            'label' => $this->translate('Process Data'),
-        ],
-        'manipulate_payload' => [
-            'value' => \Ginger\Processor\Definition::TASK_MANIPULATE_PAYLOAD,
-            'label' => $this->translate('Run Manipulation Script'),
-        ]
-    ],
-    'metadata_not_available' => $this->translate('Metadata configuration is not available for the selected connector')
-]);
+$processes    = json_encode($this->processes);
+$processTypes = json_encode($this->available_process_types);
+$messages     = json_encode($this->available_messages);
+$taskTypes    = json_encode($this->available_task_types);
+$gingerTypes  = json_encode($this->available_ginger_types);
+$connectors   = json_encode($this->connectors);
+$locations    = json_encode($this->locations);
+$manipulationScripts = json_encode($this->available_manipulation_scripts);
 
 echo <<<JS
-window.App = Ember.Application.create({
-    rootElement : '#app'
-});
+window.PM = Ginger.App.create(
+    {
+        processes    : {$processes},
+        processTypes : {$processTypes},
+        messages     : {$messages},
+        taskTypes    : {$taskTypes},
+        gingerTypes  : {$gingerTypes},
+        connectors   : {$connectors},
+        locations    : {$locations},
+        manipulationScripts : {$manipulationScripts},
+        buildTaskDesc : function (task) {
 
-window.PM = App;
-
-DS.RESTAdapter.reopen({
-  namespace : '{$apiUrl}'
-});
-
-Em.I18n.locale = '{$shortLocale}';
-
-Em.I18n.translations = $clientTranslations;
-
-App.TaskTypes          = $availableTaskTypes;
-App.ManipulationScrits = $availableManipulationScripts;
-App.GingerTypes          = $availableGingerTypes;
-App.Connectors         = $connectors;
-App.Locations          = $locations;
-
-App.Object = Ember.Object.extend(Em.Serializable);
-
-//Route Config
-App.Router.map(function() {
-    this.resource('processes', { path: '/' }, function() {
-        this.route('create');
-        this.resource('process', {path: '/process/:process_id'}, function() {
-            this.resource('tasks', function () {
-                this.resource('task', {path: '/:task_id'}, function() {
-                    this.route('delete');
-                });
-                this.route('create');
-            });
-            this.route('edit');
-        });
-    });
-});
-
-App.ApplicationRoute = Ember.Route.extend({
-    model : function() {
-        {$this->emberPushToStore('process', $this->processes)}
+        }
     }
+);
+
+$(function () {
+    PM.bootstrap("process-manager").ready();
 });
 JS;
 $this->inlineScript()->captureEnd();

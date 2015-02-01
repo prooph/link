@@ -1,0 +1,11 @@
+<h3 class="text-center">{ process.name } <a href="#" class="btn btn-default pull-right"><?php echo $this->translate('edit') ?></a></h3>
+<hr>
+<script type="text/javascript">
+    function (context) {
+        if (context.opts.process) {
+            this.process = context.opts.process;
+        } else {
+            this.process = { name : "<?php echo $this->translate('Unknown')  ?>" };
+        }
+    }
+</script>

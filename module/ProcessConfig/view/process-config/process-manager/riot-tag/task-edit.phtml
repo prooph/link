@@ -1,0 +1,332 @@
+<div id="process_name_container"></div>
+<h4 id="task_desc" class="text-center"></h4>
+<div class="alert-block text-info text-center">
+    <i><?php echo $this->translate('Note') ?>:&nbsp;<?php echo $this->translate('The process manager only suggests valid combinations.') ?></i>
+</div>
+<div class="{ form-group: true, has-success: task_type.value }">
+    <select name="task_type" class="form-control form-control-with-desc" onchange="{ updateConnectorSelects }">
+        <option value="">- <?php echo $this->translate('Task Type') ?> -</option>
+        <option each="{ taskTypes }" value="{ value }">{ label }</option>
+    </select>
+</div>
+<div if="{ task_type.value == '<?php echo \Ginger\Processor\Definition::TASK_COLLECT_DATA ?>' }">
+    <div class="{ form-group: true, has-success: source.value }">
+        <select name="source" class="form-control" onchange="{ sourceDidChange }">
+            <option value="">- <?php echo $this->translate('Source') ?> -</option>
+            <option each="{ availableSources }" value="{ value }">{ label }</option>
+        </select>
+    </div>
+    <div class="{ form-group: true, has-success: ginger_type.value }">
+        <select name="ginger_type" class="form-control" onchange="{ tick }">
+            <option value="">- <?php echo $this->translate('Data Type') ?> -</option>
+            <option each="{ availableGingerTypes }" value="{ value }">{ label }</option>
+        </select>
+    </div>
+</div>
+<div if="{ task_type.value == '<?php echo \Ginger\Processor\Definition::TASK_PROCESS_DATA ?>' }">
+    <div class="{ form-group: true, has-success: target.value }">
+        <select name="target" class="form-control" onchange="{ targetDidChange }">
+            <option value="">- <?php echo $this->translate('Target') ?> -</option>
+            <option each="{ availableTargets }" value="{ value }">{ label }</option>
+        </select>
+    </div>
+    <div class="{ form-group: true, has-success: preferred_type.value }">
+        <select name="preferred_type" class="form-control" onchange="{ tick }">
+            <option value="">- <?php echo $this->translate('Data Type') ?> -</option>
+            <option each="{ availablePreferredTypes }" value="{ value }">{ label }</option>
+        </select>
+    </div>
+</div>
+<div if="{ task_type.value == '<?php echo \Ginger\Processor\Definition::TASK_MANIPULATE_PAYLOAD ?>' }">
+    <div class="{ form-group: true, has-success: manipulation_script.value }">
+        <select name="manipulation_script" class="form-control">
+            <option value="">- <?php echo $this->translate('Payload Manipulation Script') ?> -</option>
+            <option each="{ script,i in manipulationScripts }">{ script }</option>
+        </select>
+    </div>
+</div>
+<div if="{ hasMetadata() }">
+    <div class="row metadata-block">
+        <div class="col-md-12">
+            <h4><?php echo $this->translate('Connector Configuration') ?></h4>
+            <div id="metadata_container"></div>
+        </div>
+    </div>
+</div>
+<hr>
+<div class="row">
+    <div class="col-md-12">
+        <div class="pull-right">
+            <a href="#processes/{ process.id }" class="btn btn-default"><?php echo $this->translate('cancel') ?></a>
+            <button name="saveTaskBtn" class="btn btn-success" onclick="{ saveTask }"><?php echo $this->translate('save') ?></button>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    function (context) {
+        var self = riot.observable(this);
+
+        this.process = _.findWhere(context.app.processes, {id : context.routeMatch.index});
+        this.taskTypes = context.app.taskTypes;
+        this.gingerTypes = context.app.gingerTypes;
+        this.connectors  = context.app.connectors;
+        this.availableSources = [];
+        this.availableGingerTypes = [];
+        this.availableTargets = [];
+        this.availablePreferredTypes = [];
+        this.metadata = {};
+        this.saveTaskBtn.disabled = true;
+        this.tick = function () {};
+
+        if (! this.process) {
+            riot.route("processNotFound");
+            return;
+        }
+
+        if (context.opts.isNew) {
+            this.task = {
+                id : this.process.tasks.length
+            };
+        } else {
+            this.task = _.findWhere(this.process.tasks, { id : parseInt(context.routeMatch.childIndex)});
+
+            if (! this.task) {
+                riot.route("taskNotFound");
+                return;
+            }
+
+            this.one("mount", function () {
+                this.applyTaskData(self.task);
+            });
+        }
+
+        this.findAvailableConnectorsFor = function (messageType) {
+            return _.map(_.filter(context.app.connectors, function (connector) {
+                if (_.isEmpty(connector.allowed_messages)) return;
+                return _.contains(connector.allowed_messages, messageType);
+            }), function (connector) {
+                return {
+                    label : connector.name,
+                    value : connector.id
+                }
+            });
+        };
+
+        this.findAvailableGingerTypesFor = function (connectorId) {
+            var connector = _.findWhere(context.app.connectors, { id : connectorId });
+
+            if (! connector || ! connector.allowed_types) return [];
+
+            return _.map(connector.allowed_types, function (typeValue) {
+                return _.findWhere(context.app.gingerTypes, { value : typeValue});
+            });
+        }
+
+        this.updateConnectorSelects = function () {
+            this.updateSource();
+            this.updateTarget();
+        }
+
+        this.updateSource = function () {
+            this.availableSources = this.findAvailableConnectorsFor('<?php echo \Ginger\Message\MessageNameUtils::COLLECT_DATA  ?>');
+        };
+
+        this.sourceDidChange = function () {
+            this.updateGingerType();
+
+            this.updateMetadataContainer();
+        }
+
+        this.updateTarget = function () {
+            this.availableTargets = this.findAvailableConnectorsFor('<?php echo \Ginger\Message\MessageNameUtils::PROCESS_DATA  ?>');
+
+            this.updateMetadataContainer();
+        }
+
+        this.targetDidChange = function () {
+            this.updatePreferredType();
+
+            this.updateMetadataContainer();
+        }
+
+        this.updateGingerType = function () {
+            this.availableGingerTypes = this.findAvailableGingerTypesFor(this.source.value);
+
+            this.one("update", function () {
+                if (this.availableGingerTypes.length == 1) {
+                    this.ginger_type.value = this.availableGingerTypes[0].value;
+                }
+            });
+        }
+
+        this.updatePreferredType = function () {
+            this.availablePreferredTypes = this.findAvailableGingerTypesFor(this.target.value);
+
+            this.one("update", function () {
+                if (this.availablePreferredTypes.length == 1) {
+                    this.preferred_type.value = this.availablePreferredTypes[0].value;
+                }
+            });
+        }
+
+        this.getCurrentTaskType = function () {
+            return this.task_type.value;
+        }
+
+        this.getCurrentConnector = function () {
+            if (this.task_type.value == '<?php echo \Ginger\Processor\Definition::TASK_COLLECT_DATA  ?>') {
+                return _.findWhere(context.app.connectors, {id : this.source.value});
+            }
+
+            if (this.task_type.value == '<?php echo \Ginger\Processor\Definition::TASK_PROCESS_DATA  ?>') {
+                return _.findWhere(context.app.connectors, { id : this.target.value});
+            }
+
+            return undefined;
+        }
+
+        this.getCurrentGingerType = function () {
+            if (this.task_type.value == '<?php echo \Ginger\Processor\Definition::TASK_COLLECT_DATA  ?>') {
+                return _.findWhere(context.app.gingerTypes, {value : this.ginger_type.value});
+            }
+
+            if (this.task_type.value == '<?php echo \Ginger\Processor\Definition::TASK_PROCESS_DATA  ?>') {
+                return _.findWhere(context.app.gingerTypes, { id : this.preferred_type.value});
+            }
+
+            return undefined;
+        }
+
+        this.hasMetadata = function () {
+            var con = this.getCurrentConnector();
+
+            return con && con.ui_metadata_riot_tag;
+        }
+
+        this.getMetadata = function () {
+            return this.metadata;
+        }
+
+        this.updateMetadataContainer = function () {
+            if (this.hasMetadata()) {
+                context.app.renderInto(self, '#metadata_container', this.getCurrentConnector().ui_metadata_riot_tag, {pm : this});
+            } else {
+                $(self.root).find("#metadata_container").html('');
+            }
+
+        }
+
+        this.setMetadata = function (metadata) {
+            this.metadata = metadata;
+        }
+
+        this.collectTaskData = function () {
+            var tmpTask = {
+                id : this.task.id,
+                task_type : this.task_type.value
+            };
+
+            if (tmpTask.task_type == '<?php echo \Ginger\Processor\Definition::TASK_COLLECT_DATA  ?>') {
+                tmpTask.source = this.source.value;
+                tmpTask.ginger_type = this.ginger_type.value;
+            }
+
+            if (tmpTask.task_type == '<?php echo \Ginger\Processor\Definition::TASK_PROCESS_DATA  ?>') {
+                tmpTask.target = this.target.value;
+                if (tmpTask.target) {
+                    tmpTask.preferred_type = this.preferred_type.value;
+                    tmpTask.allowed_types = _.findWhere(context.app.connectors, {id : this.target.value}).allowed_types;
+                }
+            }
+
+            if (tmpTask.task_type == '<?php echo \Ginger\Processor\Definition::TASK_MANIPULATE_PAYLOAD  ?>') {
+                tmpTask.manipulation_script = this.manipulation_script.value;
+            }
+
+            tmpTask.metadata = this.getMetadata();
+
+            return tmpTask;
+        }
+
+        this.applyTaskData = function (task) {
+            this.metadata = task.metadata || {};
+
+            this.task_type.value = task.task_type;
+
+            $(this.task_type).change();
+
+            if (task.task_type == '<?php echo \Ginger\Processor\Definition::TASK_COLLECT_DATA  ?>') {
+                this.source.value = task.source;
+                $(this.source).change();
+                this.ginger_type.value = task.ginger_type;
+                $(this.ginger_type).change();
+            }
+
+            if (task.task_type == '<?php echo \Ginger\Processor\Definition::TASK_PROCESS_DATA  ?>') {
+                this.target.value = task.target;
+                $(this.target).change();
+                if (task.target) {
+                    this.preferred_type.value = task.preferred_type;
+                    $(this.preferred_type).change();
+                }
+            }
+
+            if (task.task_type == '<?php echo \Ginger\Processor\Definition::TASK_MANIPULATE_PAYLOAD  ?>') {
+                this.manipulation_script.value = task.manipulation_script;
+                $(this.manipulation_script).change();
+            }
+        }
+
+        this.isValid = function () {
+            if (! this.task_type.value) return false;
+
+            if (this.task_type.value == '<?php echo \Ginger\Processor\Definition::TASK_COLLECT_DATA  ?>') {
+                if (! this.source.value) return false;
+                if (! this.ginger_type.value) return false;
+            }
+
+            if (this.task_type.value == '<?php echo \Ginger\Processor\Definition::TASK_PROCESS_DATA  ?>') {
+                if (! this.target.value) return false;
+                if (! this.preferred_type.value) return false;
+            }
+
+            if (this.task_type.value == '<?php echo \Ginger\Processor\Definition::TASK_MANIPULATE_PAYLOAD  ?>') {
+                if (! this.manipulation_script.value) return false;
+            }
+
+            var validMetadata = {isValid : true, metadata : this.getMetadata()};
+
+            this.trigger("validateMetadata", validMetadata);
+
+            return validMetadata.isValid;
+        }
+
+        this.saveTask = function (e) {
+            var tmpProcess = _.cloneDeep(this.process);
+            var tmpTask = this.collectTaskData();
+
+            tmpProcess.tasks[tmpTask.id] = tmpTask;
+
+            $.putJSON('<?php echo $this->url('process_config/api/process')  ?>/' + tmpProcess.id, {"process" : tmpProcess})
+                .then(function (data) {
+                    self.process.tasks[tmpTask.id] = tmpTask;
+                    riot.route('processes/' + data.process.id);
+                }, $.failNotify);
+        }
+
+        this.on("mount", function () {
+            context.app.renderInto(self, "#process_name_container", "process-name", {process : this.process});
+            context.app.renderInto(self, "#task_desc", "task-desc", {task : this.task });
+        });
+
+        this.on("update", function () {
+            context.app.renderInto(self, "#task_desc", "task-desc", {task : this.collectTaskData() });
+
+            if (self.isValid()) {
+                self.saveTaskBtn.disabled = null;
+            } else {
+                self.saveTaskBtn.disabled = true;
+            }
+        });
+    }
+</script>

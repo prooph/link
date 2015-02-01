@@ -1,0 +1,109 @@
+<h2 class="text-center"><?php echo $this->translate('New Process') ?></h2>
+<hr>
+<form id="process_form" onsubmit="{ saveProcess }">
+    <div class="row">
+        <div class="col-sm-12 col-md-8 col-md-offset-2">
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="{ form-group: true, has-success: process_type.value }">
+                        <select name="process_type" class="form-control form-control-with-desc" onchange="{ update }">
+                            <option value="">- <?php echo $this->translate('Process Type') ?> -</option>
+                            <option each="{ processTypes }" value="{ value }">{ label }</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div if="{ ! process_type.value }" class="well well-lg text-info process-desc">
+                        <?php echo $this->translate('Choose a process type. If you are unsure which type to select go through the list and you will get a description for each type.') ?>
+                    </div>
+                    <div if="{ process_type.value == '<?php echo \Ginger\Processor\Definition::PROCESS_LINEAR_MESSAGING ?>' }" class="well well-lg text-info process-desc">
+                        <?php echo $this->translate('The linear process triggers all tasks in a sequence. The previous task must be finished before the next task will start.') ?>
+                    </div>
+                    <div if="{ process_type.value == '<?php echo \Ginger\Processor\Definition::PROCESS_PARALLEL_FOR_EACH ?>' }" class="well well-lg text-info process-desc">
+                        <?php echo $this->translate('The foreach process only works with collections. It passes each item of the collection to its defined task list. The tasks are triggered in parallel.') ?>
+                    </div>
+                </div>
+            </div>
+            <h3><?php echo $this->translate('Process Trigger') ?></h3>
+            <hr>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="{ form-group: true, has-success: message_type.value }">
+                        <select name="message_type" class="form-control form-control-with-desc" onchange="{ update }" >
+                            <option value="">- <?php echo $this->translate('Message Type') ?> -</option>
+                            <option each="{ messageTypes }" value="{ value }">{ label }</option>
+                        </select>
+                    </div>
+                    <div class="{ form-group: true, has-success: ginger_tpye.value }">
+                        <select name="ginger_type" class="form-control form-control-with-desc" onchange="{ update }" onfocus="{ focusGingerType }" onblur="{ blurGingerType }">
+                            <option value="">- <?php echo $this->translate('Data  Type') ?> -</option>
+                            <option each="{ gingerTypes }" value="{ value }">{ label }</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="well well-lg text-info process-desc">
+                        <span if="{ ! isGingerTypeFocused && ! message_type.value }"><?php echo $this->translate('Each process is triggered by a workflow message. Such a message consists of two parts: a message type and a data type.') ?></span>
+                        <span if="{ ! isGingerTypeFocused && message_type.value == '<?php echo \Ginger\Message\MessageNameUtils::COLLECT_DATA ?>' }"><?php echo $this->translate('A collect-data message is useful when the first task of the process should collect data from a source system.') ?></span>
+                        <span if="{ ! isGingerTypeFocused && message_type.value == '<?php echo \Ginger\Message\MessageNameUtils::DATA_COLLECTED ?>' }"><?php echo $this->translate('A data-collected message is useful when a process should be started automatically as soon as such a message is received.') ?></span>
+                        <span if="{ isGingerTypeFocused }"><?php echo $this->translate('Data types are provided by system connectors or plugins. They define the structures a connected system can provide or process.') ?></span>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <input type="submit" class="{ btn: true, btn-success: true, pull-right: true, disabled: ! isValid() }" value="<?php echo $this->translate('Create Process') ?>">
+                </div>
+            </div>
+        </div>
+    </div>
+</form>
+<script type="text/javascript">
+    function (context) {
+        this.processTypes = context.app.processTypes;
+        this.messageTypes = _.filter(context.app.messages, function (message) { return message.value != '<?php echo \Ginger\Message\MessageNameUtils::PROCESS_DATA  ?>' });
+        this.gingerTypes  = context.app.gingerTypes;
+
+        this.isGingerTypeFocused = false;
+        this.focusGingerType = function () { this.isGingerTypeFocused = true };
+        this.blurGingerType  = function () { this.isGingerTypeFocused = false };
+
+        this.isValid = function () {
+            if(! this.process_type.value) return false;
+            if(! this.message_type.value) return false;
+            if(! this.ginger_type.value) return false;
+
+            return true;
+        }
+
+        this.generateProcessName = function () {
+            var name = "";
+
+            if (this.process_type.value == '<?php echo \Ginger\Processor\Definition::PROCESS_LINEAR_MESSAGING  ?>') name = name + "Linear ";
+            if (this.process_type.value == '<?php echo \Ginger\Processor\Definition::PROCESS_PARALLEL_FOR_EACH  ?>') name = name + "Foreach ";
+            if (this.message_type.value == '<?php echo \Ginger\Message\MessageNameUtils::COLLECT_DATA  ?>') name = name + "Collect ";
+            if (this.message_type.value == '<?php echo \Ginger\Message\MessageNameUtils::DATA_COLLECTED  ?>') name = name + "Process ";
+            if (!_.isEmpty(this.ginger_type.value)) name = name + ginger_type_name(this.ginger_type.value, this.gingerTypes);
+
+            return name;
+        };
+
+        this.saveProcess = function () {
+            var process = {
+                "name" : this.generateProcessName(),
+                "process_type" : this.process_type.value,
+                "start_message" : {
+                    message_type : this.message_type.value,
+                    ginger_type : this.ginger_type.value
+                },
+                "tasks" : []
+            }
+
+            $.postJSON('<?php echo $this->url('process_config/api/process')  ?>', {"process" : process})
+                .then(function (data) {
+                    context.app.processes.push(data.process);
+                    riot.route('processes/' + data.process.id);
+                }, $.failNotify);
+        }
+    }
+</script>

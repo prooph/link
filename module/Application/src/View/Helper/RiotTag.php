@@ -38,7 +38,7 @@ final class RiotTag extends AbstractHelper
         $template = $this->getView()->partial($template);
 
         if (is_null($jsFunction)) {
-            $jsFunction = $this->extractJsFunction($template);
+            $jsFunction = $this->extractJsFunction($template, $tagName);
             $template = $this->removeJsFromTemplate($template, $tagName);
         }
 
@@ -68,12 +68,12 @@ final class RiotTag extends AbstractHelper
         }
     }
 
-    private function extractJsFunction($template)
+    private function extractJsFunction($template, $tagName)
     {
         preg_match('/<script .*type="text\/javascript"[^>]*>[\s]*(?<func>function.+\});?[\s]*<\/script>/is', $template, $matches);
 
         if (! $matches['func']) {
-            throw new \RuntimeException("Riot tag javascript function could not be found");
+            throw new \RuntimeException("Riot tag javascript function could not be found for tag name: " . $tagName);
         }
 
         return $matches['func'];

@@ -145,7 +145,7 @@ final class TableConnectorGeneratorTest extends TestCase
             'dbal_connection' => 'test_db',
             'table' => 'test_data',
             'icon' => TableConnectorGenerator::ICON,
-            'ui_metadata_key' => TableConnectorGenerator::METADATA_UI_KEY,
+            'ui_metadata_riot_tag' => TableConnectorGenerator::METADATA_UI_KEY,
         ], $lastMessage->additionalData());
     }
 } 

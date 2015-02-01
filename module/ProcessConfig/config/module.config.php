@@ -9,17 +9,6 @@
  * Date: 06.12.14 - 22:26
  */
 return array(
-    //Placeholder for view partials which are loaded during the process manager app bootstrap
-    //You can use a partial to inject custom js and handlebar templates
-    //see the fileconnector and sqlconnector view add ons for examples
-    'process_manager' => [
-        'view_addons' => [
-            'process-config/process-manager/partial/processes',
-            'process-config/process-manager/partial/create-process',
-            'process-config/process-manager/partial/edit-process',
-            'process-config/process-manager/partial/sidebar-left'
-        ]
-    ],
     'router' => [
         'routes' => [
             'process_config' => [
@@ -56,7 +45,7 @@ return array(
                         ],
                         'may_terminate' => true,
                         'child_routes' => [
-                            'processes' => [
+                            'process' => [
                                 'type' => 'Segment',
                                 'options' => [
                                     'route' => '/processes[/:id]',
@@ -87,30 +76,25 @@ return array(
             'process-config/process-manager/app' => __DIR__ . '/../view/process-config/process-manager/app.phtml',
             'process-config/process-manager/app-test' => __DIR__ . '/../view/process-config/process-manager/app-test.phtml',
             //Partials for ProcessManager
-            'process-config/process-manager/partial/processes'      => __DIR__ . '/../view/process-config/process-manager/partial/processes.phtml',
-            'process-config/process-manager/partial/sidebar-left'   => __DIR__ . '/../view/process-config/process-manager/partial/sidebar-left.phtml',
-            'process-config/process-manager/partial/create-process' => __DIR__ . '/../view/process-config/process-manager/partial/create-process.phtml',
-            'process-config/process-manager/partial/edit-process'   => __DIR__ . '/../view/process-config/process-manager/partial/edit-process.phtml',
+            'process-config/process-manager/partial/sidebar-left'     => __DIR__ . '/../view/process-config/process-manager/partial/sidebar-left.phtml',
         ],
+        'template_path_stack' => array(
+            __DIR__ . '/../view',
+        ),
     ),
     'asset_manager' => array(
         'resolver_configs' => array(
-            'collections' => array(
-                'js/process-config/app.js' => array(
-                    'js/process-config/controllers/processes_controller.js',
-                    'js/process-config/controllers/processes_create_controller.js',
-                    'js/process-config/controllers/process_controller.js',
-                    'js/process-config/controllers/task_controller.js',
-                    'js/process-config/models/process.js',
-                    'js/process-config/views/metadata.js',
-                    'js/process-config/views/ginger_type_select.js',
-                    'js/process-config/views/helpers.js',
-                ),
-                'js/process-config/app-test.js' => array(
-                    'js/process-config/tests/bootstrap.js',
-                    'js/process-config/tests/manager-index/manager-index-test.js',
-                )
-            ),
+            'riot-tags' => [
+                'js/process-config/app.js' => [
+                    'process-config/process-manager/riot-tag/process-manager',
+                    'process-config/process-manager/riot-tag/process-list',
+                    'process-config/process-manager/riot-tag/process-create',
+                    'process-config/process-manager/riot-tag/process-tasklist',
+                    'process-config/process-manager/riot-tag/task-edit',
+                    'process-config/process-manager/riot-tag/task-desc',
+                    'process-config/process-manager/riot-tag/process-name',
+                ]
+            ],
             'paths' => array(
                 __DIR__ . '/../public',
             ),

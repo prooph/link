@@ -12,6 +12,7 @@
 namespace ProcessConfig\Controller;
 
 use Application\Service\AbstractQueryController;
+use Application\Service\TranslatorAwareController;
 use Application\SharedKernel\GingerTypeClass;
 use Application\SharedKernel\LocationTranslator;
 use Application\SharedKernel\ProcessToClientTranslator;
@@ -19,12 +20,14 @@ use Application\SharedKernel\ScriptLocation;
 use Ginger\Functional\Func;
 use Ginger\Message\MessageNameUtils;
 use Ginger\Processor\Definition;
+use Ginger\Processor\LinearProcess;
 use Ginger\Type\Description\Description;
 use Ginger\Type\Prototype;
 use Ginger\Type\PrototypeProperty;
 use SystemConfig\Projection\GingerConfig;
 use SystemConfig\Service\ConfigWriter\ZendPhpArrayWriter;
 use SystemConfig\Service\NeedsSystemConfig;
+use Zend\Mvc\I18n\Translator;
 use ZF\ContentNegotiation\ViewModel;
 
 /**
@@ -33,7 +36,7 @@ use ZF\ContentNegotiation\ViewModel;
  * @package ProcessConfig\Controller
  * @author Alexander Miertsch <kontakt@codeliner.ws>
  */
-final class ProcessManagerController extends AbstractQueryController
+final class ProcessManagerController extends AbstractQueryController implements TranslatorAwareController
 {
     /**
      * @var ScriptLocation
@@ -50,26 +53,72 @@ final class ProcessManagerController extends AbstractQueryController
      */
     private $locationTranslator;
 
+    /**
+     * @var Translator
+     */
+    private $i18nTranslator;
+
     public function startAppAction()
     {
         $viewModel = new ViewModel([
-            'processes' => Func::map(
-                    $this->systemConfig->getProcessDefinitions(),
-                    function($definition, $message) {
-                        return $this->convertToClientProcess($message, $definition, $this->systemConfig->getAllAvailableGingerTypes());
-                    }
-                ),
+            'processes' => array_values(Func::map(
+                $this->systemConfig->getProcessDefinitions(),
+                function($definition, $message) {
+                    return $this->convertToClientProcess($message, $definition, $this->systemConfig->getAllAvailableGingerTypes());
+                }
+            )),
+            'connectors' => array_values(
+                Func::map($this->systemConfig->getConnectors(), function ($connector, $id) {
+                    $connector['id'] = $id;
+                    return $connector;
+                })
+            ),
             'available_ginger_types' => $this->getGingerTypesForClient(),
-            'available_task_types' => \Ginger\Processor\Definition::getAllTaskTypes(),
             'available_manipulation_scripts' => $this->scriptLocation->getScriptNames(),
-            'connectors' => $this->systemConfig->getConnectors(),
             'locations'  => $this->locationTranslator->getLocations(),
-            'view_addons' => $this->viewAddons
+            'available_process_types' => [
+                [
+                    'value' => \Ginger\Processor\Definition::PROCESS_LINEAR_MESSAGING,
+                    'label' => $this->i18nTranslator->translate('Linear Process'),
+                ],
+                [
+                    'value' => \Ginger\Processor\Definition::PROCESS_PARALLEL_FOR_EACH,
+                    'label' => $this->i18nTranslator->translate('Foreach Process'),
+                ],
+            ],
+            'available_task_types' => [
+                [
+                    'value' => \Ginger\Processor\Definition::TASK_COLLECT_DATA,
+                    'label' => $this->i18nTranslator->translate('Collect Data'),
+                ],
+                [
+                    'value' => \Ginger\Processor\Definition::TASK_PROCESS_DATA,
+                    'label' => $this->i18nTranslator->translate('Process Data'),
+                ],
+                [
+                    'value' => \Ginger\Processor\Definition::TASK_MANIPULATE_PAYLOAD,
+                    'label' => $this->i18nTranslator->translate('Run Manipulation Script'),
+                ],
+            ],
+            'available_messages' => [
+                [
+                    'value' => 'collect-data',
+                    'label' => $this->i18nTranslator->translate('Collect Data Message'),
+                ],
+                [
+                    'value' => 'data-collected',
+                    'label' => $this->i18nTranslator->translate('Data Collected Message'),
+                ],
+                [
+                    'value' => 'process-data',
+                    'label' => $this->i18nTranslator->translate('Process Data Message'),
+                ],
+            ],
         ]);
 
         $viewModel->setTemplate('process-config/process-manager/app');
 
-        $this->layout()->setVariable('includeEmberJs', true);
+        $this->layout()->setVariable('includeRiotJs', true);
 
         return $viewModel;
     }
@@ -113,19 +162,20 @@ final class ProcessManagerController extends AbstractQueryController
     }
 
     /**
-     * @param array $viewAddons
-     */
-    public function setViewAddons(array $viewAddons)
-    {
-        $this->viewAddons = $viewAddons;
-    }
-
-    /**
      * @param LocationTranslator $locationTranslator
      */
     public function setLocationTranslator(LocationTranslator $locationTranslator)
     {
         $this->locationTranslator = $locationTranslator;
+    }
+
+    /**
+     * @param Translator $translator
+     * @return void
+     */
+    public function setTranslator(Translator $translator)
+    {
+        $this->i18nTranslator = $translator;
     }
 }
  

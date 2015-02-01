@@ -33,7 +33,7 @@ final class TableConnectorGenerator
 {
     const TAB = "    ";
     const ICON = "glyphicon-hdd";
-    const METADATA_UI_KEY = "SqlconnectorMetadata";
+    const METADATA_UI_KEY = "sqlconnector-metadata";
 
     /**
      * @var CommandBus
@@ -103,7 +103,7 @@ final class TableConnectorGenerator
         unset($connector['name']);
 
         $connector['icon'] = self::ICON;
-        $connector['ui_metadata_key'] = self::METADATA_UI_KEY;
+        $connector['ui_metadata_riot_tag'] = self::METADATA_UI_KEY;
 
         $addConnector = AddConnectorToConfig::fromDefinition(
             $id,

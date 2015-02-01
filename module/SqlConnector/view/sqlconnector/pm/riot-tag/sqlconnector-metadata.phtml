@@ -1,0 +1,321 @@
+<h5><?php echo $this->translate('Filter') ?></h5>
+<div if="{ isSingleResultType() }">
+    <div class="checkbox">
+        <label for="filter_identifier">
+            <input name="filter_identifier" type="checkbox" onchange="{ tick }"> <?php echo $this->translate('Filter By Identifier') ?>
+        </label>
+    </div>
+</div>
+<div if="{ ! filter_identifier.checked }">
+    <div><?php //DON'T REMOVE THIS DIV, OTHERWISE THE EACH LOOP WON'T WORK CORRECTLY!!! ?>
+        <form each="{ generateMetadataFilterList() }" class="form-inline" id="filter_form_{ key }">
+            <div class="form-group">
+                <input name="filter_column_{ key }" type="text" class="form-control form-control-inline-4" value="{ column }" readonly>
+            </div>&nbsp;&nbsp;
+            <div class="form-group">
+                <input name="filter_operand_{ key }" type="text" class="form-control form-control-inline-3" value="{ operand }" readonly>
+            </div>&nbsp;&nbsp;
+            <div class="form-group">
+                <input name="filter_value_{ key }" type="text" class="form-control form-control-inline-4" value="{ value }" readonly>
+            </div>&nbsp;&nbsp;
+            <button class="btn btn-sm btn-danger" onclick="{ parent.removeFilter }" data-key="{ key }"><span class="glyphicon glyphicon-remove"></span></button>
+        </form>
+    </div>
+    <br>
+    <form id="filter_form_new" class="form-inline" onsubmit="{ addFilter }">
+        <div class="form-group">
+            <select name="column" class="form-control form-control-inline-4">
+                <option value="">- <?php echo $this->translate('Property') ?> -</option>
+                <option each="{ prop in availableGingerTypeProperties }">{ prop }</option>
+            </select>
+        </div>&nbsp;&nbsp;
+        <div class="form-group">
+            <select name="operand" class="form-control form-control-inline-3">
+                <option value="">- <?php echo $this->translate('Operand') ?> -</option>
+                <option each="{ op in availableOperands }">{ op }</option>
+            </select>
+        </div>&nbsp;&nbsp;
+        <div class="form-group">
+            <input name="filter_value" class="form-control form-control-inline-4" placeholder="<?php echo $this->translate('Value') ?>">
+        </div>&nbsp;&nbsp;
+        <button class="btn btn-sm btn-success"><span class="glyphicon glyphicon-plus"></span></button>
+    </form>
+    <div if="{ isDuplicateColumn }">
+        <br>
+        <p class="alert alert-danger"><?php echo $this->translate('Your filter would never match entries, because you try to add the same property twice. This is only possible when defining a -between- filter, but your operands do not match, too. Please correct your choice.') ?></p>
+    </div>
+    <div if="{ ! isSingleResultType() }">
+        <hr>
+        <form class="form-inline">
+            <div class="form-group text-">
+                <label for="order_by" class="text-btn-align">Order By</label>&nbsp;&nbsp;
+                <span>
+                    <span each="{ order in orderByArr }"><span class="text-btn-align"><big>{ order }</big></span>&nbsp;<button class="btn btn-xs btn-danger" onclick="{ parent.removeOrderBy }" data-order="{ order }"><span class="glyphicon glyphicon-remove"></span></button></span>
+                </span>&nbsp;&nbsp;
+                <select name="tempOrderByProp" class="form-control form-inline-2">
+                    <option value="">- <?php echo $this->translate('Property') ?> -</option>
+                    <option each="{ prop in availableOrderByProperties }">{ prop }</option>
+                </select>
+                &nbsp;&nbsp;
+                <select name="tempOrderByOrder" class="form-control form-control-inline-2">
+                    <option value="">- <?php echo $this->translate('Order') ?> -</option>
+                    <option>ASC</option>
+                    <option>DESC</option>
+                </select>
+                &nbsp;&nbsp;
+                <button class="btn btn-sm btn-success" onclick="{ addOrderBy }"><span class="glyphicon glyphicon-plus"></span></button>
+            </div>
+        </form>
+        <hr>
+        <form class="form-inline">
+            <div class="form-group">
+                <label for="limit">Limit</label>&nbsp;&nbsp;
+                <input name="limit" type="text" class="form-control form-control-inline-2" placeholder="Limit" onchange="{ tick }">
+            </div>&nbsp;&nbsp;
+            <div class="form-group">
+                <label for="offset">Offset</label>&nbsp;&nbsp;
+                <input name="offset" type="text" class="form-control form-control-inline-2" placeholder="Offset" onchange="{ tick }">
+            </div>
+        </form>
+    </div>
+</div>
+<script type="text/javascript">
+    function (context) {
+        var self = this,
+            parent = context.opts.pm,
+            __toFormFilter = function (filterKey, filterValue) {
+                //FilterValue is already an object so we only need to add the filterKey
+                if (_.isObject(filterValue)) {
+                    filterValue.key = filterKey;
+                    return filterValue;
+                }
+
+                //Filter is a simple Key-Value-Pair which resolves to equal filter
+                return {
+                    'key' : filterKey,
+                    'column' : filterKey,
+                    'operand' : "=",
+                    'value' : filterValue
+                };
+            };
+
+
+        this.availableGingerTypeProperties = [];
+        this.availableOperands = ["=", "<", "<=", ">", ">=", "like", "ilike"];
+        this.availableOrderByProperties = [];
+        this.isDuplicateColumn = false;
+        this.orderByArr = [];
+        this.syncedWithParent = false;
+        this.tick = function () {};
+
+        this.syncWithProcessManager = function (pm) {
+            this.connector = pm.getCurrentConnector();
+            this.gingerType = pm.getCurrentGingerType();
+            this.taskType = pm.getCurrentTaskType();
+            this.applyMetadata(pm.getMetadata());
+            this.availableGingerTypeProperties = this.findAvailableGingerTypeProperties();
+            this.availableOrderByProperties    = this.findAvailableOrderByProperties();
+            this.syncedWithParent = true;
+            this.update();
+        }
+
+        this.isSingleResultType = function () {
+            if (! this.gingerType) return false;
+
+            return this.gingerType.native_type !== "collection";
+        }
+
+        this.findAvailableGingerTypeProperties = function () {
+            if (! this.gingerType) return [];
+
+            var gingerTypeObj = this.gingerType;
+
+            if (gingerTypeObj.native_type === "collection") gingerTypeObj = gingerTypeObj.properties.item;
+
+            var properties = [];
+
+            for (prop in gingerTypeObj.properties) {
+                properties.push(prop);
+            }
+
+            return properties;
+        }
+
+        this.findAvailableOrderByProperties = function () {
+            var gingerTypeProperties = this.findAvailableGingerTypeProperties();
+
+            var orderByProps = _.map(this.orderByArr, function (order) {
+                return order.split(" ")[0];
+            });
+
+            return _.filter(gingerTypeProperties, function (prop) {
+                return ! _.contains(orderByProps, prop);
+            });
+        }
+
+        this.generateMetadataFilterList = function () {
+            var filters = this.filter || {};
+
+
+            var filterList = [];
+
+            for (key in filters) {
+                filterList.push(__toFormFilter( key, _.clone(filters[key])));
+            }
+
+            return filterList;
+        }
+
+        this.addFilter = function (e) {
+            e.preventDefault();
+            var newFilter = {
+                column : this.column.value,
+                operand : this.operand.value,
+                value : this.filter_value.value
+            };
+
+            var filterKey = newFilter.column;
+
+            //We allow the selection of a column for max two times to specify a between like filter
+            //otherwise we will show an error
+            if (typeof this.filter[filterKey + "_1"] !== "undefined") {
+                this.isDuplicateColumn = true;
+                return;
+            } else {
+                this.isDuplicateColumn = false;
+            }
+
+            if (typeof this.filter[filterKey] !== "undefined") {
+                var oneFilter = this.filter[filterKey];
+
+                if (oneFilter.operand === "=" || oneFilter.operand === "like" || oneFilter.operand === "ilike"
+                    || this.operand === "=" || this.operand === "like" || this.operand === "ilike") {
+                    this.isDuplicateColumn = true;
+                    return;
+                } else {
+                    this.isDuplicateColumn = false;
+                }
+
+                delete this.filter[filterKey];
+                this.filter[filterKey + "_1"] = oneFilter;
+                filterKey = filterKey + "_2";
+            }
+
+            this.filter[filterKey] = newFilter;
+
+            this.column.value = "";
+            this.operand.value = "";
+            this.filter_value.value = "";
+
+            this.one("update", function () {
+                $(this.column).focus();
+            })
+        }
+
+        this.removeFilter = function (e) {
+            var filterKey = $(e.target).closest("button").data("key");
+            delete self.filter[filterKey];
+        }
+
+        this.addOrderBy = function (e) {
+            if (! this.tempOrderByProp.value) return;
+            if (! this.tempOrderByOrder.value) return;
+
+            this.orderByArr.push(this.tempOrderByProp.value + " " + this.tempOrderByOrder.value);
+
+            this.tempOrderByProp.value = "";
+            this.tempOrderByOrder.value = "";
+
+            this.availableOrderByProperties = this.findAvailableOrderByProperties();
+        }
+
+        this.removeOrderBy = function (e) {
+            e.preventDefault();
+            var order = $(e.target).closest("button").data("order");
+
+            self.orderByArr = _.filter(self.orderByArr, function (orderStr) {
+                return orderStr != order;
+            })
+
+            self.availableOrderByProperties = self.findAvailableOrderByProperties();
+        }
+
+        this.collectMetadata = function () {
+            var tmpMetadata = {};
+
+            if (this.filter_identifier.checked) {
+                tmpMetadata.filter_identifier = true;
+            }
+
+            if (! tmpMetadata.filter_identifier) {
+                if (! _.isEmpty(this.filter)) {
+                    tmpMetadata.filter = this.filter;
+                }
+
+                if (! this.isSingleResultType()) {
+                    if (!_.isEmpty(this.orderByArr)) {
+                        tmpMetadata.order_by = this.orderByArr.join(", ");
+                    }
+
+                    if (this.limit.value) {
+                        tmpMetadata.limit = this.limit.value;
+                    }
+
+                    if (this.offset.value) {
+                        tmpMetadata.offset = this.offset.value;
+                    }
+                }
+
+            }
+
+            return tmpMetadata;
+        }
+
+        this.applyMetadata = function (metadata) {
+            if (metadata.filter_identifier) {
+                this.filter_identifier.checked = 1;
+            } else {
+                this.filter_identifier.checked = null;
+            }
+
+            this.filter = metadata.filter || {};
+
+            if (metadata.order_by) {
+                this.orderByArr = metadata.order_by.split(",").map(function(order) {
+                    return $.trim(order);
+                });
+            } else {
+                this.orderByArr = [];
+            }
+
+            if (metadata.limit) {
+                this.limit.value = metadata.limit;
+            }
+
+            if (metadata.offset) {
+                this.offset.value = metadata.offset;
+            }
+        }
+
+        this.on("mount", function () {
+            this.syncWithProcessManager(parent);
+        });
+
+        this.on("update", function () {
+            if (this.syncedWithParent) {
+                parent.setMetadata(this.collectMetadata());
+            }
+        });
+
+        function onParentUpdate () {
+            self.syncWithProcessManager(parent);
+        };
+
+        parent.on("update", onParentUpdate);
+
+        this.on("unmount", function () {
+            parent.off("update", onParentUpdate);
+            parent.setMetadata({});
+        })
+    }
+</script>

@@ -11,12 +11,15 @@ window.Ginger = {
         $.extend(this, config);
 
         var self = this,
-            routeListener = function (collection, index, action) {
-
+            routeListener = function (collection, index, action, childCollection, childIndex, childAction) {
+                //All params are optional
                 self.currentRouteMatch = {
                     collection : collection,
                     index : index,
-                    action : action
+                    action : action,
+                    childCollection : childCollection,
+                    childIndex : childIndex,
+                    childAction : childAction
                 };
 
                 self.trigger("route", {app : self, routeMatch : self.currentRouteMatch});
@@ -32,10 +35,12 @@ window.Ginger = {
 
         this.renderInto = function (parentTag, into, tag, opts) {
             if (!opts) opts = {};
+            var node = $(parentTag.root).find(into).html($('<' + tag + ' />')).find(tag).get(0);
 
-            $(parentTag.root).children(into).html($('<' + tag + ' />'));
-            self.tags[tag] = riot.mount(tag, {app : self, routeMatch : self.currentRouteMatch, opts : opts})[0];
-            self.trigger("didRenderTag", {app : self, routeMatch:self.currentRouteMatch, tagName : tag, tag: self.tags[tag]});
+            if (node) {
+                self.tags[tag] = riot.mountTo(node, tag, {app : self, routeMatch : self.currentRouteMatch, opts : opts})[0];
+                self.trigger("didRenderTag", {app : self, routeMatch:self.currentRouteMatch, tagName : tag, tag: self.tags[tag]});
+            }
         }
 
         this.ready = function () {

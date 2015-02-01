@@ -15,10 +15,6 @@ $dbalConnections = json_encode($this->dbal_connections);
 $this->inlineScript()->captureStart();
 
 echo <<<JS
-
-//Set up translations
-
-
 window.SqlM = Ginger.App.create(
     {
         connectors : {$sqlConnectors},

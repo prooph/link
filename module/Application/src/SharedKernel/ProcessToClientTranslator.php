@@ -33,7 +33,7 @@ final class ProcessToClientTranslator
         $messageType = MessageNameUtils::getMessageSuffix($startMessage);
 
         foreach($processDefinition['tasks'] as $i => &$task) {
-            $task['id'] = $i+1;
+            $task['id'] = $i;
         }
 
         return [

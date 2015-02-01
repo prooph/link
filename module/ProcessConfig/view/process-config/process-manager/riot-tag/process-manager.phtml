@@ -1,0 +1,40 @@
+<div class="content"></div>
+<script type="text/javascript">
+    function (context) {
+        var self = this;
+
+        context.app.on("route", function (con) {
+
+            var rm = con.routeMatch;
+
+            if (rm.collection == "processes" || ! rm.collection) {
+                switch (true) {
+                    case ! rm.index:
+                        con.app.renderInto(self, ".content", "process-list");
+                        return;
+                    case rm.index == "create":
+                        rm.action = rm.index;
+                        rm.index = undefined;
+                        con.app.renderInto(self, ".content", "process-create");
+                        return;
+                    case ! rm.action:
+                        con.app.renderInto(self, ".content", "process-tasklist");
+                        return;
+                    case rm.action == "show" && rm.childCollection == "tasks" && ! rm.childIndex:
+                        con.app.renderInto(self, ".content", "process-tasklist");
+                        return;
+                    case rm.action == "show" && rm.childCollection == "tasks" && rm.childIndex == "create":
+                        rm.childAction = rm.childIndex;
+                        rm.childIndex = undefined;
+                        con.app.renderInto(self, ".content", "task-edit", {isNew : true});
+                        return;
+                    case rm.action == "show" && rm.childCollection == "tasks" && rm.childIndex && rm.childAction == "update":
+                        con.app.renderInto(self, ".content", "task-edit", {isNew : false});
+                        return;
+                }
+            }
+
+            $(self.root).children(".content").html('<h2 class="text-danger text-center"><?php echo $this->translate('Page Not Found')  ?></h2>');
+        });
+    };
+</script>
