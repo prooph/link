@@ -154,7 +154,7 @@ final class ProcessViewController extends AbstractQueryController implements Tra
             }
 
             $clientEvent['task_list_id'] = ($taskListPosition)? $taskListPosition->taskListId()->toString() : null;
-            $clientEvent['task_id'] = ($taskListPosition)? $taskListPosition->position() : null;
+            $clientEvent['task_id'] = ($taskListPosition)? $taskListPosition->position() - 1 : null;
 
             $clientEvents[] = $clientEvent;
         }

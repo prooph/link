@@ -12,5 +12,3 @@ App.ProcessView = Ember.View.extend({
         });
     }.on("didInsertElement")
 });
-
-Ember.Handlebars.helper()

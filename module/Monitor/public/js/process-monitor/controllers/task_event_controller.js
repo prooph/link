@@ -25,6 +25,9 @@ App.TaskEventController = Ember.ObjectController.extend({
     description : function () {
         console.log(this.get("model"));
         switch (this.get("model.name")) {
+            case "ProcessWasSetUp":
+                return Em.I18n.t('event.process_started');
+                break;
             case "TaskEntryMarkedAsRunning":
                 return Em.I18n.t('event.started_event');
             case "TaskEntryMarkedAsDone":

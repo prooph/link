@@ -1,6 +1,5 @@
 App.TaskEventView = Ember.View.extend({
     activeLogMessageDetailsToggle : function () {
-        console.log("active event toogle");
         this.$(".log-message-details").hide().removeClass("hidden");
         this.$(".log-message-details-toggle").click(
             function (e) {
