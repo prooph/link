@@ -96,6 +96,7 @@ return [
                     'gingerwork/monitor/process-view/riot-tag/task-status',
                     'gingerwork/monitor/process-view/riot-tag/task-event-monitor',
                     'process-config/process-manager/riot-tag/task-desc',
+                    'process-config/process-manager/riot-tag/process-play',
                 ]
             ],
             'paths' => array(

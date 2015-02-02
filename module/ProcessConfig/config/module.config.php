@@ -93,6 +93,7 @@ return array(
                     'process-config/process-manager/riot-tag/task-edit',
                     'process-config/process-manager/riot-tag/task-desc',
                     'process-config/process-manager/riot-tag/process-name',
+                    'process-config/process-manager/riot-tag/process-play',
                 ]
             ],
             'paths' => array(
