@@ -15,6 +15,7 @@ use Application\DataType\SqlConnector\TableRow;
 use Ginger\Type\Description\Description;
 use Ginger\Type\Description\NativeType;
 use Ginger\Type\Integer;
+use Ginger\Type\IntegerOrNull;
 use Ginger\Type\String;
 
 /**
@@ -32,7 +33,8 @@ final class TestUser extends TableRow
     public static function getPropertyPrototypes()
     {
         return [
-            'id' => Integer::prototype(),
+            //Id can be null, because id column is configured to be AUTOINCREMENT
+            'id' => IntegerOrNull::prototype(),
             'name' => String::prototype(),
             'age' => Integer::prototype()
         ];

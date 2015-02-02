@@ -111,7 +111,30 @@ abstract class TableRow extends AbstractDictionary
      */
     public static function toDbColumnName($property)
     {
+        $dbColumnNames = array_keys(static::$propertyDbTypes);
+
+        if (! in_array($property, $dbColumnNames)) {
+            foreach ($dbColumnNames as $columnName) {
+                if (strtolower($columnName) === strtolower($property)) {
+                    return $columnName;
+                }
+            }
+        }
+
         return $property;
+    }
+
+    /**
+     * @param string $property
+     * @return string|null
+     */
+    public static function getDbTypeForProperty($property)
+    {
+        $dbColumn = static::toDbColumnName($property);
+
+        if (isset(static::$propertyDbTypes[$dbColumn])) return static::$propertyDbTypes[$dbColumn];
+
+        return null;
     }
 
     public static function toNativeValue($property, $value)

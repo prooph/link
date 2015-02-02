@@ -23,12 +23,19 @@ final class UsersFixture
 {
     public static function createTableAndInsertUsers(Connection $connection)
     {
+        /*
+         * Note: We make use of the automatic row id generation of Sqlite without defining the
+         * id column as AUTOINCREMENT. If we would set it, we would not be able to test a "table truncate"
+         * because AUTOINCREMENT tells Sqlite to not use a row id twice even if the row was deleted.
+         * An empty table operation of the DoctrineTableGateway should result in an empty table with
+         * row ids for new rows starting from 1.
+         */
         $connection->exec('
             CREATE TABLE users
             (
-                id INT PRIMARY KEY NOT NULL,
+                id INTEGER PRIMARY KEY NOT NULL,
                 name TEXT NOT NULL,
-                age INT NOT NULL
+                age INTEGER NOT NULL
             )
         ');
 

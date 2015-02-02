@@ -309,7 +309,7 @@ final class TableConnectorGenerator
 
         $gingerType = $this->doctrineGingerTypeMap[$column->getType()->getName()];
 
-        if (! $column->getNotnull()) {
+        if (! $column->getNotnull() || $column->getAutoincrement()) {
             $gingerType.= "OrNull";
 
             if (! class_exists($gingerType)) {

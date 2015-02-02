@@ -11,8 +11,11 @@
 
 namespace SqlConnector\Service;
 
+use Application\DataType\SqlConnector\TableRow;
+use Application\SharedKernel\MessageMetadata;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Query\QueryBuilder;
+use Doctrine\DBAL\Schema\Table;
 use Ginger\Functional\Iterator\MapIterator;
 use Ginger\Message\AbstractWorkflowMessageHandler;
 use Ginger\Message\GingerMessage;
@@ -20,6 +23,8 @@ use Ginger\Message\LogMessage;
 use Ginger\Message\WorkflowMessage;
 use Ginger\Type\Description\Description;
 use Ginger\Type\Description\NativeType;
+use Ginger\Type\Prototype;
+use Ginger\Type\Type;
 use Prooph\ServiceBus\CommandBus;
 use Prooph\ServiceBus\EventBus;
 use Zend\Stdlib\ErrorHandler;
@@ -83,7 +88,7 @@ final class DoctrineTableGateway extends AbstractWorkflowMessageHandler
      * It should directly operate on the query builder.
      *
      * Note: The table of the requested ginger type is aliased as "main"
-     * Note: Don't set limit, offset or order_by. Use metadata for them, because the TableGateway performs also a count query without offset, limit and order_by
+     * Note: Don't set limit, offset or order_by. Use metadata for these settings, because the TableGateway performs also a count query without offset, limit and order_by
      *       but with all filters applied.
      *
      * example query builder script:
@@ -99,12 +104,12 @@ final class DoctrineTableGateway extends AbstractWorkflowMessageHandler
     /**
      * Set the query offset.
      */
-    const META_OFFSET = "offset";
+    const META_OFFSET = MessageMetadata::OFFSET;
 
     /**
      * Set the query limit
      */
-    const META_LIMIT = "limit";
+    const META_LIMIT = MessageMetadata::LIMIT;
 
     /**
      * Set order_by like you would do in a SQL query.
@@ -112,6 +117,19 @@ final class DoctrineTableGateway extends AbstractWorkflowMessageHandler
      * example: "age DESC,name ASC"
      */
     const META_ORDER_BY = "order_by";
+
+    /**
+     * Flag to empty table before insert
+     */
+    const META_EMPTY_TABLE = "empty_table";
+
+    /**
+     * Activate update or insert processing
+     *
+     * This will take much longer than empty table and insert,
+     * so use it only for delta updates.
+     */
+    const META_TRY_UPDATE = "try_update";
 
     /**
      * @var CommandBus
@@ -170,8 +188,7 @@ final class DoctrineTableGateway extends AbstractWorkflowMessageHandler
     protected function handleProcessData(WorkflowMessage $workflowMessage)
     {
         try {
-            //@TODO: Add handling of process-data
-            throw new \BadMethodCallException(__METHOD__ . " not supported by " . __CLASS__);
+            return $this->processData($workflowMessage);
         } catch (\Exception $ex) {
             ErrorHandler::stop();
             return LogMessage::logException($ex, $workflowMessage->processTaskListPosition());
@@ -180,6 +197,7 @@ final class DoctrineTableGateway extends AbstractWorkflowMessageHandler
 
     /**
      * @param WorkflowMessage $workflowMessage
+     * @return WorkflowMessage
      */
     private function collectData(WorkflowMessage $workflowMessage)
     {
@@ -257,7 +275,7 @@ final class DoctrineTableGateway extends AbstractWorkflowMessageHandler
 
         $collection = $collectionType::fromNativeValue($mapIterator);
 
-        return $workflowMessage->answerWith($collection, ['total_items' => $count]);
+        return $workflowMessage->answerWith($collection, [MessageMetadata::TOTAL_ITEMS => $count]);
     }
 
     /**
@@ -322,12 +340,12 @@ final class DoctrineTableGateway extends AbstractWorkflowMessageHandler
         }
 
         if (! $countMode) {
-            if (isset($metadata[self::META_OFFSET])) {
-                $query->setFirstResult($metadata[self::META_OFFSET]);
+            if (isset($metadata[MessageMetadata::OFFSET])) {
+                $query->setFirstResult($metadata[MessageMetadata::OFFSET]);
             }
 
-            if (isset($metadata[self::META_LIMIT])) {
-                $query->setMaxResults($metadata[self::META_LIMIT]);
+            if (isset($metadata[MessageMetadata::LIMIT])) {
+                $query->setMaxResults($metadata[MessageMetadata::LIMIT]);
             }
 
             if (isset($metadata[self::META_ORDER_BY])) {
@@ -386,6 +404,222 @@ final class DoctrineTableGateway extends AbstractWorkflowMessageHandler
         }
 
         $query->setParameter('__filter' . $filterCount, $value);
+    }
+
+    /**
+     * @param WorkflowMessage $message
+     * @return LogMessage|WorkflowMessage
+     */
+    private function processData(WorkflowMessage $message)
+    {
+        $metadata = $message->metadata();
+
+        if (isset($metadata[self::META_EMPTY_TABLE]) && $metadata[self::META_EMPTY_TABLE]) {
+            $this->emptyTable();
+        }
+
+        $forceInsert = true;
+
+        if (isset($metadata[self::META_TRY_UPDATE]) && $metadata[self::META_TRY_UPDATE]) {
+            $forceInsert = false;
+        }
+
+        return $this->updateOrInsertPayload($message, $forceInsert);
+    }
+
+    /**
+     * @param WorkflowMessage $message
+     * @param bool $forceInsert
+     * @return LogMessage|WorkflowMessage
+     */
+    private function updateOrInsertPayload(WorkflowMessage $message, $forceInsert = false)
+    {
+        $gingerType = $message->payload()->getTypeClass();
+
+        /** @var $desc Description */
+        $desc = $gingerType::buildDescription();
+
+        $successful = 0;
+        $failed = 0;
+        $failedMessages = [];
+
+        if ($desc->nativeType() == NativeType::COLLECTION) {
+
+            /** @var $prototype Prototype */
+            $prototype = $gingerType::prototype();
+
+            $itemProto = $prototype->typeProperties()['item']->typePrototype();
+
+            /** @var $tableRow TableRow */
+            foreach ($message->payload()->toType() as $i => $tableRow) {
+                if (! $tableRow instanceof TableRow) {
+                    return LogMessage::logUnsupportedMessageReceived($message, __CLASS__);
+                }
+
+                try {
+                    $this->updateOrInsertTableRow($tableRow, $forceInsert);
+
+                    $successful++;
+                } catch (\Exception $e) {
+
+                    $datasetIndex = ($tableRow->description()->hasIdentifier())?
+                        $tableRow->description()->identifierName() . " = " . $tableRow->property($tableRow->description()->identifierName())->value()
+                        : $i;
+
+                    $failed++;
+                    $failedMessages[] = sprintf(
+                        'Dataset %s: %s',
+                        $datasetIndex,
+                        $e->getMessage()
+                    );
+                }
+            }
+
+            $report = [
+                MessageMetadata::SUCCESSFUL_ITEMS => $successful,
+                MessageMetadata::FAILED_ITEMS => $failed,
+                MessageMetadata::FAILED_MESSAGES => $failedMessages
+            ];
+
+            if ($failed > 0) {
+                return LogMessage::logErrorMsg(
+                    'At least one item could not be processed.',
+                    $message->processTaskListPosition(),
+                    $report
+                );
+            } else {
+                return $message->answerWithDataProcessingCompleted($report);
+            }
+        } else {
+            $tableRow = $message->payload()->toType();
+
+            if (! $tableRow instanceof TableRow) {
+                return LogMessage::logUnsupportedMessageReceived($message, __CLASS__);
+            }
+
+            $this->updateOrInsertTableRow($tableRow, $forceInsert);
+
+            return $message->answerWithDataProcessingCompleted();
+        }
+    }
+
+    private function updateOrInsertTableRow(TableRow $data, $forceInsert = false)
+    {
+        $id = false;
+        $pk = null;
+
+        if ($data->description()->hasIdentifier()) {
+            $pk = $data::toDbColumnName($data->description()->identifierName());
+
+            $id = $data->property($data->description()->identifierName())->value();
+        }
+
+        $dbTypes = $this->getDbTypesForProperties($data);
+
+        if ($id) {
+
+            $count = 0;
+
+            if (! $forceInsert) {
+                $query = $this->connection->createQueryBuilder();
+
+                $query->select('COUNT(*)')
+                    ->from($this->table)
+                    ->where(
+                        $query->expr()->eq(
+                            $pk,
+                            ':identifier'
+                        )
+                    );
+
+                $query->setParameter('identifier', $id, $dbTypes[$pk]);
+
+                $count = $query->execute()->fetchColumn();
+            }
+
+            if ($count) {
+                //We add one additional type for the pk
+                $dbTypesArr = array_values($dbTypes);
+                $dbTypesArr[] = $dbTypes[$pk];
+
+                $this->connection->update(
+                    $this->table,
+                    $this->convertToDbData($data),
+                    [$pk => $id],
+                    $dbTypesArr
+                );
+            } else {
+                $this->connection->insert(
+                    $this->table,
+                    $this->convertToDbData($data),
+                    array_values($dbTypes)
+                );
+            }
+        } else { //insert without id, useful if column is auto incremented or table has no pk
+            $dbData = $this->convertToDbData($data);
+
+            if ($pk) {
+                unset($dbData[$pk]);
+                unset($dbTypes[$pk]);
+            }
+
+            $this->connection->insert($this->table, $dbData, array_values($dbTypes));
+        }
+    }
+
+    private function convertToDbData(TableRow $tableRow)
+    {
+        $data = [];
+
+        /** @var $prop Type */
+        foreach ($tableRow->value() as $propName => $prop) {
+            $data[$tableRow::toDbColumnName($propName)] = $prop->value();
+        }
+
+        return $data;
+    }
+
+    /**
+     * Db types need to be an array in the same order as the properties
+     * @param TableRow $tableRow
+     * @return array
+     */
+    private function getDbTypesForProperties(TableRow $tableRow)
+    {
+        $dbTypes = [];
+
+        foreach ($tableRow as $propName => $prop) {
+            $dbTypes[$tableRow::toDbColumnName($propName)] = $tableRow::getDbTypeForProperty($propName);
+        }
+
+        return $dbTypes;
+    }
+
+    private function emptyTable()
+    {
+        $foreignKeys = [];
+
+        $dbPlatform = $this->connection->getDatabasePlatform();
+
+        if ($dbPlatform->supportsForeignKeyConstraints()) {
+            $sm = $this->connection->getSchemaManager();
+
+            $foreignKeys = $sm->listTableForeignKeys($this->table);
+
+            foreach ($foreignKeys as $foreignKey) {
+                $sm->dropForeignKey($foreignKey, $this->table);
+            }
+        }
+
+        $q = $dbPlatform->getTruncateTableSql($this->table);
+        $this->connection->executeUpdate($q);
+
+        if (! empty($foreignKeys)) {
+            $sm = $this->connection->getSchemaManager();
+            foreach ($foreignKeys as $foreignKey) {
+                $sm->createForeignKey($foreignKey, $this->table);
+            }
+        }
     }
 }
  

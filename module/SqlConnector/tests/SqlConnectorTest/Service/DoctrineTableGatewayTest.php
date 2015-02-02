@@ -11,6 +11,8 @@
 
 namespace SqlConnectorTest\Service;
 
+use Application\SharedKernel\MessageMetadata;
+use Ginger\Message\LogMessage;
 use Ginger\Message\WorkflowMessage;
 use Ginger\Processor\NodeName;
 use Ginger\Processor\ProcessId;
@@ -36,6 +38,8 @@ use SqlConnectorTest\TestCase;
  */
 final class DoctrineTableGatewayTest extends TestCase
 {
+    const TEST_TABLE = 'users';
+
     /**
      * @var CommandBus
      */
@@ -74,7 +78,7 @@ final class DoctrineTableGatewayTest extends TestCase
 
         $this->eventBus->utilize(new WorkflowProcessorInvokeStrategy());
 
-        $this->tableGateway = new DoctrineTableGateway($this->getDbalConnection(), 'users');
+        $this->tableGateway = new DoctrineTableGateway($this->getDbalConnection(), self::TEST_TABLE);
 
         $workflowEngine = new RegistryWorkflowEngine();
 
@@ -400,6 +404,292 @@ final class DoctrineTableGatewayTest extends TestCase
         $this->assertInstanceOf('SqlConnectorTest\DataType\TestUser', $user);
 
         $this->assertEquals('Donald Duck', $user->property('name')->value());
+    }
+
+    /**
+     * @test
+     */
+    function it_empties_the_user_table_inserts_list_of_new_users_and_uses_the_autoincrement_feature_to_assign_an_id()
+    {
+        $taskListPosition = TaskListPosition::at(TaskListId::linkWith(NodeName::defaultName(), ProcessId::generate()), 1);
+
+        $metadata = [
+            DoctrineTableGateway::META_EMPTY_TABLE => true
+        ];
+
+        $users = TestUserCollection::fromNativeValue([
+            [
+                'id' => null,
+                'name' => 'Jane Doe',
+                'age' => 32
+            ],
+            [
+                'id' => null,
+                'name' => 'Maxi Mustermann',
+                'age' => 41
+            ],
+        ]);
+
+        $message = WorkflowMessage::newDataCollected($users);
+
+        $message->connectToProcessTask($taskListPosition);
+
+        $message = $message->prepareDataProcessing($taskListPosition, $metadata);
+
+        $this->tableGateway->handleWorkflowMessage($message);
+
+        $this->assertInstanceOf('Ginger\Message\WorkflowMessage', $this->messageReceiver->getLastReceivedMessage());
+
+        /** @var $message WorkflowMessage */
+        $message = $this->messageReceiver->getLastReceivedMessage();
+
+        $metadata = $message->metadata();
+
+        $this->assertTrue(isset($metadata[MessageMetadata::SUCCESSFUL_ITEMS]));
+        $this->assertEquals(2, $metadata[MessageMetadata::SUCCESSFUL_ITEMS]);
+
+        $this->assertTrue(isset($metadata[MessageMetadata::FAILED_ITEMS]));
+        $this->assertEquals(0, $metadata[MessageMetadata::FAILED_ITEMS]);
+
+        $this->assertTrue(isset($metadata[MessageMetadata::FAILED_MESSAGES]));
+        $this->assertEmpty($metadata[MessageMetadata::FAILED_MESSAGES]);
+
+        $query = $this->getDbalConnection()->createQueryBuilder();
+
+        $userResultSet = $query->select('*')->from(self::TEST_TABLE)->execute()->fetchAll();
+
+        $this->assertEquals(2, count($userResultSet));
+
+        $expectedUsers = [
+            [
+                'id' => '1',
+                'name' => 'Jane Doe',
+                'age' => '32'
+            ],
+            [
+                'id' => '2',
+                'name' => 'Maxi Mustermann',
+                'age' => '41'
+            ]
+        ];
+
+        $this->assertEquals($expectedUsers, $userResultSet);
+    }
+
+    /**
+     * @test
+     */
+    function it_adds_new_user_to_existing_table()
+    {
+        $taskListPosition = TaskListPosition::at(TaskListId::linkWith(NodeName::defaultName(), ProcessId::generate()), 1);
+
+        $user = TestUser::fromNativeValue([
+            'id' => null,
+            'name' => 'Jane Doe',
+            'age' => 32
+        ]);
+
+        $message = WorkflowMessage::newDataCollected($user);
+
+        $message->connectToProcessTask($taskListPosition);
+
+        $message = $message->prepareDataProcessing($taskListPosition);
+
+        $this->tableGateway->handleWorkflowMessage($message);
+
+        $this->assertInstanceOf('Ginger\Message\WorkflowMessage', $this->messageReceiver->getLastReceivedMessage());
+
+        $query = $this->getDbalConnection()->createQueryBuilder();
+
+        $userResultSet = $query->select('*')->from(self::TEST_TABLE)->execute()->fetchAll();
+
+        $this->assertEquals(4, count($userResultSet));
+
+        $expectedUsers = [
+            [
+                'id' => '1',
+                'name' => 'John Doe',
+                'age' => '34'
+            ],
+            [
+                'id' => '2',
+                'name' => 'Max Mustermann',
+                'age' => '41'
+            ],
+            [
+                'id' => '3',
+                'name' => 'Donald Duck',
+                'age' => '57'
+            ],
+            [
+                'id' => '4',
+                'name' => 'Jane Doe',
+                'age' => '32'
+            ],
+        ];
+
+        $this->assertEquals($expectedUsers, $userResultSet);
+    }
+
+    /**
+     * @test
+     */
+    function it_successfully_adds_one_user_but_fails_for_one()
+    {
+        $taskListPosition = TaskListPosition::at(TaskListId::linkWith(NodeName::defaultName(), ProcessId::generate()), 1);
+
+        $users = TestUserCollection::fromNativeValue([
+            //Should fail, because we already have a user with id = 3 in the database
+            [
+                'id' => 3,
+                'name' => 'Jane Doe',
+                'age' => 32
+            ],
+            //Should succeed, because the id is not present in the database and the connector does not stop on failure
+            [
+                'id' => 4,
+                'name' => 'Maxi Mustermann',
+                'age' => 41
+            ],
+        ]);
+
+        $message = WorkflowMessage::newDataCollected($users);
+
+        $message->connectToProcessTask($taskListPosition);
+
+        $message = $message->prepareDataProcessing($taskListPosition);
+
+        $this->tableGateway->handleWorkflowMessage($message);
+
+        $this->assertInstanceOf('Ginger\Message\LogMessage', $this->messageReceiver->getLastReceivedMessage());
+
+        /** @var $message LogMessage */
+        $message = $this->messageReceiver->getLastReceivedMessage();
+
+        $this->assertTrue($message->isError());
+
+        $params = $message->msgParams();
+
+        $this->assertTrue(isset($params[MessageMetadata::SUCCESSFUL_ITEMS]));
+        $this->assertEquals(1, $params[MessageMetadata::SUCCESSFUL_ITEMS]);
+
+        $this->assertTrue(isset($params[MessageMetadata::FAILED_ITEMS]));
+        $this->assertEquals(1, $params[MessageMetadata::FAILED_ITEMS]);
+
+        $this->assertTrue(isset($params[MessageMetadata::FAILED_MESSAGES]));
+        $this->assertEquals(1, count($params[MessageMetadata::FAILED_MESSAGES]));
+        $this->assertRegExp('/^Dataset id = 3: An exception occurred.+/', $params[MessageMetadata::FAILED_MESSAGES][0]);
+
+        $query = $this->getDbalConnection()->createQueryBuilder();
+
+        $userResultSet = $query->select('*')->from(self::TEST_TABLE)->execute()->fetchAll();
+
+        $this->assertEquals(4, count($userResultSet));
+
+        $expectedUsers = [
+            [
+                'id' => '1',
+                'name' => 'John Doe',
+                'age' => '34'
+            ],
+            [
+                'id' => '2',
+                'name' => 'Max Mustermann',
+                'age' => '41'
+            ],
+            [
+                'id' => '3',
+                'name' => 'Donald Duck',
+                'age' => '57'
+            ],
+            [
+                'id' => '4',
+                'name' => 'Maxi Mustermann',
+                'age' => '41'
+            ],
+        ];
+
+        $this->assertEquals($expectedUsers, $userResultSet);
+    }
+
+    /**
+     * @test
+     */
+    function it_updates_the_existing_row_and_inserts_new_row()
+    {
+        $taskListPosition = TaskListPosition::at(TaskListId::linkWith(NodeName::defaultName(), ProcessId::generate()), 1);
+
+        $metadata = [DoctrineTableGateway::META_TRY_UPDATE => true];
+
+        $users = TestUserCollection::fromNativeValue([
+            //Should override Donald Duck
+            [
+                'id' => 3,
+                'name' => 'Jane Doe',
+                'age' => 32
+            ],
+            //Should be added as a new entry
+            [
+                'id' => 4,
+                'name' => 'Maxi Mustermann',
+                'age' => 41
+            ],
+        ]);
+
+        $message = WorkflowMessage::newDataCollected($users);
+
+        $message->connectToProcessTask($taskListPosition);
+
+        $message = $message->prepareDataProcessing($taskListPosition);
+
+        $this->tableGateway->handleWorkflowMessage($message);
+
+        $this->assertInstanceOf('Ginger\Message\WorkflowMessage', $this->messageReceiver->getLastReceivedMessage());
+
+        /** @var $message WorkflowMessage */
+        $message = $this->messageReceiver->getLastReceivedMessage();
+
+        $metadata = $message->metadata();
+
+        $this->assertTrue(isset($metadata[MessageMetadata::SUCCESSFUL_ITEMS]));
+        $this->assertEquals(2, $metadata[MessageMetadata::SUCCESSFUL_ITEMS]);
+
+        $this->assertTrue(isset($metadata[MessageMetadata::FAILED_ITEMS]));
+        $this->assertEquals(0, $metadata[MessageMetadata::FAILED_ITEMS]);
+
+        $this->assertTrue(isset($metadata[MessageMetadata::FAILED_MESSAGES]));
+        $this->assertEmpty($metadata[MessageMetadata::FAILED_MESSAGES]);
+
+        $query = $this->getDbalConnection()->createQueryBuilder();
+
+        $userResultSet = $query->select('*')->from(self::TEST_TABLE)->execute()->fetchAll();
+
+        $this->assertEquals(4, count($userResultSet));
+
+        $expectedUsers = [
+            [
+                'id' => '1',
+                'name' => 'John Doe',
+                'age' => '34'
+            ],
+            [
+                'id' => '2',
+                'name' => 'Max Mustermann',
+                'age' => '41'
+            ],
+            [
+                'id' => '3',
+                'name' => 'Jane Doe',
+                'age' => '32'
+            ],
+            [
+                'id' => '4',
+                'name' => 'Maxi Mustermann',
+                'age' => '41'
+            ],
+        ];
+
+        $this->assertEquals($expectedUsers, $userResultSet);
     }
 }
  
