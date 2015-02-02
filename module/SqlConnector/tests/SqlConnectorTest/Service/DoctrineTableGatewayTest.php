@@ -640,7 +640,7 @@ final class DoctrineTableGatewayTest extends TestCase
 
         $message->connectToProcessTask($taskListPosition);
 
-        $message = $message->prepareDataProcessing($taskListPosition);
+        $message = $message->prepareDataProcessing($taskListPosition, $metadata);
 
         $this->tableGateway->handleWorkflowMessage($message);
 

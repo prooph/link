@@ -9,6 +9,7 @@
  * Date: 2/1/15 - 9:48 PM
  */
 namespace Application\SharedKernel;
+use Ginger\Message\LogMessage;
 
 /**
  * Class MessageMetadata
@@ -41,15 +42,15 @@ final class MessageMetadata
     /**
      * Count of successful processed items
      */
-    const SUCCESSFUL_ITEMS = 'successful_items';
+    const SUCCESSFUL_ITEMS = LogMessage::MSG_PARAM_SUCCESSFUL_ITEMS;
 
     /**
      * Count of failed items
      */
-    const FAILED_ITEMS = 'failed_items';
+    const FAILED_ITEMS = LogMessage::MSG_PARAM_FAILED_ITEMS;
 
     /**
      * Collection of failed messages per item
      */
-    const FAILED_MESSAGES = 'failed_messages';
+    const FAILED_MESSAGES = LogMessage::MSG_PARAM_FAILED_MESSAGES;
 } 

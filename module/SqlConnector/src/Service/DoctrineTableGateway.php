@@ -460,7 +460,6 @@ final class DoctrineTableGateway extends AbstractWorkflowMessageHandler
 
                     $successful++;
                 } catch (\Exception $e) {
-
                     $datasetIndex = ($tableRow->description()->hasIdentifier())?
                         $tableRow->description()->identifierName() . " = " . $tableRow->property($tableRow->description()->identifierName())->value()
                         : $i;
@@ -481,10 +480,11 @@ final class DoctrineTableGateway extends AbstractWorkflowMessageHandler
             ];
 
             if ($failed > 0) {
-                return LogMessage::logErrorMsg(
-                    'At least one item could not be processed.',
-                    $message->processTaskListPosition(),
-                    $report
+                return LogMessage::logItemsProcessingFailed(
+                    $successful,
+                    $failed,
+                    $failedMessages,
+                    $message->processTaskListPosition()
                 );
             } else {
                 return $message->answerWithDataProcessingCompleted($report);
@@ -587,7 +587,7 @@ final class DoctrineTableGateway extends AbstractWorkflowMessageHandler
     {
         $dbTypes = [];
 
-        foreach ($tableRow as $propName => $prop) {
+        foreach ($tableRow->properties() as $propName => $prop) {
             $dbTypes[$tableRow::toDbColumnName($propName)] = $tableRow::getDbTypeForProperty($propName);
         }
 

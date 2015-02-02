@@ -26,6 +26,20 @@ use Ginger\Type\String;
  */
 final class TestUser extends TableRow
 {
+    /**
+     * @var array list of doctrine types indexed by property name
+     */
+    protected static $propertyDbTypes = [
+        'id' => 'integer',
+        'name' => 'string',
+        'age' => 'integer',
+
+    ];
+
+    /**
+     * @var string Doctrine database platform class
+     */
+    protected static $platformClass = 'Doctrine\DBAL\Platforms\SqlitePlatform';
 
     /**
      * @return array[propertyName => Prototype]
