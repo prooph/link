@@ -1,6 +1,7 @@
 App.TaskEventController = Ember.ObjectController.extend({
     isInfoEvent : function () {
         switch (this.get("model.name")) {
+            case "ProcessWasSetUp":
             case "TaskEntryMarkedAsRunning":
             case "TaskEntryMarkedAsDone":
                 return true;

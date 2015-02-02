@@ -15,7 +15,6 @@ use Application\DataType\SqlConnector\TableRow;
 use Application\SharedKernel\MessageMetadata;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Query\QueryBuilder;
-use Doctrine\DBAL\Schema\Table;
 use Ginger\Functional\Iterator\MapIterator;
 use Ginger\Message\AbstractWorkflowMessageHandler;
 use Ginger\Message\GingerMessage;

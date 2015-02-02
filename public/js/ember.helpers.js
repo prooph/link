@@ -122,9 +122,10 @@ Ember.Handlebars.helper('task-desc', function(task) {
     }
 
     if (task.task_type === Em.I18n.t("task.manipulate_payload.value")) {
-        return prefix +
-            ' <span class="glyphicon glyphicon-play"></span>' +
-            task.get("manipulation_script");
+        return new Ember.Handlebars.SafeString(
+            prefix +
+            ' <span class="glyphicon glyphicon-play"></span> ' +
+            task.get("manipulation_script"));
     }
 
     if (Em.isEmpty(task.task_type)) {

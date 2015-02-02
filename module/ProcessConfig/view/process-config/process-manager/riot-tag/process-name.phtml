@@ -1,4 +1,13 @@
-<h3 class="text-center">{ process.name } <span class="pull-right"><a href="#" class="btn btn-default"><?php echo $this->translate('edit') ?></a><span if="{ isCollectDataProcess() }">&nbsp;&nbsp;<button class="btn btn-default" onclick="{ runProcess }"><span class="glyphicon glyphicon-play"></span></button></span></span></h3>
+<div class="row">
+    <div class="col-xs-8 col-xs-offset-2">
+        <h3 class="text-center">{ process.name }</h3>
+    </div>
+    <div class="col-xs-2">
+        <span class="pull-right"><a href="#" class="btn btn-default btn-h3"><?php echo $this->translate('edit') ?></a><span if="{ isCollectDataProcess() }">&nbsp;&nbsp;<button class="btn btn-default btn-h3" onclick="{ runProcess }"><span class="glyphicon glyphicon-play"></span></button></span></span>
+    </div>
+</div>
+
+
 <hr>
 <script type="text/javascript">
     function (context) {

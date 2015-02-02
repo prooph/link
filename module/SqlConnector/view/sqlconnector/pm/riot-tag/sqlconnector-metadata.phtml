@@ -1,82 +1,94 @@
-<h5><?php echo $this->translate('Filter') ?></h5>
-<div if="{ isSingleResultType() }">
-    <div class="checkbox">
-        <label for="filter_identifier">
-            <input name="filter_identifier" type="checkbox" onchange="{ tick }"> <?php echo $this->translate('Filter By Identifier') ?>
-        </label>
+<div if="{ isExport() }">
+    <h5><?php echo $this->translate('Filter') ?></h5>
+    <div if="{ isSingleResultType() }">
+        <div class="checkbox">
+            <label for="filter_identifier">
+                <input name="filter_identifier" type="checkbox" onchange="{ tick }"> <?php echo $this->translate('Filter By Identifier') ?>
+            </label>
+        </div>
+    </div>
+    <div if="{ ! filter_identifier.checked }">
+        <div><?php //DON'T REMOVE THIS DIV, OTHERWISE THE EACH LOOP WON'T WORK CORRECTLY!!! ?>
+            <form each="{ generateMetadataFilterList() }" class="form-inline" id="filter_form_{ key }">
+                <div class="form-group">
+                    <input name="filter_column_{ key }" type="text" class="form-control form-control-inline-4" value="{ column }" readonly>
+                </div>&nbsp;&nbsp;
+                <div class="form-group">
+                    <input name="filter_operand_{ key }" type="text" class="form-control form-control-inline-3" value="{ operand }" readonly>
+                </div>&nbsp;&nbsp;
+                <div class="form-group">
+                    <input name="filter_value_{ key }" type="text" class="form-control form-control-inline-4" value="{ value }" readonly>
+                </div>&nbsp;&nbsp;
+                <button class="btn btn-sm btn-danger" onclick="{ parent.removeFilter }" data-key="{ key }"><span class="glyphicon glyphicon-remove"></span></button>
+            </form>
+        </div>
+        <br>
+        <form id="filter_form_new" class="form-inline" onsubmit="{ addFilter }">
+            <div class="form-group">
+                <select name="column" class="form-control form-control-inline-4">
+                    <option value="">- <?php echo $this->translate('Property') ?> -</option>
+                    <option each="{ prop in availableGingerTypeProperties }">{ prop }</option>
+                </select>
+            </div>&nbsp;&nbsp;
+            <div class="form-group">
+                <select name="operand" class="form-control form-control-inline-3">
+                    <option value="">- <?php echo $this->translate('Operand') ?> -</option>
+                    <option each="{ op in availableOperands }">{ op }</option>
+                </select>
+            </div>&nbsp;&nbsp;
+            <div class="form-group">
+                <input name="filter_value" class="form-control form-control-inline-4" placeholder="<?php echo $this->translate('Value') ?>">
+            </div>&nbsp;&nbsp;
+            <button class="btn btn-sm btn-success"><span class="glyphicon glyphicon-plus"></span></button>
+        </form>
+        <div if="{ isDuplicateColumn }">
+            <br>
+            <p class="alert alert-danger"><?php echo $this->translate('Your filter would never match entries, because you try to add the same property twice. This is only possible when defining a -between- filter, but your operands do not match, too. Please correct your choice.') ?></p>
+        </div>
+        <div if="{ ! isSingleResultType() }">
+            <hr>
+            <form class="form-inline">
+                <div class="form-group text-">
+                    <label for="order_by" class="text-btn-align">Order By</label>&nbsp;&nbsp;
+                    <span>
+                        <span each="{ order in orderByArr }"><span class="text-btn-align"><big>{ order }</big></span>&nbsp;<button class="btn btn-xs btn-danger" onclick="{ parent.removeOrderBy }" data-order="{ order }"><span class="glyphicon glyphicon-remove"></span></button></span>
+                    </span>&nbsp;&nbsp;
+                    <select name="tempOrderByProp" class="form-control form-inline-2">
+                        <option value="">- <?php echo $this->translate('Property') ?> -</option>
+                        <option each="{ prop in availableOrderByProperties }">{ prop }</option>
+                    </select>
+                    &nbsp;&nbsp;
+                    <select name="tempOrderByOrder" class="form-control form-control-inline-2">
+                        <option value="">- <?php echo $this->translate('Order') ?> -</option>
+                        <option>ASC</option>
+                        <option>DESC</option>
+                    </select>
+                    &nbsp;&nbsp;
+                    <button class="btn btn-sm btn-success" onclick="{ addOrderBy }"><span class="glyphicon glyphicon-plus"></span></button>
+                </div>
+            </form>
+            <hr>
+            <form class="form-inline">
+                <div class="form-group">
+                    <label for="limit">Limit</label>&nbsp;&nbsp;
+                    <input name="limit" type="text" class="form-control form-control-inline-2" placeholder="Limit" onchange="{ tick }">
+                </div>&nbsp;&nbsp;
+                <div class="form-group">
+                    <label for="offset">Offset</label>&nbsp;&nbsp;
+                    <input name="offset" type="text" class="form-control form-control-inline-2" placeholder="Offset" onchange="{ tick }">
+                </div>
+            </form>
+        </div>
     </div>
 </div>
-<div if="{ ! filter_identifier.checked }">
-    <div><?php //DON'T REMOVE THIS DIV, OTHERWISE THE EACH LOOP WON'T WORK CORRECTLY!!! ?>
-        <form each="{ generateMetadataFilterList() }" class="form-inline" id="filter_form_{ key }">
-            <div class="form-group">
-                <input name="filter_column_{ key }" type="text" class="form-control form-control-inline-4" value="{ column }" readonly>
-            </div>&nbsp;&nbsp;
-            <div class="form-group">
-                <input name="filter_operand_{ key }" type="text" class="form-control form-control-inline-3" value="{ operand }" readonly>
-            </div>&nbsp;&nbsp;
-            <div class="form-group">
-                <input name="filter_value_{ key }" type="text" class="form-control form-control-inline-4" value="{ value }" readonly>
-            </div>&nbsp;&nbsp;
-            <button class="btn btn-sm btn-danger" onclick="{ parent.removeFilter }" data-key="{ key }"><span class="glyphicon glyphicon-remove"></span></button>
-        </form>
-    </div>
-    <br>
-    <form id="filter_form_new" class="form-inline" onsubmit="{ addFilter }">
-        <div class="form-group">
-            <select name="column" class="form-control form-control-inline-4">
-                <option value="">- <?php echo $this->translate('Property') ?> -</option>
-                <option each="{ prop in availableGingerTypeProperties }">{ prop }</option>
-            </select>
-        </div>&nbsp;&nbsp;
-        <div class="form-group">
-            <select name="operand" class="form-control form-control-inline-3">
-                <option value="">- <?php echo $this->translate('Operand') ?> -</option>
-                <option each="{ op in availableOperands }">{ op }</option>
-            </select>
-        </div>&nbsp;&nbsp;
-        <div class="form-group">
-            <input name="filter_value" class="form-control form-control-inline-4" placeholder="<?php echo $this->translate('Value') ?>">
-        </div>&nbsp;&nbsp;
-        <button class="btn btn-sm btn-success"><span class="glyphicon glyphicon-plus"></span></button>
-    </form>
-    <div if="{ isDuplicateColumn }">
-        <br>
-        <p class="alert alert-danger"><?php echo $this->translate('Your filter would never match entries, because you try to add the same property twice. This is only possible when defining a -between- filter, but your operands do not match, too. Please correct your choice.') ?></p>
-    </div>
-    <div if="{ ! isSingleResultType() }">
-        <hr>
-        <form class="form-inline">
-            <div class="form-group text-">
-                <label for="order_by" class="text-btn-align">Order By</label>&nbsp;&nbsp;
-                <span>
-                    <span each="{ order in orderByArr }"><span class="text-btn-align"><big>{ order }</big></span>&nbsp;<button class="btn btn-xs btn-danger" onclick="{ parent.removeOrderBy }" data-order="{ order }"><span class="glyphicon glyphicon-remove"></span></button></span>
-                </span>&nbsp;&nbsp;
-                <select name="tempOrderByProp" class="form-control form-inline-2">
-                    <option value="">- <?php echo $this->translate('Property') ?> -</option>
-                    <option each="{ prop in availableOrderByProperties }">{ prop }</option>
-                </select>
-                &nbsp;&nbsp;
-                <select name="tempOrderByOrder" class="form-control form-control-inline-2">
-                    <option value="">- <?php echo $this->translate('Order') ?> -</option>
-                    <option>ASC</option>
-                    <option>DESC</option>
-                </select>
-                &nbsp;&nbsp;
-                <button class="btn btn-sm btn-success" onclick="{ addOrderBy }"><span class="glyphicon glyphicon-plus"></span></button>
-            </div>
-        </form>
-        <hr>
-        <form class="form-inline">
-            <div class="form-group">
-                <label for="limit">Limit</label>&nbsp;&nbsp;
-                <input name="limit" type="text" class="form-control form-control-inline-2" placeholder="Limit" onchange="{ tick }">
-            </div>&nbsp;&nbsp;
-            <div class="form-group">
-                <label for="offset">Offset</label>&nbsp;&nbsp;
-                <input name="offset" type="text" class="form-control form-control-inline-2" placeholder="Offset" onchange="{ tick }">
-            </div>
-        </form>
+<div if="{ isImport() }">
+    <h5><?php echo $this->translate('Import Options')?></h5>
+    <div class="row">
+        <div class="col-md-12">
+            <button name="empty_table" class="btn btn-default text-uppercase" onclick="{ toggleEmptyTable }"><?php echo $this->translate('truncate table') ?>&nbsp;<span class="glyphicon glyphicon-unchecked"></span></button>
+            &nbsp;&nbsp;
+            <button name="try_update" class="btn btn-default text-uppercase" onclick="{ toggleTryUpdate }"><?php echo $this->translate('update existing rows') ?>&nbsp;<span class="glyphicon glyphicon-edit"></span></button>
+        </div>
     </div>
 </div>
 <script type="text/javascript">
@@ -107,6 +119,14 @@
         this.orderByArr = [];
         this.syncedWithParent = false;
         this.tick = function () {};
+
+        this.isExport = function () {
+            return this.taskType == '<?php echo \Ginger\Processor\Definition::TASK_COLLECT_DATA  ?>';
+        }
+
+        this.isImport = function () {
+            return this.taskType == '<?php echo \Ginger\Processor\Definition::TASK_PROCESS_DATA  ?>';
+        }
 
         this.syncWithProcessManager = function (pm) {
             this.connector = pm.getCurrentConnector();
@@ -240,60 +260,100 @@
             self.availableOrderByProperties = self.findAvailableOrderByProperties();
         }
 
+        this.toggleEmptyTable = function () {
+            $(this.empty_table).toggleClass("active").find("span").toggleClass("glyphicon-unchecked glyphicon-ok");
+        }
+
+        this.toggleTryUpdate = function () {
+            $(this.try_update).toggleClass("active").find("span").toggleClass("glyphicon-edit glyphicon-ok");
+        }
+
         this.collectMetadata = function () {
             var tmpMetadata = {};
 
-            if (this.filter_identifier.checked) {
-                tmpMetadata.filter_identifier = true;
+            if (this.isExport()) {
+                if (this.filter_identifier.checked) {
+                    tmpMetadata.filter_identifier = true;
+                }
+
+                if (! tmpMetadata.filter_identifier) {
+                    if (! _.isEmpty(this.filter)) {
+                        tmpMetadata.filter = this.filter;
+                    }
+
+                    if (! this.isSingleResultType()) {
+                        if (!_.isEmpty(this.orderByArr)) {
+                            tmpMetadata.order_by = this.orderByArr.join(", ");
+                        }
+
+                        if (this.limit.value) {
+                            tmpMetadata.limit = this.limit.value;
+                        }
+
+                        if (this.offset.value) {
+                            tmpMetadata.offset = this.offset.value;
+                        }
+                    }
+
+                }
             }
 
-            if (! tmpMetadata.filter_identifier) {
-                if (! _.isEmpty(this.filter)) {
-                    tmpMetadata.filter = this.filter;
+            if (this.isImport()) {
+                if ($(this.empty_table).hasClass("active")) {
+                    tmpMetadata.empty_table = true;
                 }
 
-                if (! this.isSingleResultType()) {
-                    if (!_.isEmpty(this.orderByArr)) {
-                        tmpMetadata.order_by = this.orderByArr.join(", ");
-                    }
-
-                    if (this.limit.value) {
-                        tmpMetadata.limit = this.limit.value;
-                    }
-
-                    if (this.offset.value) {
-                        tmpMetadata.offset = this.offset.value;
-                    }
+                if ($(this.try_update).hasClass("active")) {
+                    tmpMetadata.try_update = true;
                 }
-
             }
 
             return tmpMetadata;
         }
 
         this.applyMetadata = function (metadata) {
-            if (metadata.filter_identifier) {
-                this.filter_identifier.checked = 1;
-            } else {
-                this.filter_identifier.checked = null;
-            }
-
             this.filter = metadata.filter || {};
 
-            if (metadata.order_by) {
-                this.orderByArr = metadata.order_by.split(",").map(function(order) {
-                    return $.trim(order);
-                });
-            } else {
-                this.orderByArr = [];
+            if (this.isExport()) {
+                if (metadata.filter_identifier) {
+                    this.filter_identifier.checked = 1;
+                } else {
+                    this.filter_identifier.checked = null;
+                }
+
+                if (metadata.order_by) {
+                    this.orderByArr = metadata.order_by.split(",").map(function(order) {
+                        return $.trim(order);
+                    });
+                } else {
+                    this.orderByArr = [];
+                }
+
+                if (metadata.limit) {
+                    this.limit.value = metadata.limit;
+                }
+
+                if (metadata.offset) {
+                    this.offset.value = metadata.offset;
+                }
             }
 
-            if (metadata.limit) {
-                this.limit.value = metadata.limit;
-            }
+            if (this.isImport()) {
+                if (metadata.empty_table && ! $(this.empty_table).hasClass("active")) {
+                    this.toggleEmptyTable();
+                }
 
-            if (metadata.offset) {
-                this.offset.value = metadata.offset;
+                if (! metadata.empty_table && $(this.empty_table).hasClass("active")) {
+                    this.toggleEmptyTable();
+                }
+
+                if (metadata.try_update && ! $(this.try_update).hasClass("active")) {
+                    this.toggleTryUpdate();
+                }
+
+                if (! metadata.try_update && $(this.try_update).hasClass("active")) {
+                    this.toggleTryUpdate();
+                }
             }
         }
 
