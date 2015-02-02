@@ -203,6 +203,7 @@ final class FileGateway extends AbstractWorkflowMessageHandler
      *
      * Mode 1: Metadata: fetch_mode = 'single_file'
      * @param WorkflowMessage $workflowMessage
+     * @return \Ginger\Message\WorkflowMessage
      * @throws \InvalidArgumentException
      */
     private function collectData(WorkflowMessage $workflowMessage)

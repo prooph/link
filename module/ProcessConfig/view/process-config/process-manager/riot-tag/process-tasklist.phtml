@@ -6,7 +6,7 @@
     <div class="col-xs-12 col-md-8 col-md-offset-2">
         <div class="list-group">
             <a each="{ process.tasks }" href="#processes/{ parent.process.id }/show/tasks/{ id }/update" class="list-group-item"><div id="task_desc_{ id }"></div></a>
-            <a href="#processes/{ process.id }/show/tasks/create" class="list-group-item list-group-item-success text-uppercase"><strong><?php echo $this->translate('add task') ?></strong></a>
+            <a href="#processes/{ process.id }/show/tasks/create" class="list-group-item list-group-item-success text-uppercase text-center"><strong><?php echo $this->translate('add task') ?></strong></a>
         </div>
     </div>
 </div>

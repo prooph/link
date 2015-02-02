@@ -3,7 +3,7 @@
         <h3 class="text-center">{ process.name }</h3>
     </div>
     <div class="col-xs-2">
-        <span class="pull-right"><a href="#" class="btn btn-default btn-h3"><?php echo $this->translate('edit') ?></a><span if="{ isCollectDataProcess() }">&nbsp;&nbsp;<button class="btn btn-default btn-h3" onclick="{ runProcess }"><span class="glyphicon glyphicon-play"></span></button></span></span>
+        <span class="pull-right"><a href="#" class="btn btn-default btn-h3"><?php echo $this->translate('edit') ?></a><span if="{ isCollectDataProcess() }">&nbsp;&nbsp;<button name="run_process" class="btn btn-default btn-h3" onclick="{ runProcess }"><span class="glyphicon glyphicon-play"></span></button></span></span>
     </div>
 </div>
 
@@ -25,8 +25,6 @@
 
             return this.process.start_message.message_type == '<?php echo \Ginger\Message\MessageNameUtils::COLLECT_DATA  ?>';
         }
-
-
 
         this.loadStartMessage = function (location) {
             if (! loadStartMessageRetries[location]) loadStartMessageRetries[location] = 0;
@@ -59,6 +57,8 @@
                     ginger_type : this.process.start_message.ginger_type
                 }
             };
+
+            $(this.run_process).addClass("active disabled").find("span").toggleClass("glyphicon-play glyphicon-dashboard");
 
             $.postJSON('<?php echo $this->url('processor_proxy/api/collect_data_triggers')  ?>', command)
                 .then(function (data, status, xhr) {
