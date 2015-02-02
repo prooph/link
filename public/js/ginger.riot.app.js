@@ -7,13 +7,13 @@ window.Ginger = {
         riot.observable(this);
 
         this.tags = {};
-        this.currentRouteMatch = {};
+        this.routeMatch = {};
         $.extend(this, config);
 
         var self = this,
             routeListener = function (collection, index, action, childCollection, childIndex, childAction) {
                 //All params are optional
-                self.currentRouteMatch = {
+                self.routeMatch = {
                     collection : collection,
                     index : index,
                     action : action,
@@ -22,14 +22,14 @@ window.Ginger = {
                     childAction : childAction
                 };
 
-                self.trigger("route", {app : self, routeMatch : self.currentRouteMatch});
+                self.trigger("route", {app : self, routeMatch : self.routeMatch});
             };
 
         riot.route(routeListener);
 
         this.bootstrap = function (rootTag) {
             self.tags[rootTag] = riot.mount(rootTag, {app: self})[0];
-            self.trigger("didRenderTag", {app : self, routeMatch:self.currentRouteMatch, tagName : rootTag, tag: self.tags[rootTag]});
+            self.trigger("didRenderTag", {app : self, routeMatch:self.routeMatch, tagName : rootTag, tag: self.tags[rootTag]});
             return self;
         };
 
@@ -38,8 +38,8 @@ window.Ginger = {
             var node = $(parentTag.root).find(into).html($('<' + tag + ' />')).find(tag).get(0);
 
             if (node) {
-                self.tags[tag] = riot.mountTo(node, tag, {app : self, routeMatch : self.currentRouteMatch, opts : opts})[0];
-                self.trigger("didRenderTag", {app : self, routeMatch:self.currentRouteMatch, tagName : tag, tag: self.tags[tag]});
+                self.tags[tag] = riot.mountTo(node, tag, $.extend({app : self}, opts))[0];
+                self.trigger("didRenderTag", {app : self, routeMatch:self.routeMatch, tagName : tag, tag: self.tags[tag]});
             }
         }
 

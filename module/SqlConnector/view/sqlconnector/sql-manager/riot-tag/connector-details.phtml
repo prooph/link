@@ -71,7 +71,7 @@
         this.showConnectionConfig = false;
         this.regenerateType = false;
 
-        if (context.opts.isNew) {
+        if (context.isNew) {
             this.isNew = true;
 
             this.connector = {
@@ -84,7 +84,7 @@
         } else {
             this.isNew = false;
 
-            this.connector = _.find(context.app.connectors, {id : context.routeMatch.index});
+            this.connector = _.find(context.app.connectors, {id : context.app.routeMatch.index});
 
             var autoName = dbname_table_to_name(this.connector.dbal_connection, this.connector.table);
 

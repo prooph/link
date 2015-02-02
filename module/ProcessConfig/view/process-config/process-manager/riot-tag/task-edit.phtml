@@ -73,7 +73,7 @@
     function (context) {
         var self = riot.observable(this);
 
-        this.process = _.findWhere(context.app.processes, {id : context.routeMatch.index});
+        this.process = _.findWhere(context.app.processes, {id : context.app.routeMatch.index});
         this.taskTypes = context.app.taskTypes;
         this.gingerTypes = context.app.gingerTypes;
         this.connectors  = context.app.connectors;
@@ -91,12 +91,12 @@
             return;
         }
 
-        if (context.opts.isNew) {
+        if (context.isNew) {
             this.task = {
                 id : this.process.tasks.length
             };
         } else {
-            this.task = _.findWhere(this.process.tasks, { id : parseInt(context.routeMatch.childIndex)});
+            this.task = _.findWhere(this.process.tasks, { id : parseInt(context.app.routeMatch.childIndex)});
 
             if (! this.task) {
                 riot.route("taskNotFound");
@@ -217,7 +217,7 @@
 
         this.updateMetadataContainer = function () {
             if (this.hasMetadata()) {
-                context.app.renderInto(self, '#metadata_container', this.getCurrentConnector().ui_metadata_riot_tag, {pm : this});
+                context.app.renderInto(self, '#metadata_container', this.getCurrentConnector().ui_metadata_riot_tag, {ProcessManager : this});
             } else {
                 $(self.root).find("#metadata_container").html('');
             }

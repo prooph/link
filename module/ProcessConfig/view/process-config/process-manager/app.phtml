@@ -11,8 +11,6 @@ $this->partial('process-config/process-manager/partial/sidebar-left');
 //Bootstrap ember app
 $this->inlineScript()->captureStart();
 
-$apiUrl = ltrim($this->url('process_config/api'), '/');
-
 $processes    = json_encode($this->processes);
 $processTypes = json_encode($this->available_process_types);
 $messages     = json_encode($this->available_messages);

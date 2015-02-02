@@ -1,0 +1,30 @@
+<span></span>
+<script type="text/javascript">
+    function (context) {
+        this.task = context.task;
+
+        this.updateTaskStatus = function () {
+            var status = null;
+
+            this.task.events.forEach(function (event) {
+                switch (event.name) {
+                    case "TaskEntryMarkedAsRunning":
+                        status = "running";
+                        break;
+                    case "TaskEntryMarkedAsDone":
+                        status = "succeed";
+                        return false;
+                    case "TaskEntryMarkedAsFailed":
+                        status = "failed";
+                        return false;
+                }
+            });
+
+            $(this.root).html(status_icon(status));
+        };
+
+        this.on("mount", function () {
+            this.updateTaskStatus();
+        });
+    }
+</script>

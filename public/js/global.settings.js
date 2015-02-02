@@ -32,6 +32,32 @@ window.hash_find_by = function(hash, key, value) {
     return found;
 };
 
+window.status_icon = function(status) {
+    var statusIcon = "",
+        statusTextClass = "";
+
+    switch (status) {
+        case "running":
+            statusIcon = "glyphicon-flash";
+            statusTextClass = "warning";
+            break;
+        case "succeed":
+            statusIcon = "glyphicon-ok";
+            statusTextClass = "success";
+            break;
+        case "failed":
+            statusIcon = "glyphicon-remove";
+            statusTextClass = "danger";
+            break;
+        default:
+            statusIcon = "glyphicon-question-sign";
+            statusTextClass = "danger";
+            break;
+    }
+
+    return '<span class="glyphicon ' + statusIcon + ' text-' + statusTextClass + '"></span>';
+};
+
 //jQuery Additions
 (function( $ ) {
 

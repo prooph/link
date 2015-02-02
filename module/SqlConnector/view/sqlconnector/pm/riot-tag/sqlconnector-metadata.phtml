@@ -94,7 +94,7 @@
 <script type="text/javascript">
     function (context) {
         var self = this,
-            parent = context.opts.pm,
+            parent = context.ProcessManager,
             __toFormFilter = function (filterKey, filterValue) {
                 //FilterValue is already an object so we only need to add the filterKey
                 if (_.isObject(filterValue)) {

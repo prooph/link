@@ -83,19 +83,21 @@ return [
             'gingerwork/monitor/process-view/partial/process-list' => __DIR__ . '/../view/gingerwork/monitor/process-view/partial/process-list.phtml',
             'gingerwork/monitor/process-view/partial/process-details' => __DIR__ . '/../view/gingerwork/monitor/process-view/partial/process-details.phtml',
         ],
+        'template_path_stack' => array(
+            __DIR__ . '/../view',
+        ),
     ],
     'asset_manager' => array(
         'resolver_configs' => array(
-            'collections' => array(
-                'js/process-monitor/app.js' => array(
-                    'js/process-monitor/models/process.js',
-                    'js/process-monitor/controllers/process_controller.js',
-                    'js/process-monitor/controllers/task_event_controller.js',
-                    'js/process-monitor/views/helpers.js',
-                    'js/process-monitor/views/process_view.js',
-                    'js/process-monitor/views/task_event_view.js',
-                ),
-            ),
+            'riot-tags' => [
+                'js/process-monitor/app.js' => [
+                    'gingerwork/monitor/process-view/riot-tag/process-monitor',
+                    'gingerwork/monitor/process-view/riot-tag/task-monitor',
+                    'gingerwork/monitor/process-view/riot-tag/task-status',
+                    'gingerwork/monitor/process-view/riot-tag/task-event-monitor',
+                    'process-config/process-manager/riot-tag/task-desc',
+                ]
+            ],
             'paths' => array(
                 __DIR__ . '/../public',
             ),

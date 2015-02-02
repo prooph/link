@@ -15,7 +15,7 @@
 
         var self = this;
 
-        var process = _.findWhere(context.app.processes, {id : context.routeMatch.index});
+        var process = _.findWhere(context.app.processes, {id : context.app.routeMatch.index});
 
         this.processNotFound = ! process;
 

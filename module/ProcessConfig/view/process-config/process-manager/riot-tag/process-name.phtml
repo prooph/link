@@ -6,16 +6,14 @@
         <span class="pull-right"><a href="#" class="btn btn-default btn-h3"><?php echo $this->translate('edit') ?></a><span if="{ isCollectDataProcess() }">&nbsp;&nbsp;<button name="run_process" class="btn btn-default btn-h3" onclick="{ runProcess }"><span class="glyphicon glyphicon-play"></span></button></span></span>
     </div>
 </div>
-
-
 <hr>
 <script type="text/javascript">
     function (context) {
         var self = this,
             loadStartMessageRetries = {};
 
-        if (context.opts.process) {
-            this.process = context.opts.process;
+        if (context.process) {
+            this.process = context.process;
         } else {
             this.process = { name : "<?php echo $this->translate('Unknown')  ?>" };
         }

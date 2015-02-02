@@ -136,21 +136,7 @@ Ember.Handlebars.helper('task-desc', function(task) {
 }, "task_type", "source", "target", "ginger_type", "allowed_types", "preferred_type", "manipulation_script");
 
 Ember.Handlebars.helper("task-status", function (task) {
-    var status = null;
 
-    task.get("events").forEach(function (event) {
-        switch (event.name) {
-            case "TaskEntryMarkedAsRunning":
-                status = "running";
-                break;
-            case "TaskEntryMarkedAsDone":
-                status = "succeed";
-                break;
-            case "TaskEntryMarkedAsFailed":
-                status = "failed";
-                break;
-        }
-    });
 
     return Ember.StatusIcon(status);
 }, "events.@each");

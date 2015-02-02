@@ -1,0 +1,39 @@
+<div class="task">
+    <a href="#" class="list-group-item task-summary" onclick="{ toggleTaskDetails }">
+        <task-desc task="{ task }" app="{ app }"></task-desc>&nbsp;<div class="pull-right"><task-status task="{ task }" app="{ app }"></task-status></div>
+    </a>
+    <div class="task-details text-left well well-large hidden">
+        <div class="row">
+            <div class="col-md-12">
+                <h5><?php echo $this->translate('Logged Events') ?></h5>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <div class="list-group">
+                    <task-event-monitor each="{ task.events }" event="{ this }" app="{ parent.app }"></task-event-monitor>
+                    <div if="{ ! task.events.length }" class="list-group-item text-warning">
+                        <?php echo $this->translate('No events logged') ?>&nbsp;<span class="glyphicon glyphicon-warning-sign"></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    function (context) {
+        var self = this;
+
+        this.app = context.app;
+        this.task = context.task;
+
+        this.toggleTaskDetails = function () {
+            $(this.root).find(".task-summary").toggleClass("active");
+            $(this.root).find(".task-details").slideToggle(500);
+        }
+
+        this.on("mount", function () {
+            $(this.root).find(".task-details").removeClass("hidden").hide();
+        });
+    }
+</script>

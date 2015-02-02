@@ -1,27 +1,54 @@
 <div class="row">
     <div id="app" class="col-md-12">
         <h1 class="text-center"><?php echo $this->translate('Process Monitor') ?></h1>
-        <script type="text/x-handlebars" data-template-name="app">
-            {{outlet}}
-        </script>
+        <process-monitor></process-monitor>
     </div>
 </div>
 
 <?php
-
-echo $this->partial('gingerwork/monitor/process-view/partial/process-details');
-
 //Bootstrap ember app
 $this->inlineScript()->captureStart();
 
-$apiUrl = ltrim($this->url('monitor/api'), '/');
-$processConfigUrl = $this->url('process_config/configurator');
+$process = $this->process;
+
+if (! empty($process['started_at'])) {
+    $process['started_at'] = $this->dateFormat(
+        \DateTime::createFromFormat(\DateTime::ISO8601, $process['started_at']),
+        IntlDateFormatter::MEDIUM, // date
+        IntlDateFormatter::MEDIUM, // time
+        $this->plugin('translate')->getTranslator()->getLocale()
+    );
+}
+
+if (! empty($process['finished_at'])) {
+    $process['finished_at'] = $this->dateFormat(
+        \DateTime::createFromFormat(\DateTime::ISO8601, $process['finished_at']),
+        IntlDateFormatter::MEDIUM, // date
+        IntlDateFormatter::MEDIUM, // time
+        $this->plugin('translate')->getTranslator()->getLocale()
+    );
+}
+
+foreach ($process['tasks'] as &$task) foreach ($task['events'] as &$event) {
+    if (! empty($event['occurred_on'])) {
+        $event['occurred_on'] = $this->dateFormat(
+            \DateTime::createFromFormat(\DateTime::ISO8601, $event['occurred_on']),
+            IntlDateFormatter::MEDIUM, // date
+            IntlDateFormatter::MEDIUM, // time
+            $this->plugin('translate')->getTranslator()->getLocale()
+        );
+    }
+}
+
+$process = json_encode($process);
+
 $availableGingerTypes = json_encode($this->available_ginger_types);
 $availableTaskTypes = json_encode($this->available_task_types);
 $availableManipulationScripts = json_encode($this->available_manipulation_scripts);
 $connectors = json_encode($this->connectors);
 $locations  = json_encode($this->locations);
-$shortLocale = explode("_", $this->plugin('translate')->getTranslator()->getLocale())[0];
+
+
 $clientTranslations = json_encode([
     'process' => [
         'linear' => [
@@ -64,11 +91,7 @@ $clientTranslations = json_encode([
         ]
     ],
     'event' => [
-        'started_event' => $this->translate('Task was started'),
-        'process_started' => $this->translate('Process was started'),
-        'done_event' => $this->translate('Task successfully done'),
-        'failed_event' => $this->translate('Task failed'),
-        'unknown' => $this->translate('Unknown event logged: '),
+
         'log_message' => [
             'system_error' => $this->translate('A system error occurred!'),
             'unknown' => $this->translate('Unknown log message received with msg code: '),
@@ -78,43 +101,18 @@ $clientTranslations = json_encode([
 ]);
 
 echo <<<JS
-window.App = Ember.Application.create({
-    rootElement : '#app'
+window.PM = Ginger.App.create({
+    taskTypes : $availableTaskTypes,
+    manipulationScripts : $availableManipulationScripts,
+    gingerTypes : $availableGingerTypes,
+    connectors : $connectors,
+    locations : $locations,
+    process : $process
 });
 
-window.PM = App;
-
-DS.RESTAdapter.reopen({
-  namespace : '{$apiUrl}'
+$(function () {
+    PM.bootstrap("process-monitor").ready();
 });
-
-Em.I18n.locale = '{$shortLocale}';
-
-Em.I18n.translations = $clientTranslations;
-
-App.TaskTypes          = $availableTaskTypes;
-App.ManipulationScrits = $availableManipulationScripts;
-App.GingerTypes        = $availableGingerTypes;
-App.Connectors         = $connectors;
-App.Locations          = $locations;
-App.ProcessConfigUrl   = '$processConfigUrl';
-
-
-App.Object = Ember.Object.extend(Em.Serializable);
-
-//Route Config
-App.Router.map(function() {
-    this.resource('process', { path: '/' }, function () {});
-});
-
-App.ApplicationRoute = Ember.Route.extend({
-    model : function() {
-        {$this->emberPushToStore('process', [$this->process])}
-
-        return this.store.find("process", "{$this->process['id']}");
-    }
-});
-
 JS;
 $this->inlineScript()->captureEnd();
 $this->inlineScript()->appendFile($this->basePath() . '/js/process-monitor/app.js');
