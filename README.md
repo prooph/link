@@ -14,4 +14,22 @@ You can follow the instructions of the [ZF2 SkeletonApplication](https://github.
 
 4. Navigate to prooph link in your browser of choice. The app detects the fresh installation and suggests the next steps.
 
+# Work In Progress
+
+Prooph link is not stable yet. However, we work hard on getting the job done. So it is just a matter of time.
+The application runs already in production, but only with our support. Please contact us if you want to use it, too!
+
+# Support
+
+- Ask any questions on [prooph-users](https://groups.google.com/forum/?hl=de#!forum/prooph) google group.
+- File issues at [https://github.com/prooph/link/issues](https://github.com/prooph/link/issues).
+
+# Contribution
+
+We appreciate any help. You can contribute in many ways. Submit pull requests, help us with the UI or simply try prooph link
+and give us feedback. Just leave us a note in our google group linked above and we can discuss further steps.
+
+Thanks,
+your prooph link team
+
 
