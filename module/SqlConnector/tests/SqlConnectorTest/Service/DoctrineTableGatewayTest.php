@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of the Ginger Workflow Framework.
+* This file is part of prooph/link.
  * (c) prooph software GmbH <contact@prooph.de>
  *
  * For the full copyright and license information, please view the LICENSE
@@ -12,15 +12,15 @@
 namespace SqlConnectorTest\Service;
 
 use Application\SharedKernel\MessageMetadata;
-use Ginger\Message\LogMessage;
-use Ginger\Message\WorkflowMessage;
-use Ginger\Processor\NodeName;
-use Ginger\Processor\ProcessId;
-use Ginger\Processor\ProophPlugin\SingleTargetMessageRouter;
-use Ginger\Processor\ProophPlugin\WorkflowProcessorInvokeStrategy;
-use Ginger\Processor\RegistryWorkflowEngine;
-use Ginger\Processor\Task\TaskListId;
-use Ginger\Processor\Task\TaskListPosition;
+use Prooph\Processing\Message\LogMessage;
+use Prooph\Processing\Message\WorkflowMessage;
+use Prooph\Processing\Processor\NodeName;
+use Prooph\Processing\Processor\ProcessId;
+use Prooph\Processing\Processor\ProophPlugin\SingleTargetMessageRouter;
+use Prooph\Processing\Processor\ProophPlugin\WorkflowProcessorInvokeStrategy;
+use Prooph\Processing\Processor\RegistryWorkflowEngine;
+use Prooph\Processing\Processor\Task\TaskListId;
+use Prooph\Processing\Processor\Task\TaskListPosition;
 use Prooph\ServiceBus\CommandBus;
 use Prooph\ServiceBus\EventBus;
 use SqlConnector\Service\DoctrineTableGateway;
@@ -97,7 +97,7 @@ final class DoctrineTableGatewayTest extends TestCase
     /**
      * @test
      */
-    public function it_collects_all_users_when_requested_ginger_type_is_a_collection_and_wf_message_contains_no_metadata()
+    public function it_collects_all_users_when_requested_processing_type_is_a_collection_and_wf_message_contains_no_metadata()
     {
         $taskListPosition = TaskListPosition::at(TaskListId::linkWith(NodeName::defaultName(), ProcessId::generate()), 1);
 
@@ -107,7 +107,7 @@ final class DoctrineTableGatewayTest extends TestCase
 
         $this->tableGateway->handleWorkflowMessage($message);
 
-        $this->assertInstanceOf('Ginger\Message\WorkflowMessage', $this->messageReceiver->getLastReceivedMessage());
+        $this->assertInstanceOf('Prooph\Processing\Message\WorkflowMessage', $this->messageReceiver->getLastReceivedMessage());
 
         /** @var $wfMessage WorkflowMessage */
         $wfMessage = $this->messageReceiver->getLastReceivedMessage();
@@ -143,7 +143,7 @@ final class DoctrineTableGatewayTest extends TestCase
 
         $this->tableGateway->handleWorkflowMessage($message);
 
-        $this->assertInstanceOf('Ginger\Message\WorkflowMessage', $this->messageReceiver->getLastReceivedMessage());
+        $this->assertInstanceOf('Prooph\Processing\Message\WorkflowMessage', $this->messageReceiver->getLastReceivedMessage());
 
         /** @var $wfMessage WorkflowMessage */
         $wfMessage = $this->messageReceiver->getLastReceivedMessage();
@@ -185,7 +185,7 @@ final class DoctrineTableGatewayTest extends TestCase
 
         $this->tableGateway->handleWorkflowMessage($message);
 
-        $this->assertInstanceOf('Ginger\Message\WorkflowMessage', $this->messageReceiver->getLastReceivedMessage());
+        $this->assertInstanceOf('Prooph\Processing\Message\WorkflowMessage', $this->messageReceiver->getLastReceivedMessage());
 
         /** @var $wfMessage WorkflowMessage */
         $wfMessage = $this->messageReceiver->getLastReceivedMessage();
@@ -233,7 +233,7 @@ final class DoctrineTableGatewayTest extends TestCase
 
         $this->tableGateway->handleWorkflowMessage($message);
 
-        $this->assertInstanceOf('Ginger\Message\WorkflowMessage', $this->messageReceiver->getLastReceivedMessage());
+        $this->assertInstanceOf('Prooph\Processing\Message\WorkflowMessage', $this->messageReceiver->getLastReceivedMessage());
 
         /** @var $wfMessage WorkflowMessage */
         $wfMessage = $this->messageReceiver->getLastReceivedMessage();
@@ -271,7 +271,7 @@ final class DoctrineTableGatewayTest extends TestCase
 
         $this->tableGateway->handleWorkflowMessage($message);
 
-        $this->assertInstanceOf('Ginger\Message\WorkflowMessage', $this->messageReceiver->getLastReceivedMessage());
+        $this->assertInstanceOf('Prooph\Processing\Message\WorkflowMessage', $this->messageReceiver->getLastReceivedMessage());
 
         /** @var $wfMessage WorkflowMessage */
         $wfMessage = $this->messageReceiver->getLastReceivedMessage();
@@ -308,7 +308,7 @@ final class DoctrineTableGatewayTest extends TestCase
 
         $this->tableGateway->handleWorkflowMessage($message);
 
-        $this->assertInstanceOf('Ginger\Message\WorkflowMessage', $this->messageReceiver->getLastReceivedMessage());
+        $this->assertInstanceOf('Prooph\Processing\Message\WorkflowMessage', $this->messageReceiver->getLastReceivedMessage());
 
         /** @var $wfMessage WorkflowMessage */
         $wfMessage = $this->messageReceiver->getLastReceivedMessage();
@@ -340,7 +340,7 @@ final class DoctrineTableGatewayTest extends TestCase
 
         $this->tableGateway->handleWorkflowMessage($message);
 
-        $this->assertInstanceOf('Ginger\Message\WorkflowMessage', $this->messageReceiver->getLastReceivedMessage());
+        $this->assertInstanceOf('Prooph\Processing\Message\WorkflowMessage', $this->messageReceiver->getLastReceivedMessage());
 
         /** @var $wfMessage WorkflowMessage */
         $wfMessage = $this->messageReceiver->getLastReceivedMessage();
@@ -367,7 +367,7 @@ final class DoctrineTableGatewayTest extends TestCase
 
         $this->tableGateway->handleWorkflowMessage($message);
 
-        $this->assertInstanceOf('Ginger\Message\WorkflowMessage', $this->messageReceiver->getLastReceivedMessage());
+        $this->assertInstanceOf('Prooph\Processing\Message\WorkflowMessage', $this->messageReceiver->getLastReceivedMessage());
 
         /** @var $wfMessage WorkflowMessage */
         $wfMessage = $this->messageReceiver->getLastReceivedMessage();
@@ -394,7 +394,7 @@ final class DoctrineTableGatewayTest extends TestCase
 
         $this->tableGateway->handleWorkflowMessage($message);
 
-        $this->assertInstanceOf('Ginger\Message\WorkflowMessage', $this->messageReceiver->getLastReceivedMessage());
+        $this->assertInstanceOf('Prooph\Processing\Message\WorkflowMessage', $this->messageReceiver->getLastReceivedMessage());
 
         /** @var $wfMessage WorkflowMessage */
         $wfMessage = $this->messageReceiver->getLastReceivedMessage();
@@ -438,7 +438,7 @@ final class DoctrineTableGatewayTest extends TestCase
 
         $this->tableGateway->handleWorkflowMessage($message);
 
-        $this->assertInstanceOf('Ginger\Message\WorkflowMessage', $this->messageReceiver->getLastReceivedMessage());
+        $this->assertInstanceOf('Prooph\Processing\Message\WorkflowMessage', $this->messageReceiver->getLastReceivedMessage());
 
         /** @var $message WorkflowMessage */
         $message = $this->messageReceiver->getLastReceivedMessage();
@@ -497,7 +497,7 @@ final class DoctrineTableGatewayTest extends TestCase
 
         $this->tableGateway->handleWorkflowMessage($message);
 
-        $this->assertInstanceOf('Ginger\Message\WorkflowMessage', $this->messageReceiver->getLastReceivedMessage());
+        $this->assertInstanceOf('Prooph\Processing\Message\WorkflowMessage', $this->messageReceiver->getLastReceivedMessage());
 
         $query = $this->getDbalConnection()->createQueryBuilder();
 
@@ -561,7 +561,7 @@ final class DoctrineTableGatewayTest extends TestCase
 
         $this->tableGateway->handleWorkflowMessage($message);
 
-        $this->assertInstanceOf('Ginger\Message\LogMessage', $this->messageReceiver->getLastReceivedMessage());
+        $this->assertInstanceOf('Prooph\Processing\Message\LogMessage', $this->messageReceiver->getLastReceivedMessage());
 
         /** @var $message LogMessage */
         $message = $this->messageReceiver->getLastReceivedMessage();
@@ -644,7 +644,7 @@ final class DoctrineTableGatewayTest extends TestCase
 
         $this->tableGateway->handleWorkflowMessage($message);
 
-        $this->assertInstanceOf('Ginger\Message\WorkflowMessage', $this->messageReceiver->getLastReceivedMessage());
+        $this->assertInstanceOf('Prooph\Processing\Message\WorkflowMessage', $this->messageReceiver->getLastReceivedMessage());
 
         /** @var $message WorkflowMessage */
         $message = $this->messageReceiver->getLastReceivedMessage();

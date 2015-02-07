@@ -1,19 +1,19 @@
 <?php
 return [
     'processes' => [
-        'ginger-message-sqlconnectorgingertypegingertestsourcetartikelcollection-collect-data' => [
-            'id' => 'ginger-message-sqlconnectorgingertypegingertestsourcetartikelcollection-collect-data',
+        'processing-message-sqlconnectorprocessingtypeprocessingtestsourcetartikelcollection-collect-data' => [
+            'id' => 'processing-message-sqlconnectorprocessingtypeprocessingtestsourcetartikelcollection-collect-data',
             'name' => 'Linear Collect TartikelCollection ',
             'processType' => 'linear_messaging',
             'startMessage' => [
                 'messageType' => 'collect-data',
-                __DIR__ . 'Type' => 'SqlConnector\\DataType\\GingerTestSource\\TartikelCollection',
+                __DIR__ . 'Type' => 'SqlConnector\\DataType\\Prooph\ProcessingTestSource\\TartikelCollection',
             ],
             'tasks' => [
                 0 => [
                     'task_type' => 'collect_data',
-                    'source' => 'sqlconnector:::ginger_test_source',
-                    __DIR__ . '_type' => 'SqlConnector\\DataType\\GingerTestSource\\TartikelCollection',
+                    'source' => 'sqlconnector:::processing_test_source',
+                    __DIR__ . '_type' => 'SqlConnector\\DataType\\Prooph\ProcessingTestSource\\TartikelCollection',
                     'id' => 1,
                 ],
                 1 => [
@@ -24,31 +24,31 @@ return [
             ],
         ],
     ],
-    'available_ginger_types' => [
+    'available_processing_types' => [
         [
-            'value' => 'SqlConnector\\DataType\\GingerTestSource\\Tartikel',
+            'value' => 'SqlConnector\\DataType\\Prooph\ProcessingTestSource\\Tartikel',
             'label' => 'Tartikel Testsource',
             'properties' => [
                 'kArtikelId' => [
-                    'value' => 'Ginger\\Type\\Integer',
+                    'value' => 'Prooph\\Processing\\Type\\Integer',
                     'label' => 'Integer',
                     'properties' => [],
                     'native_type' => 'integer',
                 ],
                 'cName' => [
-                    'value' => 'Ginger\\Type\\String',
+                    'value' => 'Prooph\\Processing\\Type\\String',
                     'label' => 'String',
                     'properties' => [],
                     'native_type' => 'string',
                 ],
                 'cBeschreibung' => [
-                    'value' => 'Ginger\\Type\\String',
+                    'value' => 'Prooph\\Processing\\Type\\String',
                     'label' => 'String',
                     'properties' => [],
                     'native_type' => 'string',
                 ],
                 'kKategorieId' => [
-                    'value' => 'Ginger\\Type\\Integer',
+                    'value' => 'Prooph\\Processing\\Type\\Integer',
                     'label' => 'Integer',
                     'properties' => [],
                     'native_type' => 'integer',
@@ -57,33 +57,33 @@ return [
             'native_type' => 'dictionary',
         ],
         [
-            'value' => 'SqlConnector\\DataType\\GingerTestSource\\TartikelCollection',
+            'value' => 'SqlConnector\\DataType\\Prooph\ProcessingTestSource\\TartikelCollection',
             'label' => 'Tartikel Test List',
             'properties' => [
                 'item' => [
-                    'value' => 'SqlConnector\\DataType\\GingerTestSource\\Tartikel',
-                    'label' => 'DB ginger_test_source.tartikel',
+                    'value' => 'SqlConnector\\DataType\\Prooph\ProcessingTestSource\\Tartikel',
+                    'label' => 'DB processing_test_source.tartikel',
                     'properties' => [
                         'kArtikelId' => [
-                            'value' => 'Ginger\\Type\\Integer',
+                            'value' => 'Prooph\\Processing\\Type\\Integer',
                             'label' => 'Integer',
                             'properties' => [],
                             'native_type' => 'integer',
                         ],
                         'cName' => [
-                            'value' => 'Ginger\\Type\\String',
+                            'value' => 'Prooph\\Processing\\Type\\String',
                             'label' => 'String',
                             'properties' => [],
                             'native_type' => 'string',
                         ],
                         'cBeschreibung' => [
-                            'value' => 'Ginger\\Type\\String',
+                            'value' => 'Prooph\\Processing\\Type\\String',
                             'label' => 'String',
                             'properties' => [],
                             'native_type' => 'string',
                         ],
                         'kKategorieId' => [
-                            'value' => 'Ginger\\Type\\Integer',
+                            'value' => 'Prooph\\Processing\\Type\\Integer',
                             'label' => 'Integer',
                             'properties' => [],
                             'native_type' => 'integer',
@@ -105,18 +105,18 @@ return [
         'manipulate-products.php',
     ],
     'connectors' => [
-        'sqlconnector:::ginger_test_source' => [
+        'sqlconnector:::processing_test_source' => [
             'allowed_messages' => [
                 0 => 'collect-data',
             ],
             'allowed_types' => [
-                0 => 'SqlConnector\\DataType\\GingerTestSource\\Tartikel',
-                1 => 'SqlConnector\\DataType\\GingerTestSource\\TartikelCollection',
+                0 => 'SqlConnector\\DataType\\Prooph\ProcessingTestSource\\Tartikel',
+                1 => 'SqlConnector\\DataType\\Prooph\ProcessingTestSource\\TartikelCollection',
             ],
             'metadata' => [
                 'identifier' => true,
             ],
-            'dbal_connection' => 'ginger_test_source',
+            'dbal_connection' => 'processing_test_source',
             'ui_metadata_key' => 'SqlconnectorMetadata',
         ],
     ],

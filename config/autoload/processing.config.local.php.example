@@ -1,0 +1,77 @@
+<?php
+return [
+    'processing' => [
+        'node_name' => 'localhost',
+        'plugins' => [],
+        'processes' => [
+            'processing-message-acmeproductcollection-collect-data' => [
+                'name' => 'Linear Collect Data Acme.ProductCollection',
+                'process_type' => 'linear_messaging',
+                'tasks' => [
+                    [
+                        "task_type" => 'collect_data',
+                        "source" => 'sqlconnector:::processing_test_source',
+                        "processing_type" => 'SqlConnector\DataType\ProcessingTestSource\ProductCollection'
+                    ],
+                    [
+                        "task_type" => 'manipulate_payload',
+                        'manipulation_script' => 'scripts/translate-product-collection.php',
+                    ],
+                    [
+                        "task_type" => 'process_data',
+                        "target" => "filegateway:::productcollection-csv-writer",
+                        "allowed_types" => ['Acme\ProductCollection'],
+                        'metadata' => [
+                            'file_type' => 'csv',
+                            'path' => 'data/fileconnector',
+                            'filename_template'  => 'productcollection-{{#now}}Y-m-d{{/now}}.csv',
+                        ]
+                    ]
+                ],
+            ],
+        ],
+        'channels' => [
+            'local' => [
+                'targets' => [
+                    0 => 'localhost',
+                    1 => 'filegateway:::productcollection-csv-writer',
+                    2 => 'sqlconnector:::processing_test_source'
+                ],
+                'utils' => [],
+            ],
+        ],
+        'connectors' => [
+            'filegateway:::productcollection-csv-writer' => [
+                'name' => 'ProductCollection CSV Writer',
+                'icon' => 'glyphicon-file',
+                'allowed_messages' => [
+                    0 => 'process-data',
+                ],
+                'allowed_types' => [
+                    0 => 'Acme\ProductCollection',
+                ],
+                'preferred_type' => 'Acme\ProductCollection',
+                'metadata' => [
+                    'file_type' => 'csv',
+                    'path' => 'data/fileconnector',
+                    'filename_template'  => 'productcollection-{{#now}}Y-m-d{{/now}}.csv',
+                ],
+                'ui_metadata_riot_tag' => 'fileconnector-metadata',
+            ],
+            'sqlconnector:::processing_test_source' => [
+                'name' => 'Processing Test Source DB',
+                'icon' => 'glyphicon-hdd',
+                'allowed_messages' => [
+                    0 => 'collect-data',
+                ],
+                'allowed_types' => [
+                    0 => 'SqlConnector\DataType\ProcesingTestSource\Product',
+                    1 => 'SqlConnector\DataType\ProcessingTestSource\ProductCollection',
+                ],
+                'dbal_connection' => 'processing_test_source',
+                'table' => 'products',
+                'ui_metadata_riot_tag' => 'sqlconnector-metadata',
+            ]
+        ],
+    ],
+];

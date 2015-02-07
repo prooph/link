@@ -15,7 +15,7 @@ $dbalConnections = json_encode($this->dbal_connections);
 $this->inlineScript()->captureStart();
 
 echo <<<JS
-window.SqlM = Ginger.App.create(
+window.SqlM = Prooph.Link.App.create(
     {
         connectors : {$sqlConnectors},
         dbalConnections : {$dbalConnections}

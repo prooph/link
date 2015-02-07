@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of Ginger Workflow Framework.
+* This file is part of prooph/link.
  * (c) prooph software GmbH <contact@prooph.de>
  *
  * For the full copyright and license information, please view the LICENSE
@@ -10,9 +10,9 @@
  */
 namespace Application\Service;
 
-use Ginger\Type\Description\Description;
-use Ginger\Type\PrototypeProperty;
-use SystemConfig\Projection\GingerConfig;
+use Prooph\Processing\Type\Description\Description;
+use Prooph\Processing\Type\PrototypeProperty;
+use SystemConfig\Projection\ProcessingConfig;
 use SystemConfig\Service\NeedsSystemConfig;
 
 /**
@@ -26,15 +26,15 @@ use SystemConfig\Service\NeedsSystemConfig;
 class AbstractQueryController extends \Zend\Mvc\Controller\AbstractActionController implements NeedsSystemConfig
 {
     /**
-     * @var GingerConfig
+     * @var ProcessingConfig
      */
     protected $systemConfig;
 
     /**
-     * @param GingerConfig $systemConfig
+     * @param ProcessingConfig $systemConfig
      * @return void
      */
-    public function setSystemConfig(GingerConfig $systemConfig)
+    public function setSystemConfig(ProcessingConfig $systemConfig)
     {
         $this->systemConfig = $systemConfig;
     }
@@ -44,32 +44,32 @@ class AbstractQueryController extends \Zend\Mvc\Controller\AbstractActionControl
      *
      * If optional data type array is passed as argument, this is used instead of all available types
      *
-     * @param array|null $gingerTypes
+     * @param array|null $processingTypes
      * @return array
      */
-    protected function getGingerTypesForClient(array $gingerTypes = null)
+    protected function getProcessingTypesForClient(array $processingTypes = null)
     {
-        if (is_null($gingerTypes)) {
-            $gingerTypes = $this->systemConfig->getAllAvailableGingerTypes();
+        if (is_null($processingTypes)) {
+            $processingTypes = $this->systemConfig->getAllAvailableProcessingTypes();
         }
 
-        return array_map(function($gingerTypeClass) { return $this->prepareGingerType($gingerTypeClass); }, $gingerTypes);
+        return array_map(function($processingTypeClass) { return $this->prepareProcessingType($processingTypeClass); }, $processingTypes);
     }
 
-    private function prepareGingerType($gingerTypeClass)
+    private function prepareProcessingType($processingTypeClass)
     {
         $properties = [];
 
         /** @var $typeProperty PrototypeProperty */
-        foreach ($gingerTypeClass::prototype()->typeProperties() as $typeProperty) {
-            $properties[$typeProperty->propertyName()] = $this->prepareGingerType($typeProperty->typePrototype()->of());
+        foreach ($processingTypeClass::prototype()->typeProperties() as $typeProperty) {
+            $properties[$typeProperty->propertyName()] = $this->prepareProcessingType($typeProperty->typePrototype()->of());
         }
 
         /** @var $description Description */
-        $description = $gingerTypeClass::prototype()->typeDescription();
+        $description = $processingTypeClass::prototype()->typeDescription();
 
         return [
-            'value' => $gingerTypeClass,
+            'value' => $processingTypeClass,
             'label' => $description->label(),
             'properties' => $properties,
             'native_type' => $description->nativeType()

@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of the Ginger Workflow Framework.
+* This file is part of prooph/link.
  * (c) prooph software GmbH <contact@prooph.de>
  *
  * For the full copyright and license information, please view the LICENSE
@@ -11,8 +11,8 @@
 
 namespace ProcessorProxy\Model;
 
-use Ginger\Message\GingerMessage;
-use Ginger\Processor\ProcessId;
+use Prooph\Processing\Message\ProcessingMessage;
+use Prooph\Processing\Processor\ProcessId;
 use Prooph\ServiceBus\Message\MessageInterface;
 use Rhumsaa\Uuid\Uuid;
 
@@ -31,7 +31,7 @@ interface MessageLogger
     public function getEntryForMessageId(Uuid $messageId);
 
     /**
-     * @param MessageInterface|GingerMessage $message
+     * @param MessageInterface|ProcessingMessage $message
      * @return void
      */
     public function logIncomingMessage($message);

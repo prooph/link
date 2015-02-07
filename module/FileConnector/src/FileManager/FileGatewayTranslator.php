@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of the Ginger Workflow Framework.
+* This file is part of prooph/link.
  * (c) prooph software GmbH <contact@prooph.de>
  *
  * For the full copyright and license information, please view the LICENSE
@@ -10,7 +10,7 @@
  */
 
 namespace FileConnector\FileManager;
-use Ginger\Message\MessageNameUtils;
+use Prooph\Processing\Message\MessageNameUtils;
 use Rhumsaa\Uuid\Uuid;
 
 /**
@@ -38,7 +38,7 @@ final class FileGatewayTranslator
 
         unset($connectorData['allowed_messages']);
 
-        $connectorData['ginger_type'] = $connectorData['allowed_types'][0];
+        $connectorData['processing_type'] = $connectorData['allowed_types'][0];
 
         unset($connectorData['allowed_types']);
 
@@ -63,9 +63,9 @@ final class FileGatewayTranslator
         unset($connectorData['writable']);
         unset($connectorData['readable']);
 
-        $connectorData['allowed_types'] = [$connectorData['ginger_type']];
+        $connectorData['allowed_types'] = [$connectorData['processing_type']];
 
-        unset($connectorData['ginger_type']);
+        unset($connectorData['processing_type']);
 
         return $connectorData;
     }

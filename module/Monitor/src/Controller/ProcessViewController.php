@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of the Ginger Workflow Framework.
+* This file is part of prooph/link.
  * (c) prooph software GmbH <contact@prooph.de>
  *
  * For the full copyright and license information, please view the LICENSE
@@ -9,18 +9,18 @@
  * Date: 21.01.15 - 20:59
  */
 
-namespace Gingerwork\Monitor\Controller;
+namespace Prooph\Link\Monitor\Controller;
 
 use Application\Service\AbstractQueryController;
 use Application\Service\TranslatorAwareController;
 use Application\SharedKernel\LocationTranslator;
 use Application\SharedKernel\ProcessToClientTranslator;
 use Application\SharedKernel\ScriptLocation;
-use Ginger\Functional\Func;
-use Ginger\Processor\ProcessId;
-use Ginger\Processor\Task\TaskListPosition;
-use Gingerwork\Monitor\Model\ProcessLogger;
-use Gingerwork\Monitor\Projection\ProcessStreamReader;
+use Prooph\Processing\Functional\Func;
+use Prooph\Processing\Processor\ProcessId;
+use Prooph\Processing\Processor\Task\TaskListPosition;
+use Prooph\Link\Monitor\Model\ProcessLogger;
+use Prooph\Link\Monitor\Projection\ProcessStreamReader;
 use Prooph\EventStore\Stream\StreamEvent;
 use Verraes\ClassFunctions\ClassFunctions;
 use Zend\Mvc\I18n\Translator;
@@ -29,7 +29,7 @@ use Zend\View\Model\ViewModel;
 /**
  * Class ProcessViewController
  *
- * @package Gingerwork\Monitor\Controller
+ * @package Prooph\Link\Monitor\Controller
  * @author Alexander Miertsch <kontakt@codeliner.ws>
  */
 final class ProcessViewController extends AbstractQueryController implements TranslatorAwareController
@@ -95,7 +95,7 @@ final class ProcessViewController extends AbstractQueryController implements Tra
         $definition = $this->convertToClientProcess(
             $process['start_message'],
             $this->systemConfig->getProcessDefinitions()[$process['start_message']],
-            $this->systemConfig->getAllAvailableGingerTypes());
+            $this->systemConfig->getAllAvailableProcessingTypes());
 
         $process = array_merge($process, $definition);
 
@@ -104,8 +104,8 @@ final class ProcessViewController extends AbstractQueryController implements Tra
         $view = new ViewModel(
             [
                 'process' => $process,
-                'available_ginger_types' => $this->getGingerTypesForClient(),
-                'available_task_types' => \Ginger\Processor\Definition::getAllTaskTypes(),
+                'available_processing_types' => $this->getProcessingTypesForClient(),
+                'available_task_types' => \Prooph\Processing\Processor\Definition::getAllTaskTypes(),
                 'available_manipulation_scripts' => $this->scriptLocation->getScriptNames(),
                 'locations'  => $this->locationTranslator->getLocations(),
                 'connectors' => array_values(
@@ -117,7 +117,7 @@ final class ProcessViewController extends AbstractQueryController implements Tra
             ]
         );
 
-        $view->setTemplate('gingerwork/monitor/process-view/process-details-app');
+        $view->setTemplate('prooph/link/monitor/process-view/process-details-app');
 
         $this->layout()->setVariable('includeRiotJs', true);
 
@@ -131,7 +131,7 @@ final class ProcessViewController extends AbstractQueryController implements Tra
     private function incompleteAction(array $process)
     {
         $view = new ViewModel(['process' => $process]);
-        $view->setTemplate('gingerwork/monitor/process-view/process-details-incomplete');
+        $view->setTemplate('prooph/link/monitor/process-view/process-details-incomplete');
         return $view;
     }
 
@@ -169,12 +169,12 @@ final class ProcessViewController extends AbstractQueryController implements Tra
     /**
      * @param string $startMessage
      * @param array $processDefinition
-     * @param array $knownGingerTypes
+     * @param array $knownProcessingTypes
      * @return array
      */
-    private function convertToClientProcess($startMessage, array $processDefinition, array $knownGingerTypes)
+    private function convertToClientProcess($startMessage, array $processDefinition, array $knownProcessingTypes)
     {
-        return ProcessToClientTranslator::translate($startMessage, $processDefinition, $knownGingerTypes, $this->scriptLocation);
+        return ProcessToClientTranslator::translate($startMessage, $processDefinition, $knownProcessingTypes, $this->scriptLocation);
     }
 
     /**

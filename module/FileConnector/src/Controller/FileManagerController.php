@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of the Ginger Workflow Framework.
+* This file is part of prooph/link.
  * (c) prooph software GmbH <contact@prooph.de>
  *
  * For the full copyright and license information, please view the LICENSE
@@ -12,7 +12,7 @@
 namespace FileConnector\Controller;
 
 use Application\Service\AbstractQueryController;
-use SystemConfig\Projection\GingerConfig;
+use SystemConfig\Projection\ProcessingConfig;
 use SystemConfig\Service\NeedsSystemConfig;
 use Zend\View\Model\ViewModel;
 
@@ -42,7 +42,7 @@ final class FileManagerController extends AbstractQueryController
         $viewModel = new ViewModel([
             'file_connectors' => $this->getFileConnectorsForClient(),
             'system_connectors' => $this->systemConfig->getConnectors(),
-            'available_ginger_types' => $this->getGingerTypesForClient(),
+            'available_processing_types' => $this->getProcessingTypesForClient(),
             'available_file_types' => $this->availableFileTypes,
 
         ]);

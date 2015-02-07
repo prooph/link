@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of Ginger Workflow Framework.
+* This file is part of prooph/link.
  * (c) prooph software GmbH <contact@prooph.de>
  *
  * For the full copyright and license information, please view the LICENSE
@@ -35,7 +35,7 @@ final class TableConnectorGeneratorFactory implements FactoryInterface
             $serviceLocator->get('application.data_type_location'),
             $serviceLocator->get('application.config_location'),
             $serviceLocator->get('prooph.psb.command_bus'),
-            $serviceLocator->get("config")['sqlconnector']['doctrine_ginger_type_map']
+            $serviceLocator->get("config")['sqlconnector']['doctrine_processing_type_map']
         );
     }
 }

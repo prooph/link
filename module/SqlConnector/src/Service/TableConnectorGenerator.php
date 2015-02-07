@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of Ginger Workflow Framework.
+* This file is part of prooph/link.
  * (c) prooph software GmbH <contact@prooph.de>
  *
  * For the full copyright and license information, please view the LICENSE
@@ -15,7 +15,7 @@ use Application\SharedKernel\ConfigLocation;
 use Assert\Assertion;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Schema\Column;
-use Ginger\Message\MessageNameUtils;
+use Prooph\Processing\Message\MessageNameUtils;
 use Prooph\ServiceBus\CommandBus;
 use SystemConfig\Command\AddConnectorToConfig;
 use SystemConfig\Command\ChangeConnectorConfig;
@@ -24,8 +24,8 @@ use SystemConfig\Command\ChangeConnectorConfig;
  * Class TableConnectorGenerator
  *
  * Takes a sql table connector definition,
- * generates table row ginger types with the help of the doctrine dbal schema manager
- * and stores the definition in the ginger config.
+ * generates table row processing types with the help of the doctrine dbal schema manager
+ * and stores the definition in the processing config.
  *
  * @package SqlConnector\Service
  * @author Alexander Miertsch <alexander.miertsch.extern@sixt.com>
@@ -59,27 +59,27 @@ final class TableConnectorGenerator
     /**
      * @var array
      */
-    private $doctrineGingerTypeMap;
+    private $doctrineProcessingTypeMap;
 
     /**
      * @param DbalConnectionCollection $dbalConnections
      * @param ApplicationDataTypeLocation $dataTypeLocation
      * @param \Application\SharedKernel\ConfigLocation $configLocation
      * @param CommandBus $commandBus
-     * @param array $doctrineGingerTypeMap
+     * @param array $doctrineProcessingTypeMap
      */
     public function __construct(
         DbalConnectionCollection $dbalConnections,
         ApplicationDataTypeLocation $dataTypeLocation,
         ConfigLocation $configLocation,
         CommandBus $commandBus,
-        array $doctrineGingerTypeMap
+        array $doctrineProcessingTypeMap
     ) {
         $this->dbalConnections = $dbalConnections;
         $this->dataTypeLocation = $dataTypeLocation;
         $this->configLocation = $configLocation;
         $this->commandBus = $commandBus;
-        $this->doctrineGingerTypeMap = $doctrineGingerTypeMap;
+        $this->doctrineProcessingTypeMap = $doctrineProcessingTypeMap;
     }
 
     /**
@@ -97,7 +97,7 @@ final class TableConnectorGenerator
 
         $connection = $this->dbalConnections->get($connector['dbal_connection']);
 
-        $generatedTypes = $this->generateGingerTypesIfNotExist($connection->config()['dbname'], $connector['table'], $connection->connection());
+        $generatedTypes = $this->generateProcessingTypesIfNotExist($connection->config()['dbname'], $connector['table'], $connection->connection());
 
         $connectorName = $connector['name'];
 
@@ -132,7 +132,7 @@ final class TableConnectorGenerator
         $connection = $this->dbalConnections->get($connector['dbal_connection']);
 
         if ($regenerateType) {
-            $generatedTypes = $this->replaceGingerTypes($connection->config()['dbname'], $connector['table'], $connection->connection());
+            $generatedTypes = $this->replaceProcessingTypes($connection->config()['dbname'], $connector['table'], $connection->connection());
         } else {
             $generatedTypes = $this->generateTypeClassFQCNs($connection->config()['dbname'], $connector['table']);
         }
@@ -171,7 +171,7 @@ final class TableConnectorGenerator
      * @param Connection $connection
      * @return array
      */
-    private function generateGingerTypesIfNotExist($dbname, $table, Connection $connection)
+    private function generateProcessingTypesIfNotExist($dbname, $table, Connection $connection)
     {
         $dbNsName = $this->titleize($dbname);
         $rowClassName = $this->titleize($table);
@@ -195,7 +195,7 @@ final class TableConnectorGenerator
     }
 
     /**
-     * Does the same like generateGingerTypesIfNotExist but overrides any existing type classes.
+     * Does the same like generateProcessingTypesIfNotExist but overrides any existing type classes.
      * Use this method with care.
      *
      * @param string $dbname
@@ -203,7 +203,7 @@ final class TableConnectorGenerator
      * @param Connection $connection
      * @return array
      */
-    private function replaceGingerTypes($dbname, $table, Connection $connection)
+    private function replaceProcessingTypes($dbname, $table, Connection $connection)
     {
         $dbNsName = $this->titleize($dbname);
         $rowClassName = $this->titleize($table);
@@ -242,7 +242,7 @@ final class TableConnectorGenerator
     }
 
     /**
-     * Inspect given table and creates a map containing the mapped ginger type and the original doctrine type
+     * Inspect given table and creates a map containing the mapped processing type and the original doctrine type
      * The map is indexed by column names which become the property names
      *
      * @param string $table
@@ -257,10 +257,10 @@ final class TableConnectorGenerator
 
         foreach ($columns as $name => $column)
         {
-            $gingerType = $this->doctrineColumnToGingerType($column);
+            $processingType = $this->doctrineColumnToProcessingType($column);
 
             $props[$name] = [
-                'ginger_type' => $gingerType,
+                'processing_type' => $processingType,
                 'doctrine_type' => $column->getType()->getName(),
             ];
         }
@@ -301,35 +301,35 @@ final class TableConnectorGenerator
      * @return string
      * @throws \RuntimeException
      */
-    private function doctrineColumnToGingerType(Column $column)
+    private function doctrineColumnToProcessingType(Column $column)
     {
-        if (! isset($this->doctrineGingerTypeMap[$column->getType()->getName()])) {
-            throw new \RuntimeException(sprintf("No ginger type mapping for doctrine type %s", $column->getType()->getName()));
+        if (! isset($this->doctrineProcessingTypeMap[$column->getType()->getName()])) {
+            throw new \RuntimeException(sprintf("No processing type mapping for doctrine type %s", $column->getType()->getName()));
         }
 
-        $gingerType = $this->doctrineGingerTypeMap[$column->getType()->getName()];
+        $processingType = $this->doctrineProcessingTypeMap[$column->getType()->getName()];
 
         if (! $column->getNotnull() || $column->getAutoincrement()) {
-            $gingerType.= "OrNull";
+            $processingType.= "OrNull";
 
-            if (! class_exists($gingerType)) {
+            if (! class_exists($processingType)) {
                 throw new \RuntimeException(
                     "Missing null type: for nullable column: " . $column->getName()
                 );
             }
         }
 
-        Assertion::implementsInterface($gingerType, 'Ginger\Type\Type');
+        Assertion::implementsInterface($processingType, 'Prooph\Processing\Type\Type');
 
-        return $gingerType;
+        return $processingType;
     }
 
-    private function propertiesToGingerPropString(array $properties)
+    private function propertiesToProcessingPropString(array $properties)
     {
         $propString = "[\n";
 
         foreach ($properties as $name => $propDef) {
-            $propString.= self::TAB . self::TAB . self::TAB . "'" .$name . "' => \\" . $propDef['ginger_type'] . "::prototype(),\n";
+            $propString.= self::TAB . self::TAB . self::TAB . "'" .$name . "' => \\" . $propDef['processing_type'] . "::prototype(),\n";
         }
 
         $propString.= "\n" . self::TAB . self::TAB ."]";
@@ -383,7 +383,7 @@ final class TableConnectorGenerator
 
         $primaryKeyStr = ($primaryKey)? '"' . $primaryKey . '"' : 'null';
 
-        $gingerProperties = $this->propertiesToGingerPropString($properties);
+        $processingProperties = $this->propertiesToProcessingPropString($properties);
         $doctrineTypeProperties = $this->propertiesToDoctrineTypeString($properties);
         $platformClassFQCN = get_class($connection->getDatabasePlatform());
 
@@ -398,8 +398,8 @@ final class TableConnectorGenerator
  */
 namespace {$namespace};
 
-use Ginger\Type\Description\Description;
-use Ginger\Type\Description\NativeType;
+use Prooph\Processing\Type\Description\Description;
+use Prooph\Processing\Type\Description\NativeType;
 use Application\DataType\SqlConnector\TableRow;
 
 class {$className} extends TableRow
@@ -419,7 +419,7 @@ class {$className} extends TableRow
      */
     public static function getPropertyPrototypes()
     {
-        return {$gingerProperties};
+        return {$processingProperties};
     }
 
     /**
@@ -446,10 +446,10 @@ TABLE_ROW;
  */
 namespace {$namespace};
 
-use Ginger\Type\AbstractCollection;
-use Ginger\Type\Description\Description;
-use Ginger\Type\Description\NativeType;
-use Ginger\Type\Prototype;
+use Prooph\Processing\Type\AbstractCollection;
+use Prooph\Processing\Type\Description\Description;
+use Prooph\Processing\Type\Description\NativeType;
+use Prooph\Processing\Type\Prototype;
 
 class {$collectionClassName} extends AbstractCollection
 {

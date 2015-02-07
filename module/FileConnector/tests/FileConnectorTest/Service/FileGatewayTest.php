@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of the Ginger Workflow Framework.
+* This file is part of prooph/link.
  * (c) prooph software GmbH <contact@prooph.de>
  *
  * For the full copyright and license information, please view the LICENSE
@@ -18,15 +18,15 @@ use FileConnectorTest\DataType\TestUser;
 use FileConnectorTest\DataType\TestUserCollection;
 use FileConnectorTest\Mock\StupidWorkflowProcessorMock;
 use FileConnectorTest\TestCase;
-use Ginger\Message\WorkflowMessage;
-use Ginger\Processor\NodeName;
-use Ginger\Processor\ProcessId;
-use Ginger\Processor\ProophPlugin\SingleTargetMessageRouter;
-use Ginger\Processor\ProophPlugin\WorkflowProcessorInvokeStrategy;
-use Ginger\Processor\RegistryWorkflowEngine;
-use Ginger\Processor\Task\TaskListId;
-use Ginger\Processor\Task\TaskListPosition;
-use Ginger\Type\StringCollection;
+use Prooph\Processing\Message\WorkflowMessage;
+use Prooph\Processing\Processor\NodeName;
+use Prooph\Processing\Processor\ProcessId;
+use Prooph\Processing\Processor\ProophPlugin\SingleTargetMessageRouter;
+use Prooph\Processing\Processor\ProophPlugin\WorkflowProcessorInvokeStrategy;
+use Prooph\Processing\Processor\RegistryWorkflowEngine;
+use Prooph\Processing\Processor\Task\TaskListId;
+use Prooph\Processing\Processor\Task\TaskListPosition;
+use Prooph\Processing\Type\StringCollection;
 use Prooph\ServiceBus\CommandBus;
 use Prooph\ServiceBus\EventBus;
 
@@ -134,7 +134,7 @@ final class FileGatewayTest extends TestCase
 
         $this->fileGateway->handleWorkflowMessage($message);
 
-        $this->assertInstanceOf('Ginger\Message\WorkflowMessage', $this->messageReceiver->getLastReceivedMessage());
+        $this->assertInstanceOf('Prooph\Processing\Message\WorkflowMessage', $this->messageReceiver->getLastReceivedMessage());
 
         /** @var $wfMessage WorkflowMessage */
         $wfMessage = $this->messageReceiver->getLastReceivedMessage();
@@ -176,7 +176,7 @@ final class FileGatewayTest extends TestCase
 
         $this->fileGateway->handleWorkflowMessage($message);
 
-        $this->assertInstanceOf('Ginger\Message\WorkflowMessage', $this->messageReceiver->getLastReceivedMessage());
+        $this->assertInstanceOf('Prooph\Processing\Message\WorkflowMessage', $this->messageReceiver->getLastReceivedMessage());
 
         /** @var $wfMessage WorkflowMessage */
         $wfMessage = $this->messageReceiver->getLastReceivedMessage();
@@ -219,7 +219,7 @@ final class FileGatewayTest extends TestCase
 
         $this->fileGateway->handleWorkflowMessage($message);
 
-        $this->assertInstanceOf('Ginger\Message\WorkflowMessage', $this->messageReceiver->getLastReceivedMessage());
+        $this->assertInstanceOf('Prooph\Processing\Message\WorkflowMessage', $this->messageReceiver->getLastReceivedMessage());
 
         /** @var $wfMessage WorkflowMessage */
         $wfMessage = $this->messageReceiver->getLastReceivedMessage();
@@ -262,7 +262,7 @@ final class FileGatewayTest extends TestCase
 
         $this->fileGateway->handleWorkflowMessage($message);
 
-        $this->assertInstanceOf('Ginger\Message\WorkflowMessage', $this->messageReceiver->getLastReceivedMessage());
+        $this->assertInstanceOf('Prooph\Processing\Message\WorkflowMessage', $this->messageReceiver->getLastReceivedMessage());
 
         /** @var $wfMessage WorkflowMessage */
         $wfMessage = $this->messageReceiver->getLastReceivedMessage();
@@ -317,7 +317,7 @@ final class FileGatewayTest extends TestCase
 
         $this->fileGateway->handleWorkflowMessage($workflowMessage);
 
-        $this->assertInstanceOf('Ginger\Message\WorkflowMessage', $this->messageReceiver->getLastReceivedMessage());
+        $this->assertInstanceOf('Prooph\Processing\Message\WorkflowMessage', $this->messageReceiver->getLastReceivedMessage());
 
         $this->assertTrue(file_exists($this->tempPath . $this->tempFiles[0]));
     }
@@ -361,7 +361,7 @@ final class FileGatewayTest extends TestCase
 
         $this->fileGateway->handleWorkflowMessage($workflowMessage);
 
-        $this->assertInstanceOf('Ginger\Message\WorkflowMessage', $this->messageReceiver->getLastReceivedMessage());
+        $this->assertInstanceOf('Prooph\Processing\Message\WorkflowMessage', $this->messageReceiver->getLastReceivedMessage());
 
         $this->assertTrue(file_exists($this->tempPath . $this->tempFiles[0]));
     }
@@ -408,7 +408,7 @@ final class FileGatewayTest extends TestCase
 
         $this->fileGateway->handleWorkflowMessage($workflowMessage);
 
-        $this->assertInstanceOf('Ginger\Message\WorkflowMessage', $this->messageReceiver->getLastReceivedMessage());
+        $this->assertInstanceOf('Prooph\Processing\Message\WorkflowMessage', $this->messageReceiver->getLastReceivedMessage());
 
         $this->assertTrue(file_exists($this->tempPath . $this->tempFiles[0]));
         $this->assertTrue(file_exists($this->tempPath . $this->tempFiles[1]));
@@ -460,7 +460,7 @@ final class FileGatewayTest extends TestCase
 
         $this->fileGateway->handleWorkflowMessage($workflowMessage);
 
-        $this->assertInstanceOf('Ginger\Message\WorkflowMessage', $this->messageReceiver->getLastReceivedMessage());
+        $this->assertInstanceOf('Prooph\Processing\Message\WorkflowMessage', $this->messageReceiver->getLastReceivedMessage());
 
         $this->assertTrue(file_exists($this->tempPath . $this->tempFiles[0]));
         $this->assertTrue(file_exists($this->tempPath . $this->tempFiles[1]));
@@ -506,7 +506,7 @@ final class FileGatewayTest extends TestCase
 
         $this->fileGateway->handleWorkflowMessage($workflowMessage);
 
-        $this->assertInstanceOf('Ginger\Message\WorkflowMessage', $this->messageReceiver->getLastReceivedMessage());
+        $this->assertInstanceOf('Prooph\Processing\Message\WorkflowMessage', $this->messageReceiver->getLastReceivedMessage());
 
         $this->assertTrue(file_exists($this->tempPath . $this->tempFiles[0]));
         $this->assertTrue(file_exists($this->tempPath . $this->tempFiles[1]));

@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of the Ginger Workflow Framework.
+* This file is part of prooph/link.
  * (c) prooph software GmbH <contact@prooph.de>
  *
  * For the full copyright and license information, please view the LICENSE
@@ -11,14 +11,14 @@
 
 namespace ProcessorProxyTest\Model;
 
-use Ginger\Message\LogMessage;
-use Ginger\Message\WorkflowMessage;
-use Ginger\Processor\Command\StartSubProcess;
-use Ginger\Processor\Event\SubProcessFinished;
-use Ginger\Processor\NodeName;
-use Ginger\Processor\ProcessId;
-use Ginger\Processor\Task\TaskListId;
-use Ginger\Processor\Task\TaskListPosition;
+use Prooph\Processing\Message\LogMessage;
+use Prooph\Processing\Message\WorkflowMessage;
+use Prooph\Processing\Processor\Command\StartSubProcess;
+use Prooph\Processing\Processor\Event\SubProcessFinished;
+use Prooph\Processing\Processor\NodeName;
+use Prooph\Processing\Processor\ProcessId;
+use Prooph\Processing\Processor\Task\TaskListId;
+use Prooph\Processing\Processor\Task\TaskListPosition;
 use ProcessorProxy\Model\MessageLogEntry;
 use ProcessorProxy\Model\MessageStatus;
 use ProcessorProxyTest\TestCase;
@@ -36,7 +36,7 @@ final class MessageLogEntryTest extends TestCase
      * @test
      * @dataProvider provideMessages
      */
-    public function it_can_be_created_from_any_ginger_message_even_if_wrapped_in_a_service_bus_message($message, $expectedLogData)
+    public function it_can_be_created_from_any_processing_message_even_if_wrapped_in_a_service_bus_message($message, $expectedLogData)
     {
         $logEntry = MessageLogEntry::logMessage($message);
 

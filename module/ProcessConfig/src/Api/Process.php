@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of Ginger Workflow Framework.
+* This file is part of prooph/link.
  * (c) prooph software GmbH <contact@prooph.de>
  *
  * For the full copyright and license information, please view the LICENSE
@@ -13,12 +13,12 @@ namespace ProcessConfig\Api;
 use Application\Service\AbstractRestController;
 use Application\Service\ActionController;
 use Application\SharedKernel\ScriptLocation;
-use Ginger\Message\MessageNameUtils;
-use Ginger\Processor\Definition;
+use Prooph\Processing\Message\MessageNameUtils;
+use Prooph\Processing\Processor\Definition;
 use Prooph\ServiceBus\CommandBus;
 use SystemConfig\Command\AddNewProcessToConfig;
 use SystemConfig\Command\ChangeProcessConfig;
-use SystemConfig\Projection\GingerConfig;
+use SystemConfig\Projection\ProcessingConfig;
 use SystemConfig\Service\NeedsSystemConfig;
 use ZF\ApiProblem\ApiProblem;
 use ZF\ApiProblem\ApiProblemResponse;
@@ -37,7 +37,7 @@ final class Process extends AbstractRestController implements ActionController, 
     private $commandBus;
 
     /**
-     * @var GingerConfig
+     * @var ProcessingConfig
      */
     private $systemConfig;
 
@@ -117,10 +117,10 @@ final class Process extends AbstractRestController implements ActionController, 
     }
 
     /**
-     * @param GingerConfig $systemConfig
+     * @param ProcessingConfig $systemConfig
      * @return void
      */
-    public function setSystemConfig(GingerConfig $systemConfig)
+    public function setSystemConfig(ProcessingConfig $systemConfig)
     {
         $this->systemConfig = $systemConfig;
     }
@@ -140,7 +140,7 @@ final class Process extends AbstractRestController implements ActionController, 
      */
     private function generateStartMessage(array $data)
     {
-        return "ginger-message-" . MessageNameUtils::normalize($data["start_message"]["ginger_type"]) . '-' . $data["start_message"]["message_type"];
+        return "processing-message-" . MessageNameUtils::normalize($data["start_message"]["processing_type"]) . '-' . $data["start_message"]["message_type"];
     }
 
     private function validateProcessData(array $data)
@@ -150,7 +150,7 @@ final class Process extends AbstractRestController implements ActionController, 
         if (! array_key_exists("start_message", $data)) return new ApiProblemResponse(new ApiProblem(422, 'Start message missing in request data'));
         if (! is_array($data["start_message"])) return new ApiProblemResponse(new ApiProblem(422, 'Start message must be an array'));
         if (! array_key_exists("message_type", $data["start_message"])) return new ApiProblemResponse(new ApiProblem(422, 'Message type missing in start message definition'));
-        if (! array_key_exists("ginger_type", $data["start_message"])) return new ApiProblemResponse(new ApiProblem(422, 'Data type missing in start message definition'));
+        if (! array_key_exists("processing_type", $data["start_message"])) return new ApiProblemResponse(new ApiProblem(422, 'Data type missing in start message definition'));
         if (! array_key_exists("tasks", $data)) return new ApiProblemResponse(new ApiProblem(422, 'Tasks missing in request data'));
         if (! is_array($data["tasks"])) return new ApiProblemResponse(new ApiProblem(422, 'Tasks must be an array'));
 

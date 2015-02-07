@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of the Ginger Workflow Framework.
+* This file is part of prooph/link.
  * (c) prooph software GmbH <contact@prooph.de>
  *
  * For the full copyright and license information, please view the LICENSE
@@ -9,8 +9,8 @@
  * Date: 20.01.15 - 22:51
  */
 
-namespace Gingerwork\Monitor\Model;
-use Ginger\Processor\ProcessId;
+namespace Prooph\Link\Monitor\Model;
+use Prooph\Processing\Processor\ProcessId;
 
 /**
  * Interface ProcessLogger
@@ -20,7 +20,7 @@ use Ginger\Processor\ProcessId;
  * out of order. This is related to the fact that the information is collected based on events which may be received
  * out of order. It is not critical for the process monitor to not have all information in place.
  *
- * @package Gingerwork\Monitor\src\Model
+ * @package Prooph\Link\Monitor\src\Model
  * @author Alexander Miertsch <kontakt@codeliner.ws>
  */
 interface ProcessLogger 

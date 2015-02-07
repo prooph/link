@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of the Ginger Workflow Framework.
+* This file is part of prooph/link.
  * (c) prooph software GmbH <contact@prooph.de>
  *
  * For the full copyright and license information, please view the LICENSE
@@ -9,19 +9,19 @@
  * Date: 20.01.15 - 22:26
  */
 
-namespace Gingerwork\Monitor\Controller;
+namespace Prooph\Link\Monitor\Controller;
 
 use Application\Service\TranslatorAwareController;
 use Dashboard\Controller\AbstractWidgetController;
 use Dashboard\View\DashboardWidget;
-use Gingerwork\Monitor\Model\ProcessLogger;
+use Prooph\Link\Monitor\Model\ProcessLogger;
 use Zend\Mvc\I18n\Translator;
 use Zend\View\Model\ViewModel;
 
 /**
  * Class ProcessesOverviewController
  *
- * @package Gingerwork\Monitor\src\Controller
+ * @package Prooph\Link\Monitor\src\Controller
  * @author Alexander Miertsch <kontakt@codeliner.ws>
  */
 final class ProcessesOverviewController extends AbstractWidgetController implements TranslatorAwareController
@@ -54,7 +54,7 @@ final class ProcessesOverviewController extends AbstractWidgetController impleme
         $this->addProcessNames($lastLoggedProcesses);
 
         return DashboardWidget::initialize(
-            'gingerwork/monitor/process-view/partial/process-list',
+            'prooph/link/monitor/process-view/partial/process-list',
             $this->translator->translate('Workflow Monitor'),
             12,
             ['processes' => $lastLoggedProcesses]
@@ -72,7 +72,7 @@ final class ProcessesOverviewController extends AbstractWidgetController impleme
 
         $view = new ViewModel(['processes' => $lastLoggedProcesses]);
 
-        $view->setTemplate('gingerwork/monitor/process-view/overview');
+        $view->setTemplate('prooph/link/monitor/process-view/overview');
 
         return $view;
     }

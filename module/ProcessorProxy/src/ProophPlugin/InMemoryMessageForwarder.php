@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of the Ginger Workflow Framework.
+* This file is part of prooph/link.
  * (c) prooph software GmbH <contact@prooph.de>
  *
  * For the full copyright and license information, please view the LICENSE
@@ -11,14 +11,14 @@
 
 namespace ProcessorProxy\ProophPlugin;
 
-use Ginger\Processor\WorkflowEngine;
+use Prooph\Processing\Processor\WorkflowEngine;
 use Prooph\ServiceBus\Message\MessageDispatcherInterface;
 use Prooph\ServiceBus\Message\MessageInterface;
 
 /**
  * Class InMemoryMessageForwarder
  *
- * This class has has a reference to the ginger workflow engine. Any incoming service bus message is forwarded to
+ * This class has has a reference to the processing workflow engine. Any incoming service bus message is forwarded to
  * the workflow engine by determining the target channel for the message.
  *
  * @package ProcessorProxy\ProophPlugin

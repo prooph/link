@@ -56,7 +56,7 @@
 
         this.syncWithProcessManager = function (pm) {
             this.connector = pm.getCurrentConnector();
-            this.gingerType = pm.getCurrentGingerType();
+            this.processingType = pm.getCurrentProcessingType();
             this.taskType = pm.getCurrentTaskType();
             this.applyMetadata(pm.getMetadata());
             this.syncedWithParent = true;
@@ -64,7 +64,7 @@
         }
 
         this.isImport = function () {
-             if (this.taskType == '<?php echo \Ginger\Processor\Definition::TASK_COLLECT_DATA  ?>') {
+             if (this.taskType == '<?php echo \Prooph\Processing\Processor\Definition::TASK_COLLECT_DATA  ?>') {
                  if (! this.location.value || this.location.value == "outbox") {
                      this.location.value = 'inbox';
                  }
@@ -75,7 +75,7 @@
         }
 
         this.isExport = function () {
-            if  (this.taskType == '<?php echo \Ginger\Processor\Definition::TASK_PROCESS_DATA  ?>') {
+            if  (this.taskType == '<?php echo \Prooph\Processing\Processor\Definition::TASK_PROCESS_DATA  ?>') {
                 if (! this.location.value || this.location.value == "inbox") {
                     this.location.value = 'outbox';
                 }

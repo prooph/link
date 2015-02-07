@@ -1,6 +1,6 @@
 App.Connector = DS.Model.extend({
     name      : DS.attr("string"),
-    ginger_type : DS.attr("string"),
+    processing_type : DS.attr("string"),
     writable  : DS.attr("boolean"),
     readable  : DS.attr("boolean"),
     metadata  : DS.attr()

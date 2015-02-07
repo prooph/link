@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of the Ginger Workflow Framework.
+* This file is part of prooph/link.
  * (c) prooph software GmbH <contact@prooph.de>
  *
  * For the full copyright and license information, please view the LICENSE
@@ -11,13 +11,13 @@
 
 namespace ProcessorProxyTest\Command;
 
-use Ginger\Message\LogMessage;
-use Ginger\Message\WorkflowMessage;
-use Ginger\Processor\Command\StartSubProcess;
-use Ginger\Processor\NodeName;
-use Ginger\Processor\ProcessId;
-use Ginger\Processor\Task\TaskListId;
-use Ginger\Processor\Task\TaskListPosition;
+use Prooph\Processing\Message\LogMessage;
+use Prooph\Processing\Message\WorkflowMessage;
+use Prooph\Processing\Processor\Command\StartSubProcess;
+use Prooph\Processing\Processor\NodeName;
+use Prooph\Processing\Processor\ProcessId;
+use Prooph\Processing\Processor\Task\TaskListId;
+use Prooph\Processing\Processor\Task\TaskListPosition;
 use ProcessorProxy\Command\ForwardHttpMessage;
 use ProcessorProxyTest\DataType\TestUser;
 use ProcessorProxyTest\TestCase;

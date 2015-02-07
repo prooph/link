@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of the Ginger Workflow Framework.
+* This file is part of prooph/link.
  * (c) prooph software GmbH <contact@prooph.de>
  *
  * For the full copyright and license information, please view the LICENSE
@@ -11,11 +11,11 @@
 
 namespace FileConnectorTest\DataType;
 
-use Ginger\Type\AbstractDictionary;
-use Ginger\Type\Description\Description;
-use Ginger\Type\Description\NativeType;
-use Ginger\Type\Integer;
-use Ginger\Type\String;
+use Prooph\Processing\Type\AbstractDictionary;
+use Prooph\Processing\Type\Description\Description;
+use Prooph\Processing\Type\Description\NativeType;
+use Prooph\Processing\Type\Integer;
+use Prooph\Processing\Type\String;
 
 /**
  * Class TestUser

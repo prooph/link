@@ -1,8 +1,8 @@
-window.ginger_type_name = function (gingerType, availableGingerTypes) {
+window.processing_type_name = function (processingType, availableProcessingTypes) {
 
-    var gingerTypeObj = _.findWhere(availableGingerTypes, {value : gingerType});
+    var processingTypeObj = _.findWhere(availableProcessingTypes, {value : processingType});
 
-    return (typeof gingerTypeObj !== "undefined")? gingerTypeObj.label : gingerType;
+    return (typeof processingTypeObj !== "undefined")? processingTypeObj.label : processingType;
 };
 
 window.connector_name = function (connectorId, availableConnectors) {

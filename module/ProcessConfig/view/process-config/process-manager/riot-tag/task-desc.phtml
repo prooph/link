@@ -10,9 +10,9 @@
 
             var prefix = '<?php echo $this->translate('Task')  ?>' + ' ' + (parseInt(this.task.id) + 1) + ': ';
 
-            if (this.task.task_type == '<?php echo \Ginger\Processor\Definition::TASK_COLLECT_DATA  ?>') {
+            if (this.task.task_type == '<?php echo \Prooph\Processing\Processor\Definition::TASK_COLLECT_DATA  ?>') {
                 var source = this.task.source ? connector_name(this.task.source, context.app.connectors) : "<?php echo $this->translate('Source')  ?>";
-                var sourceType = this.task.ginger_type ? ginger_type_name(this.task.ginger_type, context.app.gingerTypes) : "<?php echo $this->translate('Data')  ?>";
+                var sourceType = this.task.processing_type ? processing_type_name(this.task.processing_type, context.app.processingTypes) : "<?php echo $this->translate('Data')  ?>";
 
                 return prefix +
                     ' <span class="glyphicon ' + connector_icon(this.task.source, context.app.connectors, 'glyphicon-import') + '" title="' + source + '"></span> ' +
@@ -20,7 +20,7 @@
                     ' ' + sourceType;
             }
 
-            if (this.task.task_type == '<?php echo \Ginger\Processor\Definition::TASK_PROCESS_DATA  ?>') {
+            if (this.task.task_type == '<?php echo \Prooph\Processing\Processor\Definition::TASK_PROCESS_DATA  ?>') {
                 var target = (_.isEmpty(this.task.target))? "target" : connector_name(this.task.target, context.app.connectors);
                 var preferredType = 'data';
 
@@ -30,7 +30,7 @@
                     preferredType = this.task.allowed_types[0];
                 }
 
-                preferredType = ginger_type_name(preferredType, context.app.gingerTypes);
+                preferredType = processing_type_name(preferredType, context.app.processingTypes);
 
                 return prefix +
                     ' ' + preferredType +
@@ -39,7 +39,7 @@
                     + '" title="' + target + '"></span> ';
             }
 
-            if (this.task.task_type == '<?php echo \Ginger\Processor\Definition::TASK_MANIPULATE_PAYLOAD  ?>') {
+            if (this.task.task_type == '<?php echo \Prooph\Processing\Processor\Definition::TASK_MANIPULATE_PAYLOAD  ?>') {
                 return prefix +
                     ' <span class="glyphicon glyphicon-play"></span> ' +
                     (this.task.manipulation_script || '<?php echo $this->translate('Script')  ?>');

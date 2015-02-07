@@ -73,7 +73,7 @@ Ember.Handlebars.helper('process-status', function (process) {
  * This helper requires the methods:
  * - App.connectorName
  * - App.connectorIcon
- * - App.gingerTypeName
+ * - App.processingTypeName
  *
  * and translations for:
  * - task.task
@@ -84,12 +84,12 @@ Ember.Handlebars.helper('process-status', function (process) {
  */
 Ember.Handlebars.helper('task-desc', function(task) {
     var prefix = Em.I18n.t('task.task') + " " +(parseInt(task.id) + 1) + ": ";
-    var gingerTypeName = App.gingerTypeName;
+    var processingTypeName = App.processingTypeName;
 
     if (task.task_type === Em.I18n.t("task.collect_data.value")) {
 
         var source = (Em.isEmpty(task.source))? "source" : App.connectorName(task.source);
-        var sourceType = (typeof task.ginger_type === "undefined")? "data" : gingerTypeName(task.ginger_type);
+        var sourceType = (typeof task.processing_type === "undefined")? "data" : processingTypeName(task.processing_type);
 
         source = Handlebars.Utils.escapeExpression(source);
         sourceType = Handlebars.Utils.escapeExpression(sourceType);
@@ -112,7 +112,7 @@ Ember.Handlebars.helper('task-desc', function(task) {
         }
 
         target = Handlebars.Utils.escapeExpression(target);
-        preferredType = Handlebars.Utils.escapeExpression(gingerTypeName(preferredType));
+        preferredType = Handlebars.Utils.escapeExpression(processingTypeName(preferredType));
 
         return new Ember.Handlebars.SafeString(
             prefix +
@@ -133,7 +133,7 @@ Ember.Handlebars.helper('task-desc', function(task) {
     }
 
     return new Ember.Handlebars.SafeString(prefix + Handlebars.Utils.escapeExpression(task.task_type));
-}, "task_type", "source", "target", "ginger_type", "allowed_types", "preferred_type", "manipulation_script");
+}, "task_type", "source", "target", "processing_type", "allowed_types", "preferred_type", "manipulation_script");
 
 Ember.Handlebars.helper("task-status", function (task) {
 

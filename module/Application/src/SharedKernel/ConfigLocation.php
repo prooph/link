@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of the Ginger Workflow Framework.
+* This file is part of prooph/link.
  * (c) prooph software GmbH <contact@prooph.de>
  *
  * For the full copyright and license information, please view the LICENSE
@@ -14,7 +14,7 @@ namespace Application\SharedKernel;
 /**
  * Class ConfigLocation
  *
- * This class represents the directory where the ginger config file is located.
+ * This class represents the directory where the processing config file is located.
  *
  * @package Application\SharedKernel
  * @author Alexander Miertsch <kontakt@codeliner.ws>

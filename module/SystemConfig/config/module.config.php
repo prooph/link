@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of the Ginger Workflow Framework.
+* This file is part of prooph/link.
  * (c) prooph software GmbH <contact@prooph.de>
  *
  * For the full copyright and license information, please view the LICENSE
@@ -28,12 +28,12 @@ return array(
                 ],
                 'may_terminate' => true,
                 'child_routes' => [
-                    'ginger_set_up' => [
+                    'processing_set_up' => [
                         'type' => 'Literal',
                         'options' => [
-                            'route' => '/ginger-set-up',
+                            'route' => '/processing-set-up',
                             'defaults' => [
-                                'controller' => 'SystemConfig\Controller\GingerSetUp',
+                                'controller' => 'SystemConfig\Controller\ProcessingSetUp',
                                 'action' => 'run'
                             ]
                         ],
@@ -63,41 +63,41 @@ return array(
             //System config writer
             'system_config.config_writer' => 'SystemConfig\Service\ConfigWriter\ZendPhpArrayWriter',
             //Command handlers
-            'SystemConfig\Model\GingerConfig\CreateDefaultConfigFileHandler' => 'SystemConfig\Model\GingerConfig\CreateDefaultConfigFileHandler',
-            'SystemConfig\Model\GingerConfig\InitializeEventStoreHandler'    => 'SystemConfig\Model\GingerConfig\InitializeEventStoreHandler',
-            'SystemConfig\Model\GingerConfig\ChangeNodeNameHandler'          => 'SystemConfig\Model\GingerConfig\ChangeNodeNameHandler',
-            'SystemConfig\Model\GingerConfig\AddNewProcessToConfigHandler'   => 'SystemConfig\Model\GingerConfig\AddNewProcessToConfigHandler' ,
-            'SystemConfig\Model\GingerConfig\ChangeProcessConfigHandler'     => 'SystemConfig\Model\GingerConfig\ChangeProcessConfigHandler',
-            'SystemConfig\Model\GingerConfig\UndoSystemSetUpHandler'         => 'SystemConfig\Model\GingerConfig\UndoSystemSetUpHandler',
-            'SystemConfig\Model\GingerConfig\AddConnectorToConfigHandler'    => 'SystemConfig\Model\GingerConfig\AddConnectorToConfigHandler',
-            'SystemConfig\Model\GingerConfig\ChangeConnectorConfigHandler'    => 'SystemConfig\Model\GingerConfig\ChangeConnectorConfigHandler',
+            'SystemConfig\Model\ProcessingConfig\CreateDefaultConfigFileHandler' => 'SystemConfig\Model\ProcessingConfig\CreateDefaultConfigFileHandler',
+            'SystemConfig\Model\ProcessingConfig\InitializeEventStoreHandler'    => 'SystemConfig\Model\ProcessingConfig\InitializeEventStoreHandler',
+            'SystemConfig\Model\ProcessingConfig\ChangeNodeNameHandler'          => 'SystemConfig\Model\ProcessingConfig\ChangeNodeNameHandler',
+            'SystemConfig\Model\ProcessingConfig\AddNewProcessToConfigHandler'   => 'SystemConfig\Model\ProcessingConfig\AddNewProcessToConfigHandler' ,
+            'SystemConfig\Model\ProcessingConfig\ChangeProcessConfigHandler'     => 'SystemConfig\Model\ProcessingConfig\ChangeProcessConfigHandler',
+            'SystemConfig\Model\ProcessingConfig\UndoSystemSetUpHandler'         => 'SystemConfig\Model\ProcessingConfig\UndoSystemSetUpHandler',
+            'SystemConfig\Model\ProcessingConfig\AddConnectorToConfigHandler'    => 'SystemConfig\Model\ProcessingConfig\AddConnectorToConfigHandler',
+            'SystemConfig\Model\ProcessingConfig\ChangeConnectorConfigHandler'    => 'SystemConfig\Model\ProcessingConfig\ChangeConnectorConfigHandler',
         ],
         'factories' => [
             //Projections
             'system_config' => SystemConfig\Service\SystemConfigFactory::class,
         ],
         'aliases' => [
-            'ginger_config' => 'system_config',
+            'processing_config' => 'system_config',
         ]
     ],
     'controllers' => array(
         'invokables' => array(
-            'SystemConfig\Controller\GingerSetUp'       => 'SystemConfig\Controller\GingerSetUpController',
-            'SystemConfig\Controller\Configuration'     => 'SystemConfig\Controller\ConfigurationController',
-            'SystemConfig\Controller\DashboardWidget'   => 'SystemConfig\Controller\DashboardWidgetController',
-            'SystemConfig\Controller\Overview'          => 'SystemConfig\Controller\OverviewController',
+            'SystemConfig\Controller\ProcessingSetUp'   => \SystemConfig\Controller\ProcessingSetUpController::class,
+            'SystemConfig\Controller\Configuration'     => \SystemConfig\Controller\ConfigurationController::class,
+            'SystemConfig\Controller\DashboardWidget'   => \SystemConfig\Controller\DashboardWidgetController::class,
+            'SystemConfig\Controller\Overview'          => \SystemConfig\Controller\OverviewController::class,
         ),
     ),
     'prooph.psb' => [
         'command_router_map' => [
-            'SystemConfig\Command\CreateDefaultGingerConfigFile' => 'SystemConfig\Model\GingerConfig\CreateDefaultConfigFileHandler',
-            'SystemConfig\Command\InitializeEventStore'          => 'SystemConfig\Model\GingerConfig\InitializeEventStoreHandler',
-            'SystemConfig\Command\ChangeNodeName'                => 'SystemConfig\Model\GingerConfig\ChangeNodeNameHandler',
-            'SystemConfig\Command\AddNewProcessToConfig'         => 'SystemConfig\Model\GingerConfig\AddNewProcessToConfigHandler',
-            'SystemConfig\Command\ChangeProcessConfig'           => 'SystemConfig\Model\GingerConfig\ChangeProcessConfigHandler',
-            'SystemConfig\Command\UndoSystemSetUp'               => 'SystemConfig\Model\GingerConfig\UndoSystemSetUpHandler',
-            'SystemConfig\Command\AddConnectorToConfig'          => 'SystemConfig\Model\GingerConfig\AddConnectorToConfigHandler',
-            'SystemConfig\Command\ChangeConnectorConfig'         => 'SystemConfig\Model\GingerConfig\ChangeConnectorConfigHandler',
+            'SystemConfig\Command\CreateDefaultProcessingConfigFile' => 'SystemConfig\Model\ProcessingConfig\CreateDefaultConfigFileHandler',
+            'SystemConfig\Command\InitializeEventStore'          => 'SystemConfig\Model\ProcessingConfig\InitializeEventStoreHandler',
+            'SystemConfig\Command\ChangeNodeName'                => 'SystemConfig\Model\ProcessingConfig\ChangeNodeNameHandler',
+            'SystemConfig\Command\AddNewProcessToConfig'         => 'SystemConfig\Model\ProcessingConfig\AddNewProcessToConfigHandler',
+            'SystemConfig\Command\ChangeProcessConfig'           => 'SystemConfig\Model\ProcessingConfig\ChangeProcessConfigHandler',
+            'SystemConfig\Command\UndoSystemSetUp'               => 'SystemConfig\Model\ProcessingConfig\UndoSystemSetUpHandler',
+            'SystemConfig\Command\AddConnectorToConfig'          => 'SystemConfig\Model\ProcessingConfig\AddConnectorToConfigHandler',
+            'SystemConfig\Command\ChangeConnectorConfig'         => 'SystemConfig\Model\ProcessingConfig\ChangeConnectorConfigHandler',
         ]
     ],
     'zf-content-negotiation' => [

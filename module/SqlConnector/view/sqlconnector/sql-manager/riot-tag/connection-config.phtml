@@ -55,11 +55,11 @@
             context = p.context,
             connections = context.app.dbalConnections,
             set_values = function(con) {
-                return Ginger.Helpers.merge_tag_elements_with_obj(self, con);
+                return Prooph.Link.Helpers.merge_tag_elements_with_obj(self, con);
             },
             get_connection_values = function () {
                 return _.pick(
-                    Ginger.Helpers.form_to_plain_obj(self.connection_form),
+                    Prooph.Link.Helpers.form_to_plain_obj(self.connection_form),
                     function (val) {
                         return val;
                     }

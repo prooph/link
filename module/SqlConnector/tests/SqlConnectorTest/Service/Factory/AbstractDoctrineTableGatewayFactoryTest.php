@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of the Ginger Workflow Framework.
+* This file is part of prooph/link.
  * (c) prooph software GmbH <contact@prooph.de>
  *
  * For the full copyright and license information, please view the LICENSE
@@ -27,7 +27,7 @@ final class AbstractDoctrineTableGatewayFactoryTest extends TestCase
      */
     public function it_creates_a_doctrine_table_gateway()
     {
-        $tableGateway = Bootstrap::getServiceManager()->get('sqlconnector:::ginger_test_users');
+        $tableGateway = Bootstrap::getServiceManager()->get('sqlconnector:::processing_test_users');
 
         $this->assertInstanceOf('SqlConnector\Service\DoctrineTableGateway', $tableGateway);
     }

@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of the Ginger Workflow Framework.
+* This file is part of prooph/link.
  * (c) prooph software GmbH <contact@prooph.de>
  *
  * For the full copyright and license information, please view the LICENSE
@@ -15,15 +15,15 @@ use Application\DataType\SqlConnector\TableRow;
 use Application\SharedKernel\MessageMetadata;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Query\QueryBuilder;
-use Ginger\Functional\Iterator\MapIterator;
-use Ginger\Message\AbstractWorkflowMessageHandler;
-use Ginger\Message\GingerMessage;
-use Ginger\Message\LogMessage;
-use Ginger\Message\WorkflowMessage;
-use Ginger\Type\Description\Description;
-use Ginger\Type\Description\NativeType;
-use Ginger\Type\Prototype;
-use Ginger\Type\Type;
+use Prooph\Processing\Functional\Iterator\MapIterator;
+use Prooph\Processing\Message\AbstractWorkflowMessageHandler;
+use Prooph\Processing\Message\ProcessingMessage;
+use Prooph\Processing\Message\LogMessage;
+use Prooph\Processing\Message\WorkflowMessage;
+use Prooph\Processing\Type\Description\Description;
+use Prooph\Processing\Type\Description\NativeType;
+use Prooph\Processing\Type\Prototype;
+use Prooph\Processing\Type\Type;
 use Prooph\ServiceBus\CommandBus;
 use Prooph\ServiceBus\EventBus;
 use Zend\Stdlib\ErrorHandler;
@@ -38,7 +38,7 @@ use Zend\XmlRpc\Value\AbstractCollection;
 final class DoctrineTableGateway extends AbstractWorkflowMessageHandler
 {
     /**
-     * Key in collect-data single result metadata. If set to TRUE the TableGateway uses the identifier name of the ginger type to find a result
+     * Key in collect-data single result metadata. If set to TRUE the TableGateway uses the identifier name of the processing type to find a result
      */
     const META_IDENTIFIER = 'identifier';
 
@@ -86,7 +86,7 @@ final class DoctrineTableGateway extends AbstractWorkflowMessageHandler
      * The callable should take two arguments the Doctrine\DBAL\Query\QueryBuilder and the metadata array.
      * It should directly operate on the query builder.
      *
-     * Note: The table of the requested ginger type is aliased as "main"
+     * Note: The table of the requested processing type is aliased as "main"
      * Note: Don't set limit, offset or order_by. Use metadata for these settings, because the TableGateway performs also a count query without offset, limit and order_by
      *       but with all filters applied.
      *
@@ -162,10 +162,10 @@ final class DoctrineTableGateway extends AbstractWorkflowMessageHandler
 
     /**
      * If workflow message handler receives a collect-data message it forwards the message to this
-     * method and uses the returned GingerMessage as response
+     * method and uses the returned ProcessingMessage as response
      *
      * @param WorkflowMessage $workflowMessage
-     * @return GingerMessage
+     * @return ProcessingMessage
      */
     protected function handleCollectData(WorkflowMessage $workflowMessage)
     {
@@ -179,10 +179,10 @@ final class DoctrineTableGateway extends AbstractWorkflowMessageHandler
 
     /**
      * If workflow message handler receives a process-data message it forwards the message to this
-     * method and uses the returned GingerMessage as response
+     * method and uses the returned ProcessingMessage as response
      *
      * @param WorkflowMessage $workflowMessage
-     * @return GingerMessage
+     * @return ProcessingMessage
      */
     protected function handleProcessData(WorkflowMessage $workflowMessage)
     {
@@ -200,10 +200,10 @@ final class DoctrineTableGateway extends AbstractWorkflowMessageHandler
      */
     private function collectData(WorkflowMessage $workflowMessage)
     {
-        $gingerType = $workflowMessage->payload()->getTypeClass();
+        $processingType = $workflowMessage->payload()->getTypeClass();
 
         /** @var $desc Description */
-        $desc = $gingerType::buildDescription();
+        $desc = $processingType::buildDescription();
 
         switch ($desc->nativeType()) {
             case NativeType::COLLECTION:
@@ -433,10 +433,10 @@ final class DoctrineTableGateway extends AbstractWorkflowMessageHandler
      */
     private function updateOrInsertPayload(WorkflowMessage $message, $forceInsert = false)
     {
-        $gingerType = $message->payload()->getTypeClass();
+        $processingType = $message->payload()->getTypeClass();
 
         /** @var $desc Description */
-        $desc = $gingerType::buildDescription();
+        $desc = $processingType::buildDescription();
 
         $successful = 0;
         $failed = 0;
@@ -445,7 +445,7 @@ final class DoctrineTableGateway extends AbstractWorkflowMessageHandler
         if ($desc->nativeType() == NativeType::COLLECTION) {
 
             /** @var $prototype Prototype */
-            $prototype = $gingerType::prototype();
+            $prototype = $processingType::prototype();
 
             $itemProto = $prototype->typeProperties()['item']->typePrototype();
 

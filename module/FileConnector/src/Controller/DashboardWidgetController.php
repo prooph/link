@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of the Ginger Workflow Framework.
+* This file is part of prooph/link.
  * (c) prooph software GmbH <contact@prooph.de>
  *
  * For the full copyright and license information, please view the LICENSE
@@ -13,7 +13,7 @@ namespace FileConnector\Controller;
 
 use Dashboard\Controller\AbstractWidgetController;
 use Dashboard\View\DashboardWidget;
-use SystemConfig\Projection\GingerConfig;
+use SystemConfig\Projection\ProcessingConfig;
 use SystemConfig\Service\NeedsSystemConfig;
 
 /**
@@ -42,7 +42,7 @@ final class DashboardWidgetController extends AbstractWidgetController
             'file-connector/dashboard/widget',
             'File Connector',
             4,
-            ['gingerConfig' => $this->systemConfig, 'fileConnectors' => $connectors]
+            ['processingConfig' => $this->systemConfig, 'fileConnectors' => $connectors]
         );
     }
 }

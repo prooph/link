@@ -58,7 +58,7 @@
             connectionApiUrl = "<?php echo $this->url('sql_connector/api/connection') ?>",
             connectorApiUrl  = "<?php echo $this->url('sql_connector/api/connector')  ?>",
             set_values = function (values) {
-                Ginger.Helpers.merge_tag_elements_with_obj(self, values);
+                Prooph.Link.Helpers.merge_tag_elements_with_obj(self, values);
             },
             dbname_table_to_name = function(dbname, table) {
                 return s.titleize(s.humanize(dbname)) + " " + s.titleize(s.humanize(table));

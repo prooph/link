@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of the Ginger Workflow Framework.
+* This file is part of prooph/link.
  * (c) prooph software GmbH <contact@prooph.de>
  *
  * For the full copyright and license information, please view the LICENSE
@@ -9,16 +9,16 @@
  * Date: 20.01.15 - 23:29
  */
 
-namespace Gingerwork\Monitor\Service;
+namespace Prooph\Link\Monitor\Service;
 
 use Doctrine\DBAL\Connection;
-use Ginger\Processor\ProcessId;
-use Gingerwork\Monitor\Model\ProcessLogger;
+use Prooph\Processing\Processor\ProcessId;
+use Prooph\Link\Monitor\Model\ProcessLogger;
 
 /**
  * Class DbalProcessLogger
  *
- * @package Gingerwork\Monitor\Service
+ * @package Prooph\Link\Monitor\Service
  * @author Alexander Miertsch <kontakt@codeliner.ws>
  */
 final class DbalProcessLogger implements ProcessLogger

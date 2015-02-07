@@ -8,8 +8,8 @@
  */
 namespace Application\DataType\SqlConnector\TestDb;
 
-use Ginger\Type\Description\Description;
-use Ginger\Type\Description\NativeType;
+use Prooph\Processing\Type\Description\Description;
+use Prooph\Processing\Type\Description\NativeType;
 use Application\DataType\SqlConnector\TableRow;
 
 class TestData extends TableRow
@@ -37,11 +37,11 @@ class TestData extends TableRow
     public static function getPropertyPrototypes()
     {
         return [
-            'name' => \Ginger\Type\String::prototype(),
-            'age' => \Ginger\Type\Integer::prototype(),
-            'created_at' => \Ginger\Type\DateTime::prototype(),
-            'price' => \Ginger\Type\Float::prototype(),
-            'active' => \Ginger\Type\Boolean::prototype(),
+            'name' => \Prooph\Processing\Type\String::prototype(),
+            'age' => \Prooph\Processing\Type\Integer::prototype(),
+            'created_at' => \Prooph\Processing\Type\DateTime::prototype(),
+            'price' => \Prooph\Processing\Type\Float::prototype(),
+            'active' => \Prooph\Processing\Type\Boolean::prototype(),
 
         ];
     }

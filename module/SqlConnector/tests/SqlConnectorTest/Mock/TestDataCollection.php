@@ -8,10 +8,10 @@
  */
 namespace Application\DataType\SqlConnector\TestDb;
 
-use Ginger\Type\AbstractCollection;
-use Ginger\Type\Description\Description;
-use Ginger\Type\Description\NativeType;
-use Ginger\Type\Prototype;
+use Prooph\Processing\Type\AbstractCollection;
+use Prooph\Processing\Type\Description\Description;
+use Prooph\Processing\Type\Description\NativeType;
+use Prooph\Processing\Type\Prototype;
 
 class TestDataCollection extends AbstractCollection
 {

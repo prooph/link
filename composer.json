@@ -1,18 +1,17 @@
 {
-    "name": "gingerwork/app-core",
-    "description": "Application Core for Ginger WfMS",
+    "name": "prooph/link",
+    "description": "Data links made easy",
     "license": "BSD-3-Clause",
     "keywords": [
-        "gingerwork",
-        "workflow",
-        "interface",
         "prooph",
+        "workflow",
+        "processing",
         "zf2"
     ],
-    "homepage": "https://github.com/gingerwork",
+    "homepage": "https://github.com/prooph/link",
     "require": {
         "php": ">=5.5",
-        "gingerwork/gingerframework" : "dev-master",
+        "prooph/processing" : "dev-master",
         "zendframework/zendframework": "~2.3",
         "zfcampus/zf-api-problem": "~1.0",
         "zfcampus/zf-content-negotiation": "~1.0",
@@ -33,7 +32,7 @@
     "bin-dir" : "./bin",
     "autoload": {
         "psr-4": {
-            "Gingerwork\\Monitor\\": "module/Monitor/src"
+            "Prooph\\Link\\Monitor\\": "module/Monitor/src"
         },
         "classmap": [
             "module/Monitor/Module.php"

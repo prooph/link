@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of Ginger Workflow Framework.
+* This file is part of prooph/link.
  * (c) prooph software GmbH <contact@prooph.de>
  *
  * For the full copyright and license information, please view the LICENSE
@@ -12,7 +12,7 @@ namespace SystemConfig\Command;
 
 use Application\Command\SystemCommand;
 use Application\SharedKernel\ConfigLocation;
-use Ginger\Processor\NodeName;
+use Prooph\Processing\Processor\NodeName;
 
 /**
  * Command ChangeNodeName

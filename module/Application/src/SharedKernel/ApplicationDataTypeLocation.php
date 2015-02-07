@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of Ginger Workflow Framework.
+* This file is part of prooph/link.
  * (c) prooph software GmbH <contact@prooph.de>
  *
  * For the full copyright and license information, please view the LICENSE
@@ -14,7 +14,7 @@ namespace Application\SharedKernel;
  * Class ApplicationDataTypeLocation
  *
  * This class describes the location for application wide data types.
- * These types are synchronized with all ginger nodes so that the
+ * These types are synchronized with all processing nodes so that the
  * types are available on every node. Connectors should put their
  * types under the namespace Application\DataType\<ConnectorModule>\*
  * and write them to the appropriate directory mapping the namespace and

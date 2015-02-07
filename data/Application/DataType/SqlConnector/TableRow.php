@@ -1,7 +1,7 @@
 <?php
 /*
- * This file is part of the Ginger Workflow Framework.
- * (c) Alexander Miertsch <contact@prooph.de>
+* This file is part of prooph/link.
+* (c) 2014-2015 prooph software GmbH <contact@prooph.de>
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -14,8 +14,8 @@ namespace Application\DataType\SqlConnector;
 use Assert\Assertion;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\Type;
-use Ginger\Type\AbstractDictionary;
-use Ginger\Type\Description\NativeType;
+use Prooph\Processing\Type\AbstractDictionary;
+use Prooph\Processing\Type\Description\NativeType;
 
 /**
  * Class TableRow
@@ -43,7 +43,7 @@ abstract class TableRow extends AbstractDictionary
     /**
      * @param array $row
      * @throws \Exception
-     * @throws \Ginger\Type\Exception\InvalidTypeException
+     * @throws \Prooph\Processing\Type\Exception\InvalidTypeException
      * @return static
      */
     public static function fromDatabaseRow(array $row)
@@ -153,7 +153,7 @@ abstract class TableRow extends AbstractDictionary
 
         $typeProperties = static::prototype()->typeProperties();
 
-        if (! isset($typeProperties[$property])) throw new \InvalidArgumentException(sprintf("Column %s can not be mapped to a property of ginger type %s", $property, __CLASS__));
+        if (! isset($typeProperties[$property])) throw new \InvalidArgumentException(sprintf("Column %s can not be mapped to a property of processing type %s", $property, __CLASS__));
 
         $typeProperty = $typeProperties[$property];
 

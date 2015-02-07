@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of the Ginger Workflow Framework.
+* This file is part of prooph/link.
  * (c) prooph software GmbH <contact@prooph.de>
  *
  * For the full copyright and license information, please view the LICENSE
@@ -17,7 +17,7 @@ use FileConnector\FileManager\FileGatewayTranslator;
 use Prooph\ServiceBus\CommandBus;
 use SystemConfig\Command\AddConnectorToConfig;
 use SystemConfig\Command\ChangeConnectorConfig;
-use SystemConfig\Projection\GingerConfig;
+use SystemConfig\Projection\ProcessingConfig;
 use SystemConfig\Service\NeedsSystemConfig;
 use ZF\ApiProblem\ApiProblem;
 use ZF\ApiProblem\ApiProblemResponse;
@@ -31,14 +31,14 @@ use ZF\ApiProblem\ApiProblemResponse;
 final class FileConnector extends AbstractRestController implements ActionController, NeedsSystemConfig
 {
     const ICON = 'glyphicon-file';
-    const UI_METADATA_RIOT_TAG = 'fileConnector-metadata';
+    const UI_METADATA_RIOT_TAG = 'fileconnector-metadata';
     /**
      * @var CommandBus
      */
     private $commandBus;
 
     /**
-     * @var GingerConfig
+     * @var ProcessingConfig
      */
     private $systemConfig;
 
@@ -134,10 +134,10 @@ final class FileConnector extends AbstractRestController implements ActionContro
     }
 
     /**
-     * @param GingerConfig $systemConfig
+     * @param ProcessingConfig $systemConfig
      * @return void
      */
-    public function setSystemConfig(GingerConfig $systemConfig)
+    public function setSystemConfig(ProcessingConfig $systemConfig)
     {
         $this->systemConfig = $systemConfig;
     }
@@ -158,7 +158,7 @@ final class FileConnector extends AbstractRestController implements ActionContro
     private function validateConnectorData(array $data)
     {
         if (! array_key_exists("name", $data)) return new ApiProblemResponse(new ApiProblem(422, 'Connector name missing in request data'));
-        if (! array_key_exists("ginger_type", $data)) return new ApiProblemResponse(new ApiProblem(422, 'Data type missing in request data'));
+        if (! array_key_exists("processing_type", $data)) return new ApiProblemResponse(new ApiProblem(422, 'Data type missing in request data'));
         if (! array_key_exists("writable", $data)) return new ApiProblemResponse(new ApiProblem(422, 'Writable missing in request data'));
         if (! array_key_exists("readable", $data)) return new ApiProblemResponse(new ApiProblem(422, 'Readable missing in request data'));
         if (! array_key_exists("metadata", $data)) return new ApiProblemResponse(new ApiProblem(422, 'Metadata missing in request data'));

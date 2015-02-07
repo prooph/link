@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of the Ginger Workflow Framework.
+* This file is part of prooph/link.
  * (c) prooph software GmbH <contact@prooph.de>
  *
  * For the full copyright and license information, please view the LICENSE
@@ -14,11 +14,11 @@ namespace ProcessorProxy\Api;
 use Application\Service\AbstractRestController;
 use Application\Service\ActionController;
 use Assert\Assertion;
-use Ginger\Message\WorkflowMessage;
+use Prooph\Processing\Message\WorkflowMessage;
 use ProcessorProxy\Command\ForwardHttpMessage;
 use ProcessorProxy\Model\MessageLogger;
 use Prooph\ServiceBus\CommandBus;
-use SystemConfig\Projection\GingerConfig;
+use SystemConfig\Projection\ProcessingConfig;
 use Zend\Http\PhpEnvironment\Response;
 use Zend\View\Model\JsonModel;
 use ZF\ApiProblem\ApiProblem;
@@ -37,14 +37,14 @@ final class CollectDataTrigger extends AbstractRestController implements ActionC
     private $messageLogger;
 
     /**
-     * @var GingerConfig
+     * @var ProcessingConfig
      */
-    private $gingerConfig;
+    private $ProcessingConfig;
 
-    public function __construct(MessageLogger $messageLogger, GingerConfig $config)
+    public function __construct(MessageLogger $messageLogger, ProcessingConfig $config)
     {
         $this->messageLogger = $messageLogger;
-        $this->gingerConfig  = $config;
+        $this->ProcessingConfig  = $config;
     }
 
     public function create(array $data)
@@ -53,22 +53,22 @@ final class CollectDataTrigger extends AbstractRestController implements ActionC
 
         $data = $data["collect_data_trigger"];
 
-        if (! array_key_exists('ginger_type', $data)) return new ApiProblemResponse(new ApiProblem(422, 'Key ginger_type is missing'));
+        if (! array_key_exists('processing_type', $data)) return new ApiProblemResponse(new ApiProblem(422, 'Key processing_type is missing'));
 
-        $gingerType = $data['ginger_type'];
+        $processingType = $data['processing_type'];
 
-        if (! class_exists($gingerType)) return new ApiProblemResponse(new ApiProblem(422, 'Provided ginger type is unknown'));
+        if (! class_exists($processingType)) return new ApiProblemResponse(new ApiProblem(422, 'Provided processing type is unknown'));
 
         try {
-            Assertion::implementsInterface($gingerType, 'Ginger\Type\Type');
+            Assertion::implementsInterface($processingType, 'Prooph\Processing\Type\Type');
         } catch (\InvalidArgumentException $ex) {
-            return new ApiProblemResponse(new ApiProblem(422, 'Provided ginger type is not valid'));
+            return new ApiProblemResponse(new ApiProblem(422, 'Provided processing type is not valid'));
         }
 
         $wfMessage = WorkflowMessage::collectDataOf(
-            $gingerType::prototype(),
+            $processingType::prototype(),
             __CLASS__,
-            $this->gingerConfig->getNodeName()
+            $this->ProcessingConfig->getNodeName()
         );
 
         $this->messageLogger->logIncomingMessage($wfMessage);
