@@ -56,7 +56,7 @@ return [
                     'path' => 'data/fileconnector',
                     'filename_template'  => 'productcollection-{{#now}}Y-m-d{{/now}}.csv',
                 ],
-                'ui_metadata_key' => 'FileConnectorMetadata',
+                'ui_metadata_riot_tag' => 'fileconnector-metadata',
             ],
             'sqlconnector:::ginger_test_source' => [
                 'name' => 'Ginger Test Source DB',
@@ -70,7 +70,7 @@ return [
                 ],
                 'dbal_connection' => 'ginger_test_source',
                 'table' => 'products',
-                'ui_metadata_key' => 'SqlconnectorMetadata',
+                'ui_metadata_riot_tag' => 'sqlconnector-metadata',
             ]
         ],
     ],

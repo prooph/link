@@ -32,7 +32,10 @@ final class CollectDataTriggerFactory implements FactoryInterface
      */
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
-        return new CollectDataTrigger($serviceLocator->getServiceLocator()->get('processor_proxy.message_logger'));
+        return new CollectDataTrigger(
+            $serviceLocator->getServiceLocator()->get('processor_proxy.message_logger'),
+            $serviceLocator->getServiceLocator()->get('system_config')
+        );
     }
 }
  

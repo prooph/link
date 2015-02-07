@@ -88,9 +88,9 @@ final class FileGatewayTest extends TestCase
 
         $workflowEngine = new RegistryWorkflowEngine();
 
-        $workflowEngine->registerCommandBus($this->commandBus, [NodeName::defaultName()->toString()]);
+        $workflowEngine->registerCommandBus($this->commandBus, [NodeName::defaultName()->toString(), 'file-connector']);
 
-        $workflowEngine->registerEventBus($this->eventBus, [NodeName::defaultName()->toString()]);
+        $workflowEngine->registerEventBus($this->eventBus, [NodeName::defaultName()->toString(), 'file-connector']);
 
         $this->fileGateway->useWorkflowEngine($workflowEngine);
 
@@ -123,7 +123,12 @@ final class FileGatewayTest extends TestCase
             'file_type' => 'csv'
         ];
 
-        $message = WorkflowMessage::collectDataOf(TestUserCollection::prototype(), $metadata);
+        $message = WorkflowMessage::collectDataOf(
+            TestUserCollection::prototype(),
+            NodeName::defaultName()->toString(),
+            'file-connector',
+            $metadata
+        );
 
         $message->connectToProcessTask($taskListPosition);
 
@@ -160,7 +165,12 @@ final class FileGatewayTest extends TestCase
             'file_type' => 'csv'
         ];
 
-        $message = WorkflowMessage::collectDataOf(TestUserCollection::prototype(), $metadata);
+        $message = WorkflowMessage::collectDataOf(
+            TestUserCollection::prototype(),
+            NodeName::defaultName()->toString(),
+            'file-connector',
+            $metadata
+        );
 
         $message->connectToProcessTask($taskListPosition);
 
@@ -199,7 +209,11 @@ final class FileGatewayTest extends TestCase
             'file_data_type' => TestUser::prototype()->of(),
         ];
 
-        $message = WorkflowMessage::collectDataOf(TestUserCollection::prototype(), $metadata);
+        $message = WorkflowMessage::collectDataOf(
+            TestUserCollection::prototype(),
+            NodeName::defaultName()->toString(),
+            'file-connector',
+            $metadata);
 
         $message->connectToProcessTask($taskListPosition);
 
@@ -238,7 +252,11 @@ final class FileGatewayTest extends TestCase
             'merge_files' => true
         ];
 
-        $message = WorkflowMessage::collectDataOf(TestUser::prototype(), $metadata);
+        $message = WorkflowMessage::collectDataOf(
+            TestUser::prototype(),
+            NodeName::defaultName()->toString(),
+            'file-connector',
+            $metadata);
 
         $message->connectToProcessTask($taskListPosition);
 
@@ -287,11 +305,15 @@ final class FileGatewayTest extends TestCase
 
         $this->tempFiles[] = 'users-' . date('Y-m-d') . '.csv';
 
-        $workflowMessage = WorkflowMessage::newDataCollected($testUsers);
+        $workflowMessage = WorkflowMessage::newDataCollected(
+            $testUsers,
+            NodeName::defaultName()->toString(),
+            'file-connector'
+        );
 
         $workflowMessage->connectToProcessTask($taskListPosition);
 
-        $workflowMessage = $workflowMessage->prepareDataProcessing($taskListPosition, $metadata);
+        $workflowMessage = $workflowMessage->prepareDataProcessing($taskListPosition, NodeName::defaultName()->toString(), $metadata);
 
         $this->fileGateway->handleWorkflowMessage($workflowMessage);
 
@@ -328,11 +350,14 @@ final class FileGatewayTest extends TestCase
 
         $this->tempFiles[] = 'users-' . date('Y-m-d') . '.csv';
 
-        $workflowMessage = WorkflowMessage::newDataCollected($testUsers);
+        $workflowMessage = WorkflowMessage::newDataCollected(
+            $testUsers,
+            NodeName::defaultName()->toString(),
+            'file-connector');
 
         $workflowMessage->connectToProcessTask($taskListPosition);
 
-        $workflowMessage = $workflowMessage->prepareDataProcessing($taskListPosition, $metadata);
+        $workflowMessage = $workflowMessage->prepareDataProcessing($taskListPosition, NodeName::defaultName()->toString(), $metadata);
 
         $this->fileGateway->handleWorkflowMessage($workflowMessage);
 
@@ -371,11 +396,15 @@ final class FileGatewayTest extends TestCase
         $this->tempFiles[] = 'user-1.json';
         $this->tempFiles[] = 'user-2.json';
 
-        $workflowMessage = WorkflowMessage::newDataCollected($testUsers);
+        $workflowMessage = WorkflowMessage::newDataCollected(
+            $testUsers,
+            NodeName::defaultName()->toString(),
+            'file-connector'
+        );
 
         $workflowMessage->connectToProcessTask($taskListPosition);
 
-        $workflowMessage = $workflowMessage->prepareDataProcessing($taskListPosition, $metadata);
+        $workflowMessage = $workflowMessage->prepareDataProcessing($taskListPosition, NodeName::defaultName()->toString(), $metadata);
 
         $this->fileGateway->handleWorkflowMessage($workflowMessage);
 
@@ -420,11 +449,14 @@ final class FileGatewayTest extends TestCase
         $this->tempFiles[] = 'user-0.json';
         $this->tempFiles[] = 'user-1.json';
 
-        $workflowMessage = WorkflowMessage::newDataCollected($testUsers);
+        $workflowMessage = WorkflowMessage::newDataCollected(
+            $testUsers,
+            NodeName::defaultName()->toString(),
+            'file-connector');
 
         $workflowMessage->connectToProcessTask($taskListPosition);
 
-        $workflowMessage = $workflowMessage->prepareDataProcessing($taskListPosition, $metadata);
+        $workflowMessage = $workflowMessage->prepareDataProcessing($taskListPosition, NodeName::defaultName()->toString(), $metadata);
 
         $this->fileGateway->handleWorkflowMessage($workflowMessage);
 
@@ -463,11 +495,14 @@ final class FileGatewayTest extends TestCase
         $this->tempFiles[] = 'string-second.json';
         $this->tempFiles[] = 'string-third.json';
 
-        $workflowMessage = WorkflowMessage::newDataCollected($strings);
+        $workflowMessage = WorkflowMessage::newDataCollected(
+            $strings,
+            NodeName::defaultName()->toString(),
+            'file-connector');
 
         $workflowMessage->connectToProcessTask($taskListPosition);
 
-        $workflowMessage = $workflowMessage->prepareDataProcessing($taskListPosition, $metadata);
+        $workflowMessage = $workflowMessage->prepareDataProcessing($taskListPosition, NodeName::defaultName()->toString(), $metadata);
 
         $this->fileGateway->handleWorkflowMessage($workflowMessage);
 

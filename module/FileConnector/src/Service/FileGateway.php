@@ -177,7 +177,7 @@ final class FileGateway extends AbstractWorkflowMessageHandler
             return $this->collectData($workflowMessage);
         } catch (\Exception $ex) {
             ErrorHandler::stop();
-            return LogMessage::logException($ex, $workflowMessage->processTaskListPosition());
+            return LogMessage::logException($ex, $workflowMessage);
         }
     }
 
@@ -194,7 +194,7 @@ final class FileGateway extends AbstractWorkflowMessageHandler
             return $this->processData($workflowMessage);
         } catch (\Exception $ex) {
             ErrorHandler::stop();
-            return LogMessage::logException($ex, $workflowMessage->processTaskListPosition());
+            return LogMessage::logException($ex, $workflowMessage);
         }
     }
 

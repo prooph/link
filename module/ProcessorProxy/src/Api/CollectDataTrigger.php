@@ -18,6 +18,7 @@ use Ginger\Message\WorkflowMessage;
 use ProcessorProxy\Command\ForwardHttpMessage;
 use ProcessorProxy\Model\MessageLogger;
 use Prooph\ServiceBus\CommandBus;
+use SystemConfig\Projection\GingerConfig;
 use Zend\Http\PhpEnvironment\Response;
 use Zend\View\Model\JsonModel;
 use ZF\ApiProblem\ApiProblem;
@@ -35,9 +36,15 @@ final class CollectDataTrigger extends AbstractRestController implements ActionC
      */
     private $messageLogger;
 
-    public function __construct(MessageLogger $messageLogger)
+    /**
+     * @var GingerConfig
+     */
+    private $gingerConfig;
+
+    public function __construct(MessageLogger $messageLogger, GingerConfig $config)
     {
         $this->messageLogger = $messageLogger;
+        $this->gingerConfig  = $config;
     }
 
     public function create(array $data)
@@ -58,7 +65,11 @@ final class CollectDataTrigger extends AbstractRestController implements ActionC
             return new ApiProblemResponse(new ApiProblem(422, 'Provided ginger type is not valid'));
         }
 
-        $wfMessage = WorkflowMessage::collectDataOf($gingerType::prototype());
+        $wfMessage = WorkflowMessage::collectDataOf(
+            $gingerType::prototype(),
+            __CLASS__,
+            $this->gingerConfig->getNodeName()
+        );
 
         $this->messageLogger->logIncomingMessage($wfMessage);
 

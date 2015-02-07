@@ -173,7 +173,7 @@ final class DoctrineTableGateway extends AbstractWorkflowMessageHandler
             return $this->collectData($workflowMessage);
         } catch (\Exception $ex) {
             ErrorHandler::stop();
-            return LogMessage::logException($ex, $workflowMessage->processTaskListPosition());
+            return LogMessage::logException($ex, $workflowMessage);
         }
     }
 
@@ -190,7 +190,7 @@ final class DoctrineTableGateway extends AbstractWorkflowMessageHandler
             return $this->processData($workflowMessage);
         } catch (\Exception $ex) {
             ErrorHandler::stop();
-            return LogMessage::logException($ex, $workflowMessage->processTaskListPosition());
+            return LogMessage::logException($ex, $workflowMessage);
         }
     }
 
@@ -213,7 +213,7 @@ final class DoctrineTableGateway extends AbstractWorkflowMessageHandler
                 return $this->collectSingleResult($workflowMessage);
                 break;
             default:
-                return LogMessage::logUnsupportedMessageReceived($workflowMessage, 'sqlconnector-' . $this->table);
+                return LogMessage::logUnsupportedMessageReceived($workflowMessage);
         }
     }
 
@@ -452,7 +452,7 @@ final class DoctrineTableGateway extends AbstractWorkflowMessageHandler
             /** @var $tableRow TableRow */
             foreach ($message->payload()->toType() as $i => $tableRow) {
                 if (! $tableRow instanceof TableRow) {
-                    return LogMessage::logUnsupportedMessageReceived($message, __CLASS__);
+                    return LogMessage::logUnsupportedMessageReceived($message);
                 }
 
                 try {
@@ -484,7 +484,7 @@ final class DoctrineTableGateway extends AbstractWorkflowMessageHandler
                     $successful,
                     $failed,
                     $failedMessages,
-                    $message->processTaskListPosition()
+                    $message
                 );
             } else {
                 return $message->answerWithDataProcessingCompleted($report);
@@ -493,7 +493,7 @@ final class DoctrineTableGateway extends AbstractWorkflowMessageHandler
             $tableRow = $message->payload()->toType();
 
             if (! $tableRow instanceof TableRow) {
-                return LogMessage::logUnsupportedMessageReceived($message, __CLASS__);
+                return LogMessage::logUnsupportedMessageReceived($message);
             }
 
             $this->updateOrInsertTableRow($tableRow, $forceInsert);

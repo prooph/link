@@ -36,16 +36,16 @@ return array(
         ),
         'factories' => [
             'ginger_environment' => 'Application\Service\Factory\GingerEnvironmentFactory',
-            \Ginger\Processor\Definition::SERVICE_WORKFLOW_PROCESSOR       => 'Ginger\Environment\Factory\WorkflowProcessorFactory',
-            \Ginger\Processor\Definition::SERVICE_PROCESS_FACTORY          => 'Ginger\Environment\Factory\ProcessFactoryFactory',
-            \Ginger\Processor\Definition::SERVICE_PROCESS_REPOSITORY       => 'Ginger\Environment\Factory\ProcessRepositoryFactory',
+            \Ginger\Processor\Definition::SERVICE_WORKFLOW_PROCESSOR       => \Ginger\Environment\Factory\WorkflowProcessorFactory::class,
+            \Ginger\Processor\Definition::SERVICE_PROCESS_FACTORY          => \Ginger\Environment\Factory\ProcessFactoryFactory::class,
+            \Ginger\Processor\Definition::SERVICE_PROCESS_REPOSITORY       => \Ginger\Environment\Factory\ProcessRepositoryFactory::class,
         ],
         'abstract_factories' => [
             //ProophServiceBus section
             //The factory creates the channels (ProophServiceBus buses) for the Ginger\Environment\ServicesAwareWorkflowEngine
             //It listens on the requested names "ginger.command_bus.*" and "ginger.event_bus.*" and creates buses with
             //special ginger environment plugins
-            'Ginger\Environment\Factory\AbstractServiceBusFactory'
+            \Ginger\Environment\Factory\AbstractChannelFactory::class,
         ],
         'aliases' => [
             //We tell doctrine that it should use the application db connection instead of creating an own connection

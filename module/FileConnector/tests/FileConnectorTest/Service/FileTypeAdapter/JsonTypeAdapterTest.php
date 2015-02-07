@@ -79,7 +79,7 @@ final class JsonTypeAdapterTest extends TestCase
 
         $readUsers = TestUserCollection::fromNativeValue($readUsersData);
 
-        $this->assertEquals(2, count($readUsers));
+        $this->assertEquals(2, count($readUsers->value()));
         $this->assertEquals(
             ['John Doe', 'Max Mustermann'],
             array_map(

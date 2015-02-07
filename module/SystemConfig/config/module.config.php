@@ -74,7 +74,7 @@ return array(
         ],
         'factories' => [
             //Projections
-            'system_config' => 'SystemConfig\Service\SystemConfigFactory',
+            'system_config' => SystemConfig\Service\SystemConfigFactory::class,
         ],
         'aliases' => [
             'ginger_config' => 'system_config',

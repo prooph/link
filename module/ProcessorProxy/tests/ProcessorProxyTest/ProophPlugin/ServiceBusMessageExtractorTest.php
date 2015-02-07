@@ -30,7 +30,7 @@ final class ServiceBusMessageExtractorTest extends TestCase
      */
     public function it_extracts_a_service_bus_message_from_a_forward_message_command()
     {
-        $wfMessage = WorkflowMessage::collectDataOf(TestUser::prototype());
+        $wfMessage = WorkflowMessage::collectDataOf(TestUser::prototype(), 'test-case', 'localhost');
 
         $sbMessage = $wfMessage->toServiceBusMessage();
 

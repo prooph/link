@@ -37,7 +37,11 @@ final class ForwardMessageTest extends TestCase
      */
     public function it_can_be_created_from_a_service_bus_message_to_wrap_it()
     {
-        $workflowMessage = WorkflowMessage::collectDataOf(TestUser::prototype());
+        $workflowMessage = WorkflowMessage::collectDataOf(
+            TestUser::prototype(),
+            'test-case',
+            'localhost'
+        );
 
         $sbMessage = $workflowMessage->toServiceBusMessage();
 

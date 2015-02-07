@@ -82,8 +82,8 @@ final class DoctrineTableGatewayTest extends TestCase
 
         $workflowEngine = new RegistryWorkflowEngine();
 
-        $workflowEngine->registerCommandBus($this->commandBus, [NodeName::defaultName()->toString()]);
-        $workflowEngine->registerEventBus($this->eventBus, [NodeName::defaultName()->toString()]);
+        $workflowEngine->registerCommandBus($this->commandBus, [NodeName::defaultName()->toString(), 'test-case']);
+        $workflowEngine->registerEventBus($this->eventBus, [NodeName::defaultName()->toString(), 'test-case']);
 
         $this->tableGateway->useWorkflowEngine($workflowEngine);
     }
@@ -101,7 +101,7 @@ final class DoctrineTableGatewayTest extends TestCase
     {
         $taskListPosition = TaskListPosition::at(TaskListId::linkWith(NodeName::defaultName(), ProcessId::generate()), 1);
 
-        $message = WorkflowMessage::collectDataOf(TestUserCollection::prototype());
+        $message = WorkflowMessage::collectDataOf(TestUserCollection::prototype(), 'test-case', 'localhost');
 
         $message->connectToProcessTask($taskListPosition);
 
@@ -137,7 +137,7 @@ final class DoctrineTableGatewayTest extends TestCase
             ]
         ];
 
-        $message = WorkflowMessage::collectDataOf(TestUserCollection::prototype(), $metadata);
+        $message = WorkflowMessage::collectDataOf(TestUserCollection::prototype(), 'test-case', 'localhost', $metadata);
 
         $message->connectToProcessTask($taskListPosition);
 
@@ -179,7 +179,7 @@ final class DoctrineTableGatewayTest extends TestCase
             ]
         ];
 
-        $message = WorkflowMessage::collectDataOf(TestUserCollection::prototype(), $metadata);
+        $message = WorkflowMessage::collectDataOf(TestUserCollection::prototype(), 'test-case', 'localhost', $metadata);
 
         $message->connectToProcessTask($taskListPosition);
 
@@ -227,7 +227,7 @@ final class DoctrineTableGatewayTest extends TestCase
             ]
         ];
 
-        $message = WorkflowMessage::collectDataOf(TestUserCollection::prototype(), $metadata);
+        $message = WorkflowMessage::collectDataOf(TestUserCollection::prototype(), 'test-case', 'localhost', $metadata);
 
         $message->connectToProcessTask($taskListPosition);
 
@@ -265,7 +265,7 @@ final class DoctrineTableGatewayTest extends TestCase
             'limit' => 2
         ];
 
-        $message = WorkflowMessage::collectDataOf(TestUserCollection::prototype(), $metadata);
+        $message = WorkflowMessage::collectDataOf(TestUserCollection::prototype(), 'test-case', 'localhost', $metadata);
 
         $message->connectToProcessTask($taskListPosition);
 
@@ -302,7 +302,7 @@ final class DoctrineTableGatewayTest extends TestCase
             'order_by' => 'age DESC',
         ];
 
-        $message = WorkflowMessage::collectDataOf(TestUserCollection::prototype(), $metadata);
+        $message = WorkflowMessage::collectDataOf(TestUserCollection::prototype(), 'test-case', 'localhost', $metadata);
 
         $message->connectToProcessTask($taskListPosition);
 
@@ -334,7 +334,7 @@ final class DoctrineTableGatewayTest extends TestCase
     {
         $taskListPosition = TaskListPosition::at(TaskListId::linkWith(NodeName::defaultName(), ProcessId::generate()), 1);
 
-        $message = WorkflowMessage::collectDataOf(TestUser::prototype());
+        $message = WorkflowMessage::collectDataOf(TestUser::prototype(), 'test-case', 'localhost');
 
         $message->connectToProcessTask($taskListPosition);
 
@@ -361,7 +361,7 @@ final class DoctrineTableGatewayTest extends TestCase
 
         $metadata = ['identifier' => 2];
 
-        $message = WorkflowMessage::collectDataOf(TestUser::prototype(), $metadata);
+        $message = WorkflowMessage::collectDataOf(TestUser::prototype(), 'test-case', 'localhost', $metadata);
 
         $message->connectToProcessTask($taskListPosition);
 
@@ -388,7 +388,7 @@ final class DoctrineTableGatewayTest extends TestCase
 
         $metadata = ['order_by' => 'age DESC'];
 
-        $message = WorkflowMessage::collectDataOf(TestUser::prototype(), $metadata);
+        $message = WorkflowMessage::collectDataOf(TestUser::prototype(), 'test-case', 'localhost', $metadata);
 
         $message->connectToProcessTask($taskListPosition);
 
@@ -430,11 +430,11 @@ final class DoctrineTableGatewayTest extends TestCase
             ],
         ]);
 
-        $message = WorkflowMessage::newDataCollected($users);
+        $message = WorkflowMessage::newDataCollected($users, 'test-case', 'localhost');
 
         $message->connectToProcessTask($taskListPosition);
 
-        $message = $message->prepareDataProcessing($taskListPosition, $metadata);
+        $message = $message->prepareDataProcessing($taskListPosition, 'localhost', $metadata);
 
         $this->tableGateway->handleWorkflowMessage($message);
 
@@ -489,11 +489,11 @@ final class DoctrineTableGatewayTest extends TestCase
             'age' => 32
         ]);
 
-        $message = WorkflowMessage::newDataCollected($user);
+        $message = WorkflowMessage::newDataCollected($user, 'test-case', 'localhost');
 
         $message->connectToProcessTask($taskListPosition);
 
-        $message = $message->prepareDataProcessing($taskListPosition);
+        $message = $message->prepareDataProcessing($taskListPosition, 'sql-connector');
 
         $this->tableGateway->handleWorkflowMessage($message);
 
@@ -553,11 +553,11 @@ final class DoctrineTableGatewayTest extends TestCase
             ],
         ]);
 
-        $message = WorkflowMessage::newDataCollected($users);
+        $message = WorkflowMessage::newDataCollected($users, 'test-case', 'localhost');
 
         $message->connectToProcessTask($taskListPosition);
 
-        $message = $message->prepareDataProcessing($taskListPosition);
+        $message = $message->prepareDataProcessing($taskListPosition, 'localhost');
 
         $this->tableGateway->handleWorkflowMessage($message);
 
@@ -636,11 +636,11 @@ final class DoctrineTableGatewayTest extends TestCase
             ],
         ]);
 
-        $message = WorkflowMessage::newDataCollected($users);
+        $message = WorkflowMessage::newDataCollected($users, 'test-case', 'localhost');
 
         $message->connectToProcessTask($taskListPosition);
 
-        $message = $message->prepareDataProcessing($taskListPosition, $metadata);
+        $message = $message->prepareDataProcessing($taskListPosition, 'localhost', $metadata);
 
         $this->tableGateway->handleWorkflowMessage($message);
 
