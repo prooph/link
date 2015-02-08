@@ -34,15 +34,15 @@
     <?php endif; //if is configured end ?>
 </div>
 <?php
-if ($this->gingerConfig->isConfigured()) {
+if ($this->processingConfig->isConfigured()) {
 
 //Bootstrap riot app
 $this->inlineScript()->captureStart();
 
-$nodeName = $this->gingerConfig->getNodeName();
+$nodeName = $this->processingConfig->getNodeName();
 
 echo <<<JS
-window.SysConf = Ginger.App.create(
+window.SysConf = Prooph.Link.App.create(
     {
         node_name : '$nodeName'
     }
