@@ -1,18 +1,10 @@
-
-The Ginger Workflow Framework and the GingerWork IWS are 100% open source. We make use of carefully selected open source
-libraries, add specific logic for process automation and monitoring and put a modern UI on top of it to make
-it available for all kind of users no matter if they have development experiences or not.
-
-
-# Contribution
-
-You wanna help us? Great!
-We appreciate any help, be it on implementation level, UI improvements, testing, donation or simply trying out the system and give us feedback.
-
-PROOPH LINK
+prooph link
 ===========
 
-Prooph link is a data linking and workflow processing application. It is build on top of [prooph processing](https://github.com/prooph/processing) - powered by prooph software GmbH
+Prooph link is a data linking and workflow processing application. It is build on top of [prooph processing](https://github.com/prooph/processing)
+and it is 100% open source. We make use of carefully selected open source libraries from the PHP universe,
+add specific logic for process automation and monitoring and put a modern UI on top of it to make
+it available for all kind of users no matter if they have development experiences or not.
 
 # Installation
 
@@ -30,6 +22,10 @@ You can follow the instructions of the [ZF2 SkeletonApplication](https://github.
 Prooph link is not stable yet. However, we work hard on getting the job done. So it is just a matter of time.
 The application runs already in production, but only with our support. Please contact us if you want to use it, too!
 
+# Documentation
+
+More information is coming soon. Stay tuned!
+
 # Support
 
 - Ask any questions on [prooph-users](https://groups.google.com/forum/?hl=de#!forum/prooph) google group.
@@ -37,12 +33,9 @@ The application runs already in production, but only with our support. Please co
 
 # Contribution
 
-We appreciate any help. You can contribute in many ways. Submit pull requests, help us with the UI or simply try prooph link
-and give us feedback. Just leave us a note in our google group linked above and we can discuss further steps.
+You wanna help us? Great!
+We appreciate any help, be it on implementation level, UI improvements, testing, donation or simply trying out the system and give us feedback.
+Just leave us a note in our google group linked above and we can discuss further steps.
 
 Thanks,
-your prooph link team
-
-# Documentation
-
-More information is coming soon. Stay tuned!
+your prooph team
