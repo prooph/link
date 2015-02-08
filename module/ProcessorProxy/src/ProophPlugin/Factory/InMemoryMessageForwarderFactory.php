@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of the Ginger Workflow Framework.
+* This file is part of prooph/link.
  * (c) prooph software GmbH <contact@prooph.de>
  *
  * For the full copyright and license information, please view the LICENSE
@@ -11,7 +11,7 @@
 
 namespace ProcessorProxy\ProophPlugin\Factory;
 
-use Ginger\Environment\Environment;
+use Prooph\Processing\Environment\Environment;
 use ProcessorProxy\ProophPlugin\InMemoryMessageForwarder;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
@@ -33,7 +33,7 @@ final class InMemoryMessageForwarderFactory implements FactoryInterface
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
         /** @var $env Environment */
-        $env = $serviceLocator->get('ginger_environment');
+        $env = $serviceLocator->get('processing_environment');
 
         return new InMemoryMessageForwarder($env->getWorkflowEngine());
     }

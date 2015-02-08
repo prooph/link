@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of the Ginger Workflow Framework.
+* This file is part of prooph/link.
  * (c) prooph software GmbH <contact@prooph.de>
  *
  * For the full copyright and license information, please view the LICENSE
@@ -11,7 +11,7 @@
 
 namespace SystemConfig\Service;
 
-use SystemConfig\Projection\GingerConfig;
+use SystemConfig\Projection\ProcessingConfig;
 
 /**
  * Interface NeedsSystemConfig
@@ -22,9 +22,9 @@ use SystemConfig\Projection\GingerConfig;
 interface NeedsSystemConfig
 {
     /**
-     * @param GingerConfig $systemConfig
+     * @param ProcessingConfig $systemConfig
      * @return void
      */
-    public function setSystemConfig(GingerConfig $systemConfig);
+    public function setSystemConfig(ProcessingConfig $systemConfig);
 }
  

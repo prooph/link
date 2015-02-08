@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of the Ginger Workflow Framework.
+* This file is part of prooph/link.
  * (c) prooph software GmbH <contact@prooph.de>
  *
  * For the full copyright and license information, please view the LICENSE
@@ -33,7 +33,7 @@ final class SystemConfigFactory implements FactoryInterface
      */
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
-        return \SystemConfig\Model\GingerConfig::asProjectionFrom($serviceLocator->get('application.config_location'));
+        return \SystemConfig\Model\ProcessingConfig::asProjectionFrom($serviceLocator->get('application.config_location'));
     }
 }
  

@@ -1,7 +1,7 @@
 <?php
 return [
     'application_db' => [
-        //By default the application db is the same as the event store db for the ginger processor
+        //By default the application db is the same as the event store db for the processing processor
         //so the application uses the same adapter to connect.
         //But this can be changed to separate both systems
         'use_event_store_adapter_connection' => true,

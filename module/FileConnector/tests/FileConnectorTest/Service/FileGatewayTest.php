@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of the Ginger Workflow Framework.
+* This file is part of prooph/link.
  * (c) prooph software GmbH <contact@prooph.de>
  *
  * For the full copyright and license information, please view the LICENSE
@@ -18,15 +18,15 @@ use FileConnectorTest\DataType\TestUser;
 use FileConnectorTest\DataType\TestUserCollection;
 use FileConnectorTest\Mock\StupidWorkflowProcessorMock;
 use FileConnectorTest\TestCase;
-use Ginger\Message\WorkflowMessage;
-use Ginger\Processor\NodeName;
-use Ginger\Processor\ProcessId;
-use Ginger\Processor\ProophPlugin\SingleTargetMessageRouter;
-use Ginger\Processor\ProophPlugin\WorkflowProcessorInvokeStrategy;
-use Ginger\Processor\RegistryWorkflowEngine;
-use Ginger\Processor\Task\TaskListId;
-use Ginger\Processor\Task\TaskListPosition;
-use Ginger\Type\StringCollection;
+use Prooph\Processing\Message\WorkflowMessage;
+use Prooph\Processing\Processor\NodeName;
+use Prooph\Processing\Processor\ProcessId;
+use Prooph\Processing\Processor\ProophPlugin\SingleTargetMessageRouter;
+use Prooph\Processing\Processor\ProophPlugin\WorkflowProcessorInvokeStrategy;
+use Prooph\Processing\Processor\RegistryWorkflowEngine;
+use Prooph\Processing\Processor\Task\TaskListId;
+use Prooph\Processing\Processor\Task\TaskListPosition;
+use Prooph\Processing\Type\StringCollection;
 use Prooph\ServiceBus\CommandBus;
 use Prooph\ServiceBus\EventBus;
 
@@ -88,9 +88,9 @@ final class FileGatewayTest extends TestCase
 
         $workflowEngine = new RegistryWorkflowEngine();
 
-        $workflowEngine->registerCommandBus($this->commandBus, [NodeName::defaultName()->toString()]);
+        $workflowEngine->registerCommandBus($this->commandBus, [NodeName::defaultName()->toString(), 'file-connector']);
 
-        $workflowEngine->registerEventBus($this->eventBus, [NodeName::defaultName()->toString()]);
+        $workflowEngine->registerEventBus($this->eventBus, [NodeName::defaultName()->toString(), 'file-connector']);
 
         $this->fileGateway->useWorkflowEngine($workflowEngine);
 
@@ -123,13 +123,18 @@ final class FileGatewayTest extends TestCase
             'file_type' => 'csv'
         ];
 
-        $message = WorkflowMessage::collectDataOf(TestUserCollection::prototype(), $metadata);
+        $message = WorkflowMessage::collectDataOf(
+            TestUserCollection::prototype(),
+            NodeName::defaultName()->toString(),
+            'file-connector',
+            $metadata
+        );
 
         $message->connectToProcessTask($taskListPosition);
 
         $this->fileGateway->handleWorkflowMessage($message);
 
-        $this->assertInstanceOf('Ginger\Message\WorkflowMessage', $this->messageReceiver->getLastReceivedMessage());
+        $this->assertInstanceOf('Prooph\Processing\Message\WorkflowMessage', $this->messageReceiver->getLastReceivedMessage());
 
         /** @var $wfMessage WorkflowMessage */
         $wfMessage = $this->messageReceiver->getLastReceivedMessage();
@@ -160,13 +165,18 @@ final class FileGatewayTest extends TestCase
             'file_type' => 'csv'
         ];
 
-        $message = WorkflowMessage::collectDataOf(TestUserCollection::prototype(), $metadata);
+        $message = WorkflowMessage::collectDataOf(
+            TestUserCollection::prototype(),
+            NodeName::defaultName()->toString(),
+            'file-connector',
+            $metadata
+        );
 
         $message->connectToProcessTask($taskListPosition);
 
         $this->fileGateway->handleWorkflowMessage($message);
 
-        $this->assertInstanceOf('Ginger\Message\WorkflowMessage', $this->messageReceiver->getLastReceivedMessage());
+        $this->assertInstanceOf('Prooph\Processing\Message\WorkflowMessage', $this->messageReceiver->getLastReceivedMessage());
 
         /** @var $wfMessage WorkflowMessage */
         $wfMessage = $this->messageReceiver->getLastReceivedMessage();
@@ -199,13 +209,17 @@ final class FileGatewayTest extends TestCase
             'file_data_type' => TestUser::prototype()->of(),
         ];
 
-        $message = WorkflowMessage::collectDataOf(TestUserCollection::prototype(), $metadata);
+        $message = WorkflowMessage::collectDataOf(
+            TestUserCollection::prototype(),
+            NodeName::defaultName()->toString(),
+            'file-connector',
+            $metadata);
 
         $message->connectToProcessTask($taskListPosition);
 
         $this->fileGateway->handleWorkflowMessage($message);
 
-        $this->assertInstanceOf('Ginger\Message\WorkflowMessage', $this->messageReceiver->getLastReceivedMessage());
+        $this->assertInstanceOf('Prooph\Processing\Message\WorkflowMessage', $this->messageReceiver->getLastReceivedMessage());
 
         /** @var $wfMessage WorkflowMessage */
         $wfMessage = $this->messageReceiver->getLastReceivedMessage();
@@ -238,13 +252,17 @@ final class FileGatewayTest extends TestCase
             'merge_files' => true
         ];
 
-        $message = WorkflowMessage::collectDataOf(TestUser::prototype(), $metadata);
+        $message = WorkflowMessage::collectDataOf(
+            TestUser::prototype(),
+            NodeName::defaultName()->toString(),
+            'file-connector',
+            $metadata);
 
         $message->connectToProcessTask($taskListPosition);
 
         $this->fileGateway->handleWorkflowMessage($message);
 
-        $this->assertInstanceOf('Ginger\Message\WorkflowMessage', $this->messageReceiver->getLastReceivedMessage());
+        $this->assertInstanceOf('Prooph\Processing\Message\WorkflowMessage', $this->messageReceiver->getLastReceivedMessage());
 
         /** @var $wfMessage WorkflowMessage */
         $wfMessage = $this->messageReceiver->getLastReceivedMessage();
@@ -287,15 +305,19 @@ final class FileGatewayTest extends TestCase
 
         $this->tempFiles[] = 'users-' . date('Y-m-d') . '.csv';
 
-        $workflowMessage = WorkflowMessage::newDataCollected($testUsers);
+        $workflowMessage = WorkflowMessage::newDataCollected(
+            $testUsers,
+            NodeName::defaultName()->toString(),
+            'file-connector'
+        );
 
         $workflowMessage->connectToProcessTask($taskListPosition);
 
-        $workflowMessage = $workflowMessage->prepareDataProcessing($taskListPosition, $metadata);
+        $workflowMessage = $workflowMessage->prepareDataProcessing($taskListPosition, NodeName::defaultName()->toString(), $metadata);
 
         $this->fileGateway->handleWorkflowMessage($workflowMessage);
 
-        $this->assertInstanceOf('Ginger\Message\WorkflowMessage', $this->messageReceiver->getLastReceivedMessage());
+        $this->assertInstanceOf('Prooph\Processing\Message\WorkflowMessage', $this->messageReceiver->getLastReceivedMessage());
 
         $this->assertTrue(file_exists($this->tempPath . $this->tempFiles[0]));
     }
@@ -328,15 +350,18 @@ final class FileGatewayTest extends TestCase
 
         $this->tempFiles[] = 'users-' . date('Y-m-d') . '.csv';
 
-        $workflowMessage = WorkflowMessage::newDataCollected($testUsers);
+        $workflowMessage = WorkflowMessage::newDataCollected(
+            $testUsers,
+            NodeName::defaultName()->toString(),
+            'file-connector');
 
         $workflowMessage->connectToProcessTask($taskListPosition);
 
-        $workflowMessage = $workflowMessage->prepareDataProcessing($taskListPosition, $metadata);
+        $workflowMessage = $workflowMessage->prepareDataProcessing($taskListPosition, NodeName::defaultName()->toString(), $metadata);
 
         $this->fileGateway->handleWorkflowMessage($workflowMessage);
 
-        $this->assertInstanceOf('Ginger\Message\WorkflowMessage', $this->messageReceiver->getLastReceivedMessage());
+        $this->assertInstanceOf('Prooph\Processing\Message\WorkflowMessage', $this->messageReceiver->getLastReceivedMessage());
 
         $this->assertTrue(file_exists($this->tempPath . $this->tempFiles[0]));
     }
@@ -371,15 +396,19 @@ final class FileGatewayTest extends TestCase
         $this->tempFiles[] = 'user-1.json';
         $this->tempFiles[] = 'user-2.json';
 
-        $workflowMessage = WorkflowMessage::newDataCollected($testUsers);
+        $workflowMessage = WorkflowMessage::newDataCollected(
+            $testUsers,
+            NodeName::defaultName()->toString(),
+            'file-connector'
+        );
 
         $workflowMessage->connectToProcessTask($taskListPosition);
 
-        $workflowMessage = $workflowMessage->prepareDataProcessing($taskListPosition, $metadata);
+        $workflowMessage = $workflowMessage->prepareDataProcessing($taskListPosition, NodeName::defaultName()->toString(), $metadata);
 
         $this->fileGateway->handleWorkflowMessage($workflowMessage);
 
-        $this->assertInstanceOf('Ginger\Message\WorkflowMessage', $this->messageReceiver->getLastReceivedMessage());
+        $this->assertInstanceOf('Prooph\Processing\Message\WorkflowMessage', $this->messageReceiver->getLastReceivedMessage());
 
         $this->assertTrue(file_exists($this->tempPath . $this->tempFiles[0]));
         $this->assertTrue(file_exists($this->tempPath . $this->tempFiles[1]));
@@ -420,15 +449,18 @@ final class FileGatewayTest extends TestCase
         $this->tempFiles[] = 'user-0.json';
         $this->tempFiles[] = 'user-1.json';
 
-        $workflowMessage = WorkflowMessage::newDataCollected($testUsers);
+        $workflowMessage = WorkflowMessage::newDataCollected(
+            $testUsers,
+            NodeName::defaultName()->toString(),
+            'file-connector');
 
         $workflowMessage->connectToProcessTask($taskListPosition);
 
-        $workflowMessage = $workflowMessage->prepareDataProcessing($taskListPosition, $metadata);
+        $workflowMessage = $workflowMessage->prepareDataProcessing($taskListPosition, NodeName::defaultName()->toString(), $metadata);
 
         $this->fileGateway->handleWorkflowMessage($workflowMessage);
 
-        $this->assertInstanceOf('Ginger\Message\WorkflowMessage', $this->messageReceiver->getLastReceivedMessage());
+        $this->assertInstanceOf('Prooph\Processing\Message\WorkflowMessage', $this->messageReceiver->getLastReceivedMessage());
 
         $this->assertTrue(file_exists($this->tempPath . $this->tempFiles[0]));
         $this->assertTrue(file_exists($this->tempPath . $this->tempFiles[1]));
@@ -463,15 +495,18 @@ final class FileGatewayTest extends TestCase
         $this->tempFiles[] = 'string-second.json';
         $this->tempFiles[] = 'string-third.json';
 
-        $workflowMessage = WorkflowMessage::newDataCollected($strings);
+        $workflowMessage = WorkflowMessage::newDataCollected(
+            $strings,
+            NodeName::defaultName()->toString(),
+            'file-connector');
 
         $workflowMessage->connectToProcessTask($taskListPosition);
 
-        $workflowMessage = $workflowMessage->prepareDataProcessing($taskListPosition, $metadata);
+        $workflowMessage = $workflowMessage->prepareDataProcessing($taskListPosition, NodeName::defaultName()->toString(), $metadata);
 
         $this->fileGateway->handleWorkflowMessage($workflowMessage);
 
-        $this->assertInstanceOf('Ginger\Message\WorkflowMessage', $this->messageReceiver->getLastReceivedMessage());
+        $this->assertInstanceOf('Prooph\Processing\Message\WorkflowMessage', $this->messageReceiver->getLastReceivedMessage());
 
         $this->assertTrue(file_exists($this->tempPath . $this->tempFiles[0]));
         $this->assertTrue(file_exists($this->tempPath . $this->tempFiles[1]));

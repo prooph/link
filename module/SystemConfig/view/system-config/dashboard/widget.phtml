@@ -1,12 +1,12 @@
 <?php if (! $this->config_is_writable) : ?>
     <div class="alert alert-danger">
-        <span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span>&nbsp;<?php echo sprintf($this->translate('Ginger config is not writable'), $this->config_dir, $this->config_file_name) ?>!
+        <span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span>&nbsp;<?php echo sprintf($this->translate('Config is not writable'), $this->config_dir, $this->config_file_name) ?>!
     </div>
     <p class="text-center"><a href="<?php echo $this->url('system_config') ?>" class="btn btn-success"><?php echo $this->translate('fix the error') ?></a></p>
 <?php else : ?>
-    <?php if (! $this->gingerConfig->isConfigured()) : ?>
+    <?php if (! $this->processingConfig->isConfigured()) : ?>
         <div class="alert alert-warning">
-            <span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span>&nbsp;<?php echo $this->translate('Ginger runs in default mode') ?>!
+            <span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span>&nbsp;<?php echo $this->translate('Link runs in default mode') ?>!
         </div>
         <p class="text-center"><a href="<?php echo $this->url('system_config') ?>" class="btn btn-success"><?php echo $this->translate('set up the system') ?></a></p>
     <?php else : ?>

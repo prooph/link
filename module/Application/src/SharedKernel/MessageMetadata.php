@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of Ginger Workflow Framework.
+* This file is part of prooph/link.
  * (c) prooph software GmbH <contact@prooph.de>
  *
  * For the full copyright and license information, please view the LICENSE
@@ -9,7 +9,7 @@
  * Date: 2/1/15 - 9:48 PM
  */
 namespace Application\SharedKernel;
-use Ginger\Message\LogMessage;
+use Prooph\Processing\Message\LogMessage;
 
 /**
  * Class MessageMetadata

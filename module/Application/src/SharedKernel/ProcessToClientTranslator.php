@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of Ginger Workflow Framework.
+* This file is part of prooph/link.
  * (c) prooph software GmbH <contact@prooph.de>
  *
  * For the full copyright and license information, please view the LICENSE
@@ -10,8 +10,8 @@
  */
 namespace Application\SharedKernel;
 
-use Ginger\Message\MessageNameUtils;
-use Ginger\Processor\Definition;
+use Prooph\Processing\Message\MessageNameUtils;
+use Prooph\Processing\Processor\Definition;
 
 /**
  * Class ProcessToClientTranslator
@@ -24,11 +24,11 @@ final class ProcessToClientTranslator
     /**
      * @param $startMessage
      * @param array $processDefinition
-     * @param array $knownGingerTypes
+     * @param array $knownProcessingTypes
      * @param ScriptLocation $scriptLocation
      * @return array
      */
-    public static function translate($startMessage, array $processDefinition, array $knownGingerTypes, ScriptLocation $scriptLocation)
+    public static function translate($startMessage, array $processDefinition, array $knownProcessingTypes, ScriptLocation $scriptLocation)
     {
         $messageType = MessageNameUtils::getMessageSuffix($startMessage);
 
@@ -42,7 +42,7 @@ final class ProcessToClientTranslator
             'process_type' => $processDefinition['process_type'],
             'start_message' => [
                 'message_type' => $messageType,
-                'ginger_type' => GingerTypeClass::extractFromMessageName($startMessage, $knownGingerTypes)
+                'processing_type' => ProcessingTypeClass::extractFromMessageName($startMessage, $knownProcessingTypes)
             ],
             'tasks' => array_map(
                 function ($task) use ($scriptLocation) {

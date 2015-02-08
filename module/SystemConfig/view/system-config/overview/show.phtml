@@ -13,17 +13,17 @@
         <div class="col-md-12">
             <div class="alert alert-danger">
                 <span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span>&nbsp;<?php
-                echo sprintf($this->translate('The ginger config file: %s in %s is not writable. Please make sure the webserver has write access!'), $this->config_file_name, $this->config_dir)
+                echo sprintf($this->translate('The processing config file: %s in %s is not writable. Please make sure the webserver has write access!'), $this->config_file_name, $this->config_dir)
                 ?>
             </div>
         </div>
     <?php endif; ?>
-    <?php if (!$this->gingerConfig->isConfigured()) : ?>
+    <?php if (!$this->processingConfig->isConfigured()) : ?>
         <div class="col-md-12">
             <div class="alert alert-warning">
                 <span class="glyphicon glyphicon-warning-sign" aria-hidden="true"></span>&nbsp;<?php echo sprintf(
-                    $this->translate('No configuration found for Ginger. Would you like to %screate one%s?'),
-                    '<a href="'.$this->url('system_config/ginger_set_up').'">', '</a>') ?>
+                    $this->translate('No configuration found for prooph processing. Would you like to %screate one%s?'),
+                    '<a href="'.$this->url('system_config/processing_set_up').'">', '</a>') ?>
             </div>
         </div>
     <?php else : ?>
@@ -32,10 +32,10 @@
                 <table class="table table-hover">
                     <tr>
                         <td>
-                            <p class="text-info text-btn-align"><strong>Ginger Node Name</strong></p>
+                            <p class="text-info text-btn-align"><strong>Processing Node Name</strong></p>
                         </td>
                         <td>
-                            <p id="config-node-name" class="text-btn-align"><strong><?php echo $this->gingerConfig->getNodeName() ?></strong></p>
+                            <p id="config-node-name" class="text-btn-align"><strong><?php echo $this->processingConfig->getNodeName() ?></strong></p>
                         </td>
                         <td>
                             <a id="btn-node-name" href="#" class="btn btn-default edit"><?php echo $this->translate('edit') ?></a>

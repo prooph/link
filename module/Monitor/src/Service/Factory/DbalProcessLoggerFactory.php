@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of the Ginger Workflow Framework.
+* This file is part of prooph/link.
  * (c) prooph software GmbH <contact@prooph.de>
  *
  * For the full copyright and license information, please view the LICENSE
@@ -9,16 +9,16 @@
  * Date: 21.01.15 - 17:42
  */
 
-namespace Gingerwork\Monitor\Service\Factory;
+namespace Prooph\Link\Monitor\Service\Factory;
 
-use Gingerwork\Monitor\Service\DbalProcessLogger;
+use Prooph\Link\Monitor\Service\DbalProcessLogger;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
 /**
  * Class DbalProcessLoggerFactory
  *
- * @package Gingerwork\Monitor\Service\Factory
+ * @package Prooph\Link\Monitor\Service\Factory
  * @author Alexander Miertsch <kontakt@codeliner.ws>
  */
 final class DbalProcessLoggerFactory implements FactoryInterface

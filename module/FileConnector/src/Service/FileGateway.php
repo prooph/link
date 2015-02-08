@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of the Ginger Workflow Framework.
+* This file is part of prooph/link.
  * (c) prooph software GmbH <contact@prooph.de>
  *
  * For the full copyright and license information, please view the LICENSE
@@ -14,16 +14,16 @@ namespace FileConnector\Service;
 use Application\SharedKernel\LocationTranslator;
 use Assert\Assertion;
 use FileConnector\Service\FileTypeAdapter\FileTypeAdapterManager;
-use Ginger\Message\AbstractWorkflowMessageHandler;
-use Ginger\Message\GingerMessage;
-use Ginger\Message\LogMessage;
-use Ginger\Message\MessageNameUtils;
-use Ginger\Message\WorkflowMessage;
-use Ginger\Message\WorkflowMessageHandler;
-use Ginger\Type\AbstractDictionary;
-use Ginger\Type\Description\NativeType;
-use Ginger\Type\SingleValue;
-use Ginger\Type\Type;
+use Prooph\Processing\Message\AbstractWorkflowMessageHandler;
+use Prooph\Processing\Message\ProcessingMessage;
+use Prooph\Processing\Message\LogMessage;
+use Prooph\Processing\Message\MessageNameUtils;
+use Prooph\Processing\Message\WorkflowMessage;
+use Prooph\Processing\Message\WorkflowMessageHandler;
+use Prooph\Processing\Type\AbstractDictionary;
+use Prooph\Processing\Type\Description\NativeType;
+use Prooph\Processing\Type\SingleValue;
+use Prooph\Processing\Type\Type;
 use Prooph\ServiceBus\CommandBus;
 use Prooph\ServiceBus\EventBus;
 use Zend\Stdlib\ArrayUtils;
@@ -32,7 +32,7 @@ use Zend\Stdlib\ErrorHandler;
 /**
  * Class FileGateway
  *
- * Ginger workflow message handler to write data to file or read data from file
+ * Processing message handler to write data to file or read data from file
  *
  * @package FileConnector\Service
  * @author Alexander Miertsch <kontakt@codeliner.ws>
@@ -67,9 +67,9 @@ final class FileGateway extends AbstractWorkflowMessageHandler
     const META_FETCH_MODE_SINGLE_FILE = 'single_file';
 
     /**
-     * If requested ginger type is a collection and filename_pattern matches multiple files each file
+     * If requested processing type is a collection and filename_pattern matches multiple files each file
      * can be loaded as an item for the collection. In this case you should provide a file_data_type pointing
-     * to the ginger type that should be used to load the data of each file.
+     * to the processing type that should be used to load the data of each file.
      */
     const META_FETCH_MODE_MULTI_FILES = 'multi_files';
 
@@ -79,14 +79,14 @@ final class FileGateway extends AbstractWorkflowMessageHandler
     const META_FILENAME_PATTERN   = 'filename_pattern';
 
     /**
-     * Optional key in collect-data metadata. Useful when using the multi_files fetch_mode. It tells the FileGateway which ginger type
+     * Optional key in collect-data metadata. Useful when using the multi_files fetch_mode. It tells the FileGateway which processing type
      * should be used when loading a file.
      */
     const META_FILE_DATA_TYPE     = 'file_data_type';
 
     /**
      * Optional key in collect-data metadata. If set to TRUE and filename_pattern matches multiple files the FileGateway merges
-     * the data from each file into a single array and creates the requested ginger type with the merged data array
+     * the data from each file into a single array and creates the requested processing type with the merged data array
      */
     const META_MERGE_FILES        = 'merge_files';
 
@@ -94,13 +94,13 @@ final class FileGateway extends AbstractWorkflowMessageHandler
      * Required key in process-data metadata. Specifies the filename for the file in which the data should be written.
      * The filename_template is rendered with a FileNameRenderer that uses a mustache engine to resolve placeholders
      * in the filename_template. In the template are various dynamic values available like the metadata array, the data
-     * of the ginger type that is going to be written to file and general mixins.
+     * of the processing type that is going to be written to file and general mixins.
      * see: module/FileConnector/config/module.config.php for default mixins and how to provide your own ones.
      */
     const META_FILENAME_TEMPLATE  = 'filename_template';
 
     /**
-     * Optional key in process-data metadata. If set to TRUE and given ginger type is a collection each item of the
+     * Optional key in process-data metadata. If set to TRUE and given processing type is a collection each item of the
      * collection is written to a single file by using the filename_template and provide the data of the item within the
      * template so that you can create unique file names.
      */
@@ -118,15 +118,15 @@ final class FileGateway extends AbstractWorkflowMessageHandler
     const FILENAME_DATA_METADATA   = 'metadata';
 
     /**
-     * When ginger type is a dictionary its data is passed to the filename_template accessible via the data key.
-     * When using the write_multi_files write mode and the ginger type collection contains dictionary items each
+     * When processing type is a dictionary its data is passed to the filename_template accessible via the data key.
+     * When using the write_multi_files write mode and the processing type collection contains dictionary items each
      * item is passed to the filename_template and can be accessed via data.
      * Example: {{data.id]]
      */
     const FILENAME_DATA_DATA       = 'data';
 
     /**
-     * When ginger type is a single value you can access it in the filename_template via the value key.
+     * When processing type is a single value you can access it in the filename_template via the value key.
      * Example: {{value}}
      */
     const FILENAME_DATA_VALUE      = 'value';
@@ -166,10 +166,10 @@ final class FileGateway extends AbstractWorkflowMessageHandler
 
     /**
      * If workflow message handler receives a collect-data message it forwards the message to this
-     * method and uses the returned GingerMessage as response
+     * method and uses the returned ProcessingMessage as response
      *
      * @param WorkflowMessage $workflowMessage
-     * @return GingerMessage
+     * @return ProcessingMessage
      */
     protected function handleCollectData(WorkflowMessage $workflowMessage)
     {
@@ -177,16 +177,16 @@ final class FileGateway extends AbstractWorkflowMessageHandler
             return $this->collectData($workflowMessage);
         } catch (\Exception $ex) {
             ErrorHandler::stop();
-            return LogMessage::logException($ex, $workflowMessage->processTaskListPosition());
+            return LogMessage::logException($ex, $workflowMessage);
         }
     }
 
     /**
      * If workflow message handler receives a process-data message it forwards the message to this
-     * method and uses the returned GingerMessage as response
+     * method and uses the returned ProcessingMessage as response
      *
      * @param WorkflowMessage $workflowMessage
-     * @return GingerMessage
+     * @return ProcessingMessage
      */
     protected function handleProcessData(WorkflowMessage $workflowMessage)
     {
@@ -194,7 +194,7 @@ final class FileGateway extends AbstractWorkflowMessageHandler
             return $this->processData($workflowMessage);
         } catch (\Exception $ex) {
             ErrorHandler::stop();
-            return LogMessage::logException($ex, $workflowMessage->processTaskListPosition());
+            return LogMessage::logException($ex, $workflowMessage);
         }
     }
 
@@ -203,7 +203,7 @@ final class FileGateway extends AbstractWorkflowMessageHandler
      *
      * Mode 1: Metadata: fetch_mode = 'single_file'
      * @param WorkflowMessage $workflowMessage
-     * @return \Ginger\Message\WorkflowMessage
+     * @return \Prooph\Processing\Message\WorkflowMessage
      * @throws \InvalidArgumentException
      */
     private function collectData(WorkflowMessage $workflowMessage)
@@ -263,7 +263,7 @@ final class FileGateway extends AbstractWorkflowMessageHandler
                 $typeClass = $workflowMessage->payload()->getTypeClass();
 
                 if ($typeClass::prototype()->typeDescription()->nativeType() !== NativeType::COLLECTION) {
-                    throw new \InvalidArgumentException(sprintf("Filename pattern %s matches no file and the requested ginger type %s is not a collection.", $metadata['filename_pattern'], $typeClass));
+                    throw new \InvalidArgumentException(sprintf("Filename pattern %s matches no file and the requested processing type %s is not a collection.", $metadata['filename_pattern'], $typeClass));
                 }
 
                 $metadata[self::META_TOTAL_ITEMS] = 0;
@@ -290,7 +290,7 @@ final class FileGateway extends AbstractWorkflowMessageHandler
 
         $fileDataType = (isset($metadata[self::META_FILE_DATA_TYPE]))? $metadata[self::META_FILE_DATA_TYPE] : $workflowMessage->payload()->getTypeClass();
 
-        Assertion::implementsInterface($fileDataType, 'Ginger\Type\Type');
+        Assertion::implementsInterface($fileDataType, 'Prooph\Processing\Type\Type');
 
         $fileDataPrototype = $fileDataType::prototype();
 
@@ -317,7 +317,7 @@ final class FileGateway extends AbstractWorkflowMessageHandler
         } else {
 
             if ($typeClass::prototype()->typeDescription()->nativeType() !== NativeType::COLLECTION) {
-                throw new \InvalidArgumentException(sprintf("Filename pattern %s matches multiple files but the requested ginger type %s is not a collection.", $metadata['filename_pattern'], $typeClass));
+                throw new \InvalidArgumentException(sprintf("Filename pattern %s matches multiple files but the requested processing type %s is not a collection.", $metadata['filename_pattern'], $typeClass));
             }
 
             $metadata[self::META_TOTAL_ITEMS] = count($fileDataCollection);

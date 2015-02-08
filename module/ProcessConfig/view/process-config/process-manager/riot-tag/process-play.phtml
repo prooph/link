@@ -9,7 +9,7 @@
         this.isCollectDataProcess = function () {
             if (! this.process.start_message) return false;
 
-            return this.process.start_message.message_type == '<?php echo \Ginger\Message\MessageNameUtils::COLLECT_DATA  ?>';
+            return this.process.start_message.message_type == '<?php echo \Prooph\Processing\Message\MessageNameUtils::COLLECT_DATA  ?>';
         }
 
         this.loadStartMessage = function (location) {
@@ -40,7 +40,7 @@
 
             var command = {
                 collect_data_trigger : {
-                    ginger_type : this.process.start_message.ginger_type
+                    processing_type : this.process.start_message.processing_type
                 }
             };
 

@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of the Ginger Workflow Framework.
+* This file is part of prooph/link.
  * (c) prooph software GmbH <contact@prooph.de>
  *
  * For the full copyright and license information, please view the LICENSE
@@ -14,7 +14,7 @@ namespace ProcessConfig\Controller;
 use Dashboard\Controller\AbstractWidgetController;
 use Dashboard\View\DashboardWidget;
 use SystemConfig\Definition;
-use SystemConfig\Projection\GingerConfig;
+use SystemConfig\Projection\ProcessingConfig;
 use SystemConfig\Service\NeedsSystemConfig;
 
 /**
@@ -38,7 +38,7 @@ class DashboardWidgetController extends AbstractWidgetController
             'process-config/dashboard/widget',
             'Process Manager',
             4,
-            ['gingerConfig' => $this->systemConfig]
+            ['processingConfig' => $this->systemConfig]
         );
     }
 }

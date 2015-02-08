@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of the Ginger Workflow Framework.
+* This file is part of prooph/link.
  * (c) prooph software GmbH <contact@prooph.de>
  *
  * For the full copyright and license information, please view the LICENSE
@@ -12,7 +12,7 @@
 namespace ProcessConfig\Controller\Factory;
 
 use ProcessConfig\Controller\DashboardWidgetController;
-use ProcessConfig\Projection\GingerConfig;
+use SystemConfig\Projection\ProcessingConfig;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
@@ -32,7 +32,7 @@ class DashboardWidgetControllerFactory implements  FactoryInterface
      */
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
-        return new DashboardWidgetController(new GingerConfig());
+        return new DashboardWidgetController($serviceLocator->getServiceLocator()->get('system_config'));
     }
 }
  

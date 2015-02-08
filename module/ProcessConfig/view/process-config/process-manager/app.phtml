@@ -15,19 +15,19 @@ $processes    = json_encode($this->processes);
 $processTypes = json_encode($this->available_process_types);
 $messages     = json_encode($this->available_messages);
 $taskTypes    = json_encode($this->available_task_types);
-$gingerTypes  = json_encode($this->available_ginger_types);
+$processingTypes  = json_encode($this->available_processing_types);
 $connectors   = json_encode($this->connectors);
 $locations    = json_encode($this->locations);
 $manipulationScripts = json_encode($this->available_manipulation_scripts);
 
 echo <<<JS
-window.PM = Ginger.App.create(
+window.PM = Prooph.Link.App.create(
     {
         processes    : {$processes},
         processTypes : {$processTypes},
         messages     : {$messages},
         taskTypes    : {$taskTypes},
-        gingerTypes  : {$gingerTypes},
+        processingTypes  : {$processingTypes},
         connectors   : {$connectors},
         locations    : {$locations},
         manipulationScripts : {$manipulationScripts},

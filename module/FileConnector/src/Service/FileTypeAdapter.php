@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of the Ginger Workflow Framework.
+* This file is part of prooph/link.
  * (c) prooph software GmbH <contact@prooph.de>
  *
  * For the full copyright and license information, please view the LICENSE
@@ -11,8 +11,8 @@
 
 namespace FileConnector\Service;
 
-use Ginger\Type\Prototype;
-use Ginger\Type\Type;
+use Prooph\Processing\Type\Prototype;
+use Prooph\Processing\Type\Type;
 
 /**
  * Interface FileTypeAdapter

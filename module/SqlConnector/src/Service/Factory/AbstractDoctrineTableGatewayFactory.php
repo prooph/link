@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of the Ginger Workflow Framework.
+* This file is part of prooph/link.
  * (c) prooph software GmbH <contact@prooph.de>
  *
  * For the full copyright and license information, please view the LICENSE
@@ -13,7 +13,7 @@ namespace SqlConnector\Service\Factory;
 
 use Doctrine\DBAL\DriverManager;
 use SqlConnector\Service\DoctrineTableGateway;
-use SystemConfig\Projection\GingerConfig;
+use SystemConfig\Projection\ProcessingConfig;
 use Zend\ServiceManager\AbstractFactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
@@ -36,8 +36,8 @@ final class AbstractDoctrineTableGatewayFactory implements AbstractFactoryInterf
     public function canCreateServiceWithName(ServiceLocatorInterface $serviceLocator, $name, $requestedName)
     {
         if (strpos($requestedName, 'sqlconnector:::') === 0) {
-            /** @var $config GingerConfig */
-            $config = $serviceLocator->get("ginger_config");
+            /** @var $config ProcessingConfig */
+            $config = $serviceLocator->get("processing_config");
 
             return isset($config->getConnectors()[$requestedName]);
         }
@@ -56,8 +56,8 @@ final class AbstractDoctrineTableGatewayFactory implements AbstractFactoryInterf
      */
     public function createServiceWithName(ServiceLocatorInterface $serviceLocator, $name, $requestedName)
     {
-        /** @var $config GingerConfig */
-        $config = $serviceLocator->get("ginger_config");
+        /** @var $config ProcessingConfig */
+        $config = $serviceLocator->get("processing_config");
 
         $connector = $config->getConnectors()[$requestedName];
 

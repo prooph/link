@@ -51,8 +51,8 @@ return [
             'processor_proxy.forward_message_extractor_translator'                => 'ProcessorProxy\ProophPlugin\Factory\ForwardMessageExtractorTranslatorFactory',
             'processor_proxy.in_memory_message_forwarder'                         => 'ProcessorProxy\ProophPlugin\Factory\InMemoryMessageForwarderFactory',
             'processor_proxy.message_logger'                                      => 'ProcessorProxy\Service\Factory\DbalMessageLoggerFactory',
-            \ProcessorProxy\GingerPlugin\StartMessageProcessIdLogger::PLUGIN_NAME => 'ProcessorProxy\GingerPlugin\Factory\StartMessageProcessIdLoggerFactory',
-            \ProcessorProxy\GingerPlugin\MessageFlowLogger::PLUGIN_NAME           => 'ProcessorProxy\GingerPlugin\Factory\MessageFlowLoggerFactory',
+            \ProcessorProxy\ProcessingPlugin\StartMessageProcessIdLogger::PLUGIN_NAME => 'ProcessorProxy\ProcessingPlugin\Factory\StartMessageProcessIdLoggerFactory',
+            \ProcessorProxy\ProcessingPlugin\MessageFlowLogger::PLUGIN_NAME           => 'ProcessorProxy\ProcessingPlugin\Factory\MessageFlowLoggerFactory',
         ]
     ],
     'controllers' => array(
@@ -65,7 +65,7 @@ return [
         'command_router_map' => [
             //By default a service bus message received by the processor proxy API is wrapped with a ForwardMessage command
             //and then forwarded to the ProcessorProxy\ProophPlugin\InMemoryMessageForwarder which forwards
-            //the wrapped message to the ginger workflow engine
+            //the wrapped message to the processing workflow engine
             //An add on can override the routing so that the ForwardMessage is send to a message dispatcher which puts
             //the wrapped service bus message into a worker queue so that the API service can respond fast and
             //don't have to wait until the message was processed by the workflow processor

@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of the Ginger Workflow Framework.
+* This file is part of prooph/link.
  * (c) prooph software GmbH <contact@prooph.de>
  *
  * For the full copyright and license information, please view the LICENSE
@@ -102,23 +102,23 @@ return array(
         //of a connector definition. This ensures that sensitive connection params are not available in the UI except the
         //sqlconnector UI itself.
         'connections' => [],
-        //Doctrine type to GingerType map
-        'doctrine_ginger_type_map' => [
-            'string' => 'Ginger\Type\String',
-            'text' => 'Ginger\Type\String',
-            'binary' => 'Ginger\Type\String',
-            'blob' => 'Ginger\Type\String',
-            'guid' => 'Ginger\Type\String',
-            'integer' => 'Ginger\Type\Integer',
-            'smallint' => 'Ginger\Type\Integer',
-            'bigint' => 'Ginger\Type\String',
-            'float' => 'Ginger\Type\Float',
-            'decimal' => 'Ginger\Type\Float',
-            'boolean' => 'Ginger\Type\Boolean',
-            'datetime' => 'Ginger\Type\DateTime',
-            'datetimetz' => 'Ginger\Type\DateTime',
-            'date' => 'Ginger\Type\DateTime',
-            'time' => 'Ginger\Type\DateTime',
+        //Doctrine type to ProcessingType map
+        'doctrine_processing_type_map' => [
+            'string' => 'Prooph\Processing\Type\String',
+            'text' => 'Prooph\Processing\Type\String',
+            'binary' => 'Prooph\Processing\Type\String',
+            'blob' => 'Prooph\Processing\Type\String',
+            'guid' => 'Prooph\Processing\Type\String',
+            'integer' => 'Prooph\Processing\Type\Integer',
+            'smallint' => 'Prooph\Processing\Type\Integer',
+            'bigint' => 'Prooph\Processing\Type\String',
+            'float' => 'Prooph\Processing\Type\Float',
+            'decimal' => 'Prooph\Processing\Type\Float',
+            'boolean' => 'Prooph\Processing\Type\Boolean',
+            'datetime' => 'Prooph\Processing\Type\DateTime',
+            'datetimetz' => 'Prooph\Processing\Type\DateTime',
+            'date' => 'Prooph\Processing\Type\DateTime',
+            'time' => 'Prooph\Processing\Type\DateTime',
         ]
     ],
     'view_manager' => array(

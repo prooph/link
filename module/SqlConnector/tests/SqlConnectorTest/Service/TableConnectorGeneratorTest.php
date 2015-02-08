@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of Ginger Workflow Framework.
+* This file is part of prooph/link.
  * (c) prooph software GmbH <contact@prooph.de>
  *
  * For the full copyright and license information, please view the LICENSE
@@ -16,7 +16,7 @@ use Application\SharedKernel\ConfigLocation;
 use Application\SharedKernel\DataLocation;
 use Doctrine\DBAL\Connection;
 use Doctrine\DBAL\Schema\Table;
-use Ginger\Message\MessageNameUtils;
+use Prooph\Processing\Message\MessageNameUtils;
 use SqlConnector\Service\DbalConnection;
 use SqlConnector\Service\DbalConnectionCollection;
 use SqlConnector\Service\SqlConnectorTranslator;
@@ -91,7 +91,7 @@ final class TableConnectorGeneratorTest extends TestCase
             $this->dataTypeLocation,
             ConfigLocation::fromPath(sys_get_temp_dir()),
             $this->commandBus,
-            Bootstrap::getServiceManager()->get("config")['sqlconnector']['doctrine_ginger_type_map']
+            Bootstrap::getServiceManager()->get("config")['sqlconnector']['doctrine_processing_type_map']
         );
     }
 

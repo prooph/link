@@ -9,21 +9,21 @@
         <option each="{ taskTypes }" value="{ value }">{ label }</option>
     </select>
 </div>
-<div if="{ task_type.value == '<?php echo \Ginger\Processor\Definition::TASK_COLLECT_DATA ?>' }">
+<div if="{ task_type.value == '<?php echo \Prooph\Processing\Processor\Definition::TASK_COLLECT_DATA ?>' }">
     <div class="{ form-group: true, has-success: source.value }">
         <select name="source" class="form-control" onchange="{ sourceDidChange }">
             <option value="">- <?php echo $this->translate('Source') ?> -</option>
             <option each="{ availableSources }" value="{ value }">{ label }</option>
         </select>
     </div>
-    <div class="{ form-group: true, has-success: ginger_type.value }">
-        <select name="ginger_type" class="form-control" onchange="{ tick }">
+    <div class="{ form-group: true, has-success: processing_type.value }">
+        <select name="processing_type" class="form-control" onchange="{ tick }">
             <option value="">- <?php echo $this->translate('Data Type') ?> -</option>
-            <option each="{ availableGingerTypes }" value="{ value }">{ label }</option>
+            <option each="{ availableProcessingTypes }" value="{ value }">{ label }</option>
         </select>
     </div>
 </div>
-<div if="{ task_type.value == '<?php echo \Ginger\Processor\Definition::TASK_PROCESS_DATA ?>' }">
+<div if="{ task_type.value == '<?php echo \Prooph\Processing\Processor\Definition::TASK_PROCESS_DATA ?>' }">
     <div class="{ form-group: true, has-success: target.value }">
         <select name="target" class="form-control" onchange="{ targetDidChange }">
             <option value="">- <?php echo $this->translate('Target') ?> -</option>
@@ -37,7 +37,7 @@
         </select>
     </div>
 </div>
-<div if="{ task_type.value == '<?php echo \Ginger\Processor\Definition::TASK_MANIPULATE_PAYLOAD ?>' }">
+<div if="{ task_type.value == '<?php echo \Prooph\Processing\Processor\Definition::TASK_MANIPULATE_PAYLOAD ?>' }">
     <div class="{ form-group: true, has-success: manipulation_script.value }">
         <select name="manipulation_script" class="form-control" onchange="{ tick }">
             <option value="">- <?php echo $this->translate('Payload Manipulation Script') ?> -</option>
@@ -75,11 +75,11 @@
 
         this.process = _.findWhere(context.app.processes, {id : context.app.routeMatch.index});
         this.taskTypes = context.app.taskTypes;
-        this.gingerTypes = context.app.gingerTypes;
+        this.processingTypes = context.app.processingTypes;
         this.connectors  = context.app.connectors;
         this.manipulationScripts = context.app.manipulationScripts;
         this.availableSources = [];
-        this.availableGingerTypes = [];
+        this.availableProcessingTypes = [];
         this.availableTargets = [];
         this.availablePreferredTypes = [];
         this.metadata = {};
@@ -120,13 +120,13 @@
             });
         };
 
-        this.findAvailableGingerTypesFor = function (connectorId) {
+        this.findAvailableProcessingTypesFor = function (connectorId) {
             var connector = _.findWhere(context.app.connectors, { id : connectorId });
 
             if (! connector || ! connector.allowed_types) return [];
 
             return _.map(connector.allowed_types, function (typeValue) {
-                return _.findWhere(context.app.gingerTypes, { value : typeValue});
+                return _.findWhere(context.app.processingTypes, { value : typeValue});
             });
         }
 
@@ -136,17 +136,17 @@
         }
 
         this.updateSource = function () {
-            this.availableSources = this.findAvailableConnectorsFor('<?php echo \Ginger\Message\MessageNameUtils::COLLECT_DATA  ?>');
+            this.availableSources = this.findAvailableConnectorsFor('<?php echo \Prooph\Processing\Message\MessageNameUtils::COLLECT_DATA  ?>');
         };
 
         this.sourceDidChange = function () {
-            this.updateGingerType();
+            this.updateProcessingType();
 
             this.updateMetadataContainer();
         }
 
         this.updateTarget = function () {
-            this.availableTargets = this.findAvailableConnectorsFor('<?php echo \Ginger\Message\MessageNameUtils::PROCESS_DATA  ?>');
+            this.availableTargets = this.findAvailableConnectorsFor('<?php echo \Prooph\Processing\Message\MessageNameUtils::PROCESS_DATA  ?>');
 
             this.updateMetadataContainer();
         }
@@ -157,18 +157,18 @@
             this.updateMetadataContainer();
         }
 
-        this.updateGingerType = function () {
-            this.availableGingerTypes = this.findAvailableGingerTypesFor(this.source.value);
+        this.updateProcessingType = function () {
+            this.availableProcessingTypes = this.findAvailableProcessingTypesFor(this.source.value);
 
             this.one("update", function () {
-                if (this.availableGingerTypes.length == 1) {
-                    this.ginger_type.value = this.availableGingerTypes[0].value;
+                if (this.availableProcessingTypes.length == 1) {
+                    this.processing_type.value = this.availableProcessingTypes[0].value;
                 }
             });
         }
 
         this.updatePreferredType = function () {
-            this.availablePreferredTypes = this.findAvailableGingerTypesFor(this.target.value);
+            this.availablePreferredTypes = this.findAvailableProcessingTypesFor(this.target.value);
 
             this.one("update", function () {
                 if (this.availablePreferredTypes.length == 1) {
@@ -182,24 +182,24 @@
         }
 
         this.getCurrentConnector = function () {
-            if (this.task_type.value == '<?php echo \Ginger\Processor\Definition::TASK_COLLECT_DATA  ?>') {
+            if (this.task_type.value == '<?php echo \Prooph\Processing\Processor\Definition::TASK_COLLECT_DATA  ?>') {
                 return _.findWhere(context.app.connectors, {id : this.source.value});
             }
 
-            if (this.task_type.value == '<?php echo \Ginger\Processor\Definition::TASK_PROCESS_DATA  ?>') {
+            if (this.task_type.value == '<?php echo \Prooph\Processing\Processor\Definition::TASK_PROCESS_DATA  ?>') {
                 return _.findWhere(context.app.connectors, { id : this.target.value});
             }
 
             return undefined;
         }
 
-        this.getCurrentGingerType = function () {
-            if (this.task_type.value == '<?php echo \Ginger\Processor\Definition::TASK_COLLECT_DATA  ?>') {
-                return _.findWhere(context.app.gingerTypes, {value : this.ginger_type.value});
+        this.getCurrentProcessingType = function () {
+            if (this.task_type.value == '<?php echo \Prooph\Processing\Processor\Definition::TASK_COLLECT_DATA  ?>') {
+                return _.findWhere(context.app.processingTypes, {value : this.processing_type.value});
             }
 
-            if (this.task_type.value == '<?php echo \Ginger\Processor\Definition::TASK_PROCESS_DATA  ?>') {
-                return _.findWhere(context.app.gingerTypes, { id : this.preferred_type.value});
+            if (this.task_type.value == '<?php echo \Prooph\Processing\Processor\Definition::TASK_PROCESS_DATA  ?>') {
+                return _.findWhere(context.app.processingTypes, { id : this.preferred_type.value});
             }
 
             return undefined;
@@ -234,12 +234,12 @@
                 task_type : this.task_type.value
             };
 
-            if (tmpTask.task_type == '<?php echo \Ginger\Processor\Definition::TASK_COLLECT_DATA  ?>') {
+            if (tmpTask.task_type == '<?php echo \Prooph\Processing\Processor\Definition::TASK_COLLECT_DATA  ?>') {
                 tmpTask.source = this.source.value;
-                tmpTask.ginger_type = this.ginger_type.value;
+                tmpTask.processing_type = this.processing_type.value;
             }
 
-            if (tmpTask.task_type == '<?php echo \Ginger\Processor\Definition::TASK_PROCESS_DATA  ?>') {
+            if (tmpTask.task_type == '<?php echo \Prooph\Processing\Processor\Definition::TASK_PROCESS_DATA  ?>') {
                 tmpTask.target = this.target.value;
                 if (tmpTask.target) {
                     tmpTask.preferred_type = this.preferred_type.value;
@@ -247,7 +247,7 @@
                 }
             }
 
-            if (tmpTask.task_type == '<?php echo \Ginger\Processor\Definition::TASK_MANIPULATE_PAYLOAD  ?>') {
+            if (tmpTask.task_type == '<?php echo \Prooph\Processing\Processor\Definition::TASK_MANIPULATE_PAYLOAD  ?>') {
                 tmpTask.manipulation_script = this.manipulation_script.value;
             }
 
@@ -263,14 +263,14 @@
 
             $(this.task_type).change();
 
-            if (task.task_type == '<?php echo \Ginger\Processor\Definition::TASK_COLLECT_DATA  ?>') {
+            if (task.task_type == '<?php echo \Prooph\Processing\Processor\Definition::TASK_COLLECT_DATA  ?>') {
                 this.source.value = task.source;
                 $(this.source).change();
-                this.ginger_type.value = task.ginger_type;
-                $(this.ginger_type).change();
+                this.processing_type.value = task.processing_type;
+                $(this.processing_type).change();
             }
 
-            if (task.task_type == '<?php echo \Ginger\Processor\Definition::TASK_PROCESS_DATA  ?>') {
+            if (task.task_type == '<?php echo \Prooph\Processing\Processor\Definition::TASK_PROCESS_DATA  ?>') {
                 this.target.value = task.target;
                 $(this.target).change();
                 if (task.target) {
@@ -279,7 +279,7 @@
                 }
             }
 
-            if (task.task_type == '<?php echo \Ginger\Processor\Definition::TASK_MANIPULATE_PAYLOAD  ?>') {
+            if (task.task_type == '<?php echo \Prooph\Processing\Processor\Definition::TASK_MANIPULATE_PAYLOAD  ?>') {
                 this.manipulation_script.value = task.manipulation_script;
                 $(this.manipulation_script).change();
             }
@@ -288,17 +288,17 @@
         this.isValid = function () {
             if (! this.task_type.value) return false;
 
-            if (this.task_type.value == '<?php echo \Ginger\Processor\Definition::TASK_COLLECT_DATA  ?>') {
+            if (this.task_type.value == '<?php echo \Prooph\Processing\Processor\Definition::TASK_COLLECT_DATA  ?>') {
                 if (! this.source.value) return false;
-                if (! this.ginger_type.value) return false;
+                if (! this.processing_type.value) return false;
             }
 
-            if (this.task_type.value == '<?php echo \Ginger\Processor\Definition::TASK_PROCESS_DATA  ?>') {
+            if (this.task_type.value == '<?php echo \Prooph\Processing\Processor\Definition::TASK_PROCESS_DATA  ?>') {
                 if (! this.target.value) return false;
                 if (! this.preferred_type.value) return false;
             }
 
-            if (this.task_type.value == '<?php echo \Ginger\Processor\Definition::TASK_MANIPULATE_PAYLOAD  ?>') {
+            if (this.task_type.value == '<?php echo \Prooph\Processing\Processor\Definition::TASK_MANIPULATE_PAYLOAD  ?>') {
                 if (! this.manipulation_script.value) return false;
             }
 

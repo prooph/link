@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of Ginger Workflow Framework.
+* This file is part of prooph/link.
  * (c) prooph software GmbH <contact@prooph.de>
  *
  * For the full copyright and license information, please view the LICENSE
@@ -8,16 +8,16 @@
  * 
  * Date: 1/23/15 - 4:17 PM
  */
-namespace Gingerwork\Monitor\Controller\Factory;
+namespace Prooph\Link\Monitor\Controller\Factory;
 
-use Gingerwork\Monitor\Controller\ProcessesOverviewController;
+use Prooph\Link\Monitor\Controller\ProcessesOverviewController;
 use Zend\ServiceManager\FactoryInterface;
 use Zend\ServiceManager\ServiceLocatorInterface;
 
 /**
  * Class ProcessesOverviewControllerFactory
  *
- * @package Gingerwork\Monitor\Controller\Factory
+ * @package Prooph\Link\Monitor\Controller\Factory
  * @author Alexander Miertsch <alexander.miertsch.extern@sixt.com>
  */
 final class ProcessesOverviewControllerFactory implements FactoryInterface
@@ -31,7 +31,7 @@ final class ProcessesOverviewControllerFactory implements FactoryInterface
     public function createService(ServiceLocatorInterface $serviceLocator)
     {
         return new ProcessesOverviewController(
-            $serviceLocator->getServiceLocator()->get('gingerwork.monitor.process_logger')
+            $serviceLocator->getServiceLocator()->get('prooph.link.monitor.process_logger')
         );
     }
 }

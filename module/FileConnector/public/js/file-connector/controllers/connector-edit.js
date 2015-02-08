@@ -7,7 +7,7 @@ App.ConnectorEditController = Em.ObjectController.extend({
             this.set("writable", ! this.get("writable"));
         },
         createConnector : function () {
-            var connector = this.store.createRecord("connector", this.getProperties("name", "ginger_type", "metadata", "writable", "readable"));
+            var connector = this.store.createRecord("connector", this.getProperties("name", "processing_type", "metadata", "writable", "readable"));
             var self = this;
             connector.save().then(function () {
                 self.transitionToRoute("connectors.index");
@@ -24,17 +24,17 @@ App.ConnectorEditController = Em.ObjectController.extend({
 
     isNew : false,
     isSaved : false,
-    isGingerTypeSelected : Ember.computed.notEmpty("ginger_type"),
+    isProcessingTypeSelected : Ember.computed.notEmpty("processing_type"),
     isFileTypeSelected : Ember.computed.notEmpty("metadata.file_type"),
 
     isNotValid : function () {
         if (! this.get("isValidName")) return true;
-        if (! this.get("isGingerTypeSelected")) return true;
+        if (! this.get("isProcessingTypeSelected")) return true;
         if (! this.get("isFileTypeSelected")) return true;
         if (! this.get("writable") && ! this.get("readable")) return true;
 
         return false;
-    }.property("isValidName", "isGingerTypeSelected", "isFileTypeSelected", "writable", "readable"),
+    }.property("isValidName", "isProcessingTypeSelected", "isFileTypeSelected", "writable", "readable"),
 
     isValidName        : function () {
         if (Em.isEmpty(this.get("name"))) return false;
@@ -60,8 +60,8 @@ App.ConnectorEditController = Em.ObjectController.extend({
         return false;
     }.property("name"),
 
-    availableGingerTypes : function () {
-        return App.GingerTypes;
+    availableProcessingTypes : function () {
+        return App.ProcessingTypes;
     }.property(),
 
     availableFileTypes : function () {
@@ -74,21 +74,21 @@ App.ConnectorEditController = Em.ObjectController.extend({
             return;
         }
 
-        if (this.get("isGenerateName") && ! Em.isEmpty(this.get("ginger_type"))) {
+        if (this.get("isGenerateName") && ! Em.isEmpty(this.get("processing_type"))) {
             this.set("name", this.__generateName());
         }
 
         return this.get("name");
-    }.property("ginger_type", "isGenerateName"),
+    }.property("processing_type", "isGenerateName"),
 
     isGenerateName : function () {
         return Em.isEmpty(this.get("name")) || this.get("name") === this.get("__lastGeneratedName");
-    }.property("ginger_type", "metadata.file_type"),
+    }.property("processing_type", "metadata.file_type"),
     __lastGeneratedName : null,
     __generateName : function () {
-        if (Em.isEmpty(this.get("ginger_type"))) return null;
+        if (Em.isEmpty(this.get("processing_type"))) return null;
 
-        var name = App.gingerTypeName(this.get("ginger_type"));
+        var name = App.processingTypeName(this.get("processing_type"));
 
         if (! Em.isEmpty(this.get("metadata.file_type"))) {
             name = name + " " + this.get("metadata.file_type").toUpperCase();

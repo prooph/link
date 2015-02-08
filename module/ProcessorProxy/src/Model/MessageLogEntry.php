@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of the Ginger Workflow Framework.
+* This file is part of prooph/link.
  * (c) prooph software GmbH <contact@prooph.de>
  *
  * For the full copyright and license information, please view the LICENSE
@@ -11,15 +11,15 @@
 
 namespace ProcessorProxy\Model;
 
-use Ginger\Message\GingerMessage;
-use Ginger\Message\LogMessage;
-use Ginger\Message\ProophPlugin\ToGingerMessageTranslator;
-use Ginger\Message\WorkflowMessage;
-use Ginger\Processor\Command\StartSubProcess;
-use Ginger\Processor\Event\SubProcessFinished;
-use Ginger\Processor\Process;
-use Ginger\Processor\ProcessId;
-use Ginger\Processor\Task\TaskListPosition;
+use Prooph\Processing\Message\ProcessingMessage;
+use Prooph\Processing\Message\LogMessage;
+use Prooph\Processing\Message\ProophPlugin\ToProcessingMessageTranslator;
+use Prooph\Processing\Message\WorkflowMessage;
+use Prooph\Processing\Processor\Command\StartSubProcess;
+use Prooph\Processing\Processor\Event\SubProcessFinished;
+use Prooph\Processing\Processor\Process;
+use Prooph\Processing\Processor\ProcessId;
+use Prooph\Processing\Processor\Task\TaskListPosition;
 use Prooph\ServiceBus\Message\MessageInterface;
 use Rhumsaa\Uuid\Uuid;
 
@@ -52,7 +52,7 @@ final class MessageLogEntry
     private $loggedAt;
 
     /**
-     * All ginger messages - except start messages - are connected with a process task
+     * All processing messages - except start messages - are connected with a process task
      * So the TaskListPosition will only be null when a start message was logged.
      *
      * @var null|TaskListPosition
@@ -61,7 +61,7 @@ final class MessageLogEntry
 
     /**
      * A start message is neither connect with a task nor with a process
-     * But the DbalMessageLogger listens on the Ginger\Processor\Processor events to determine
+     * But the DbalMessageLogger listens on the Prooph\Processing\Processor\Processor events to determine
      * the process id of the process triggered by the start message
      * and adds the process id to the message log entry.
      *
@@ -75,14 +75,14 @@ final class MessageLogEntry
     private $status;
 
     /**
-     * @param MessageInterface|GingerMessage $message
+     * @param MessageInterface|ProcessingMessage $message
      * @throws \InvalidArgumentException
      * @return MessageLogEntry
      */
     public static function logMessage($message)
     {
         if ($message instanceof MessageInterface) {
-            $message = (new ToGingerMessageTranslator())->translateToGingerMessage($message);
+            $message = (new ToProcessingMessageTranslator())->translateToProcessingMessage($message);
         }
 
         if ($message instanceof WorkflowMessage)    return self::logWorkflowMessage($message);

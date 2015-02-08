@@ -1,3 +1,3 @@
-App.gingerTypeName = function (gingerType) {
-    return ginger_type_name(gingerType, App.GingerTypes);
+App.processingTypeName = function (processingType) {
+    return processing_type_name(processingType, App.ProcessingTypes);
 };

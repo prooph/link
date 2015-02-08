@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of the Ginger Workflow Framework.
+* This file is part of prooph/link.
  * (c) prooph software GmbH <contact@prooph.de>
  *
  * For the full copyright and license information, please view the LICENSE
@@ -31,15 +31,15 @@ final class UndoSystemSetUp extends SystemCommand
      */
     public static function removeConfigs($systemConfigLocation, $eventStoreConfigLocation, $sqliteDbFile)
     {
-        return new self(__CLASS__, ['ginger_config_location' => $systemConfigLocation, 'es_config_location' => $eventStoreConfigLocation, 'sqlite_db_file' => $sqliteDbFile]);
+        return new self(__CLASS__, ['processing_config_location' => $systemConfigLocation, 'es_config_location' => $eventStoreConfigLocation, 'sqlite_db_file' => $sqliteDbFile]);
     }
 
     /**
      * @return string
      */
-    public function gingerConfigLocation()
+    public function processingConfigLocation()
     {
-        return $this->payload['ginger_config_location'];
+        return $this->payload['processing_config_location'];
     }
 
     /**
@@ -61,7 +61,7 @@ final class UndoSystemSetUp extends SystemCommand
     protected function assertPayload($aPayload = null)
     {
         if (! is_array($aPayload)) throw new \InvalidArgumentException("Payload must be an array");
-        if (! array_key_exists("ginger_config_location",$aPayload)) throw new \InvalidArgumentException("ginger_config_location missing");
+        if (! array_key_exists("processing_config_location",$aPayload)) throw new \InvalidArgumentException("processing_config_location missing");
         if (! array_key_exists("es_config_location",$aPayload)) throw new \InvalidArgumentException("Event store config location missing");
         if (! array_key_exists("sqlite_db_file",$aPayload)) throw new \InvalidArgumentException("sqlite_db_file missing");
     }

@@ -90,7 +90,7 @@ class Bootstrap
                 'autoregister_zf' => true,
                 'namespaces' => array(
                     __NAMESPACE__ => __DIR__ . '/' . __NAMESPACE__,
-                    'GingerTest'  => __DIR__ . '/../../../vendor/gingerframework/gingerframework/tests'
+                    'ProcessingTest'  => __DIR__ . '/../../../vendor/prooph/processing/tests'
                 ),
             ),
         ));

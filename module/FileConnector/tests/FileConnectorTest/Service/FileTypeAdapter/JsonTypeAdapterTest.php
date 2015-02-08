@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of the Ginger Workflow Framework.
+* This file is part of prooph/link.
  * (c) prooph software GmbH <contact@prooph.de>
  *
  * For the full copyright and license information, please view the LICENSE
@@ -79,7 +79,7 @@ final class JsonTypeAdapterTest extends TestCase
 
         $readUsers = TestUserCollection::fromNativeValue($readUsersData);
 
-        $this->assertEquals(2, count($readUsers));
+        $this->assertEquals(2, count($readUsers->value()));
         $this->assertEquals(
             ['John Doe', 'Max Mustermann'],
             array_map(

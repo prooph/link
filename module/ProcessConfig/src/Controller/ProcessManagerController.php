@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of the Ginger Workflow Framework.
+* This file is part of prooph/link.
  * (c) prooph software GmbH <contact@prooph.de>
  *
  * For the full copyright and license information, please view the LICENSE
@@ -13,18 +13,18 @@ namespace ProcessConfig\Controller;
 
 use Application\Service\AbstractQueryController;
 use Application\Service\TranslatorAwareController;
-use Application\SharedKernel\GingerTypeClass;
+use Application\SharedKernel\ProcessingTypeClass;
 use Application\SharedKernel\LocationTranslator;
 use Application\SharedKernel\ProcessToClientTranslator;
 use Application\SharedKernel\ScriptLocation;
-use Ginger\Functional\Func;
-use Ginger\Message\MessageNameUtils;
-use Ginger\Processor\Definition;
-use Ginger\Processor\LinearProcess;
-use Ginger\Type\Description\Description;
-use Ginger\Type\Prototype;
-use Ginger\Type\PrototypeProperty;
-use SystemConfig\Projection\GingerConfig;
+use Prooph\Processing\Functional\Func;
+use Prooph\Processing\Message\MessageNameUtils;
+use Prooph\Processing\Processor\Definition;
+use Prooph\Processing\Processor\LinearProcess;
+use Prooph\Processing\Type\Description\Description;
+use Prooph\Processing\Type\Prototype;
+use Prooph\Processing\Type\PrototypeProperty;
+use SystemConfig\Projection\ProcessingConfig;
 use SystemConfig\Service\ConfigWriter\ZendPhpArrayWriter;
 use SystemConfig\Service\NeedsSystemConfig;
 use Zend\Mvc\I18n\Translator;
@@ -64,7 +64,7 @@ final class ProcessManagerController extends AbstractQueryController implements 
             'processes' => array_values(Func::map(
                 $this->systemConfig->getProcessDefinitions(),
                 function($definition, $message) {
-                    return $this->convertToClientProcess($message, $definition, $this->systemConfig->getAllAvailableGingerTypes());
+                    return $this->convertToClientProcess($message, $definition, $this->systemConfig->getAllAvailableProcessingTypes());
                 }
             )),
             'connectors' => array_values(
@@ -73,30 +73,30 @@ final class ProcessManagerController extends AbstractQueryController implements 
                     return $connector;
                 })
             ),
-            'available_ginger_types' => $this->getGingerTypesForClient(),
+            'available_processing_types' => $this->getProcessingTypesForClient(),
             'available_manipulation_scripts' => $this->scriptLocation->getScriptNames(),
             'locations'  => $this->locationTranslator->getLocations(),
             'available_process_types' => [
                 [
-                    'value' => \Ginger\Processor\Definition::PROCESS_LINEAR_MESSAGING,
+                    'value' => \Prooph\Processing\Processor\Definition::PROCESS_LINEAR_MESSAGING,
                     'label' => $this->i18nTranslator->translate('Linear Process'),
                 ],
                 [
-                    'value' => \Ginger\Processor\Definition::PROCESS_PARALLEL_FOR_EACH,
+                    'value' => \Prooph\Processing\Processor\Definition::PROCESS_PARALLEL_FOR_EACH,
                     'label' => $this->i18nTranslator->translate('Foreach Process'),
                 ],
             ],
             'available_task_types' => [
                 [
-                    'value' => \Ginger\Processor\Definition::TASK_COLLECT_DATA,
+                    'value' => \Prooph\Processing\Processor\Definition::TASK_COLLECT_DATA,
                     'label' => $this->i18nTranslator->translate('Collect Data'),
                 ],
                 [
-                    'value' => \Ginger\Processor\Definition::TASK_PROCESS_DATA,
+                    'value' => \Prooph\Processing\Processor\Definition::TASK_PROCESS_DATA,
                     'label' => $this->i18nTranslator->translate('Process Data'),
                 ],
                 [
-                    'value' => \Ginger\Processor\Definition::TASK_MANIPULATE_PAYLOAD,
+                    'value' => \Prooph\Processing\Processor\Definition::TASK_MANIPULATE_PAYLOAD,
                     'label' => $this->i18nTranslator->translate('Run Manipulation Script'),
                 ],
             ],
@@ -145,12 +145,12 @@ final class ProcessManagerController extends AbstractQueryController implements 
     /**
      * @param string $startMessage
      * @param array $processDefinition
-     * @param array $knownGingerTypes
+     * @param array $knownProcessingTypes
      * @return array
      */
-    private function convertToClientProcess($startMessage, array $processDefinition, array $knownGingerTypes)
+    private function convertToClientProcess($startMessage, array $processDefinition, array $knownProcessingTypes)
     {
-        return ProcessToClientTranslator::translate($startMessage, $processDefinition, $knownGingerTypes, $this->scriptLocation);
+        return ProcessToClientTranslator::translate($startMessage, $processDefinition, $knownProcessingTypes, $this->scriptLocation);
     }
 
     /**

@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of the Ginger Workflow Framework.
+* This file is part of prooph/link.
  * (c) prooph software GmbH <contact@prooph.de>
  *
  * For the full copyright and license information, please view the LICENSE
@@ -11,12 +11,12 @@
 
 namespace SqlConnectorTest\Mock;
 
-use Ginger\Processor\WorkflowProcessor;
+use Prooph\Processing\Processor\WorkflowProcessor;
 
 /**
  * Class StupidWorkflowProcessorMock
  *
- * @package GingerTest\Mock
+ * @package ProcessingTest\Mock
  * @author Alexander Miertsch <kontakt@codeliner.ws>
  */
 class StupidWorkflowProcessorMock extends WorkflowProcessor

@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of the Ginger Workflow Framework.
+* This file is part of prooph/link.
  * (c) prooph software GmbH <contact@prooph.de>
  *
  * For the full copyright and license information, please view the LICENSE
@@ -103,9 +103,9 @@ return array(
     ),
     'controllers' => array(
         'factories' => array(
-            'ProcessConfig\Controller\DashboardWidget' => 'ProcessConfig\Controller\Factory\DashboardWidgetControllerFactory',
-            'ProcessConfig\Controller\ProcessManager' => 'ProcessConfig\Controller\Factory\ProcessManagerControllerFactory',
-            'ProcessConfig\Api\Process' => 'ProcessConfig\Api\Factory\ProcessFactory',
+            'ProcessConfig\Controller\DashboardWidget' => ProcessConfig\Controller\Factory\DashboardWidgetControllerFactory::class,
+            'ProcessConfig\Controller\ProcessManager' => ProcessConfig\Controller\Factory\ProcessManagerControllerFactory::class,
+            'ProcessConfig\Api\Process' => ProcessConfig\Api\Factory\ProcessFactory::class,
         ),
     ),
     'zf-content-negotiation' => [

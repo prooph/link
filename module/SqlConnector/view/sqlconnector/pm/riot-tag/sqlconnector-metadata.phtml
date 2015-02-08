@@ -27,7 +27,7 @@
             <div class="form-group">
                 <select name="column" class="form-control form-control-inline-4">
                     <option value="">- <?php echo $this->translate('Property') ?> -</option>
-                    <option each="{ prop in availableGingerTypeProperties }">{ prop }</option>
+                    <option each="{ prop in availableProcessingTypeProperties }">{ prop }</option>
                 </select>
             </div>&nbsp;&nbsp;
             <div class="form-group">
@@ -112,7 +112,7 @@
             };
 
 
-        this.availableGingerTypeProperties = [];
+        this.availableProcessingTypeProperties = [];
         this.availableOperands = ["=", "<", "<=", ">", ">=", "like", "ilike"];
         this.availableOrderByProperties = [];
         this.isDuplicateColumn = false;
@@ -121,40 +121,40 @@
         this.tick = function () {};
 
         this.isExport = function () {
-            return this.taskType == '<?php echo \Ginger\Processor\Definition::TASK_COLLECT_DATA  ?>';
+            return this.taskType == '<?php echo \Prooph\Processing\Processor\Definition::TASK_COLLECT_DATA  ?>';
         }
 
         this.isImport = function () {
-            return this.taskType == '<?php echo \Ginger\Processor\Definition::TASK_PROCESS_DATA  ?>';
+            return this.taskType == '<?php echo \Prooph\Processing\Processor\Definition::TASK_PROCESS_DATA  ?>';
         }
 
         this.syncWithProcessManager = function (pm) {
             this.connector = pm.getCurrentConnector();
-            this.gingerType = pm.getCurrentGingerType();
+            this.processingType = pm.getCurrentProcessingType();
             this.taskType = pm.getCurrentTaskType();
             this.applyMetadata(pm.getMetadata());
-            this.availableGingerTypeProperties = this.findAvailableGingerTypeProperties();
+            this.availableProcessingTypeProperties = this.findAvailableProcessingTypeProperties();
             this.availableOrderByProperties    = this.findAvailableOrderByProperties();
             this.syncedWithParent = true;
             this.update();
         }
 
         this.isSingleResultType = function () {
-            if (! this.gingerType) return false;
+            if (! this.processingType) return false;
 
-            return this.gingerType.native_type !== "collection";
+            return this.processingType.native_type !== "collection";
         }
 
-        this.findAvailableGingerTypeProperties = function () {
-            if (! this.gingerType) return [];
+        this.findAvailableProcessingTypeProperties = function () {
+            if (! this.processingType) return [];
 
-            var gingerTypeObj = this.gingerType;
+            var processingTypeObj = this.processingType;
 
-            if (gingerTypeObj.native_type === "collection") gingerTypeObj = gingerTypeObj.properties.item;
+            if (processingTypeObj.native_type === "collection") processingTypeObj = processingTypeObj.properties.item;
 
             var properties = [];
 
-            for (prop in gingerTypeObj.properties) {
+            for (prop in processingTypeObj.properties) {
                 properties.push(prop);
             }
 
@@ -162,13 +162,13 @@
         }
 
         this.findAvailableOrderByProperties = function () {
-            var gingerTypeProperties = this.findAvailableGingerTypeProperties();
+            var processingTypeProperties = this.findAvailableProcessingTypeProperties();
 
             var orderByProps = _.map(this.orderByArr, function (order) {
                 return order.split(" ")[0];
             });
 
-            return _.filter(gingerTypeProperties, function (prop) {
+            return _.filter(processingTypeProperties, function (prop) {
                 return ! _.contains(orderByProps, prop);
             });
         }

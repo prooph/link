@@ -1,0 +1,181 @@
+<div class="{ list-group-item: true, event-container: true, text-info: isInfoEvent(), text-warning: isWarningEvent(), text-danger: isErrorEvent() }">
+    <div class="row">
+        <div class="col-xs-12 col-md-7">
+            { getDescription() }
+        </div>
+        <div class="col-xs-10 col-md-4">
+            { event.occurred_on }
+        </div>
+        <div class="col-xs-2 col-md-1">
+            <a if="{ isLogEvent() }" href="#" class="btn btn-sm btn-default log-message-details-toggle" onclick="{ toggleLogMessageDetails }"><span class="glyphicon glyphicon-arrow-down"></span></a>
+        </div>
+    </div>
+    <div if="{ hasLogMessageDetails() }" class="row log-message-details hidden">
+        <div class="col-md-12">
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+    function (context) {
+        this.event = context.event;
+
+        this.toggleLogMessageDetails = function () {
+
+            $(this.root).find(".log-message-details-toggle")
+                .toggleClass("active")
+                .children(".glyphicon")
+                .toggleClass("glyphicon-arrow-down glyphicon-arrow-up")
+                .closest(".event-container")
+                .children(".log-message-details").slideToggle(500);
+        };
+
+        this.isInfoEvent = function () {
+            switch (this.event.name) {
+                case "ProcessWasSetUp":
+                case "TaskEntryMarkedAsRunning":
+                case "TaskEntryMarkedAsDone":
+                    return true;
+                case "LogMessageReceived":
+                    return this.__getLogMessageCode() < 100
+                            || (this.__getLogMessageCode() >= 200 && this.__getLogMessageCode() < 400)
+                default:
+                    return false;
+            }
+        }
+
+        this.isWarningEvent = function () {
+            return this.event.name == "LogMessageReceived"
+                && this.__getLogMessageCode() >= 100
+                && this.__getLogMessageCode() < 200;
+        };
+
+        this.isErrorEvent = function () {
+            switch (this.event.name) {
+                case "TaskEntryMarkedAsFailed":
+                    return true;
+                case "LogMessageReceived":
+                    return this.__getLogMessageCode() >= 400;
+                default:
+                    return false;
+            }
+        }
+
+        this.isLogEvent = function () {
+            return this.event.name == "LogMessageReceived";
+        }
+
+        this.getDescription = function () {
+            switch (this.event.name) {
+                case "ProcessWasSetUp":
+                    return '<?php echo $this->translate('Task was started')  ?>';
+                case "TaskEntryMarkedAsRunning":
+                    return '<?php echo $this->translate('Process was started')  ?>';
+                case "TaskEntryMarkedAsDone":
+                    return '<?php echo $this->translate('Task successfully done')  ?>';
+                case "TaskEntryMarkedAsFailed":
+                    return '<?php echo $this->translate('Task failed')  ?>';
+                case "LogMessageReceived":
+                    return this.__logMessageDescription(this.__getLogMessageCode());
+                default:
+                    return '<?php echo $this->translate('Unknown event logged: ')  ?>';
+            }
+        }
+
+        this.__logMessageDescription = function (logMessageCode) {
+            switch (logMessageCode) {
+                case <?php echo \Prooph\Processing\Message\LogMessage::ERROR_SYSTEM_ERROR  ?>:
+                    return '<?php echo $this->translate('A system error occurred!')  ?>';
+                case <?php echo \Prooph\Processing\Message\LogMessage::ERROR_UNSUPPORTED_MESSAGE_RECEIVED  ?>:
+                    return s.sprintf(
+                        '<?php echo $this->translate('Connector %s received wrong message with name %s!')  ?>',
+                        this.__getLogMessageParams().workflow_message_handler,
+                        this.__getLogMessageParams().message_name
+                    );
+                case <?php echo \Prooph\Processing\Message\LogMessage::ERROR_NO_MESSAGE_RECEIVED  ?>:
+                    return s.sprintf(
+                        '<?php echo $this->translate('The Processor has no message received for task %d')  ?>',
+                        this.__getLogMessageParams().task_list_position
+                    );
+                case <?php echo \Prooph\Processing\Message\LogMessage::ERROR_WRONG_MESSAGE_RECEIVED  ?>:
+                    return s.sprintf(
+                        '<?php echo $this->translate('The Processor has received a wrong message for task %d. The message name was %s.')  ?>',
+                        this.__getLogMessageParams().task_list_position,
+                        this.__getLogMessageParams().message_name
+                    );
+                case <?php echo \Prooph\Processing\Message\LogMessage::ERROR_ITEMS_PROCESSING_FAILED  ?>:
+                    return s.sprintf(
+                        '<?php echo $this->translate('Processing of %d/%d items failed')  ?>',
+                        this.__getLogMessageParams().failed_items,
+                        this.__getLogMessageParams().failed_items + this.__getLogMessageParams().successful_items
+                    );
+                default:
+                    return '<?php echo $this->translate('Unknown log message received with msg code: ')  ?>' + logMessageCode;
+            }
+        }
+
+        this.__getLogMessageCode = function () {
+            return this.event.payload.message.payload.msgCode;
+        }
+
+        this.hasLogMessageDetails = function () {
+            if (! this.isLogEvent() ) return false;
+
+            switch (this.__getLogMessageCode()) {
+                case <?php echo \Prooph\Processing\Message\LogMessage::ERROR_SYSTEM_ERROR  ?>:
+                case <?php echo \Prooph\Processing\Message\LogMessage::ERROR_ITEMS_PROCESSING_FAILED  ?>:
+                    return true;
+                default:
+                    return false;
+            }
+        }
+
+        this.getLogMessageDetails = function () {
+            switch (this.__getLogMessageCode()) {
+                case <?php echo \Prooph\Processing\Message\LogMessage::ERROR_SYSTEM_ERROR  ?>:
+                    return this.__getSystemErrorDetails();
+                case <?php echo \Prooph\Processing\Message\LogMessage::ERROR_ITEMS_PROCESSING_FAILED  ?>:
+                    return this.__getItemsProcessingFailedMessages();
+                default:
+                    return this.__getTechnicalLogMsg();
+            }
+        }
+
+        this.__getLogMessagePayload = function () {
+            return this.event.payload.message.payload || {};
+        }
+
+        this.__getLogMessageParams = function () {
+            return this.__getLogMessagePayload().msgParams || {};
+        }
+
+        this.__getSystemErrorDetails = function () {
+            var payload = this.__getLogMessagePayload();
+
+            return '<p><strong>Error:</strong></p>' +
+                    '<p>' + payload.technicalMsg + '</p>' +
+                    '<p><strong>TRACE: </strong></p>' +
+                    '<pre>' + payload.msgParams.trace + '</pre>';
+        }
+
+        this.__getItemsProcessingFailedMessages = function () {
+            var messages = [];
+            _.each(this.__getLogMessageParams().failed_messages, function (failedMessage) {
+                console.log('failed Message: ', failedMessage);
+                messages.push('<p>' + failedMessage + '</p>');
+            })
+
+            return messages.join("\n");
+        }
+
+        this.__getTechnicalLogMsg = function () {
+            return this.event.payload.message.payload.technicalMsg;
+        }
+
+        this.on("mount", function () {
+            if (this.hasLogMessageDetails()) {
+                $(this.root).find(".log-message-details").hide().removeClass("hidden")
+                    .find("div").html(this.getLogMessageDetails());
+            }
+        })
+    }
+</script>

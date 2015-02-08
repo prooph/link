@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of the Ginger Workflow Framework.
+* This file is part of prooph/link.
  * (c) prooph software GmbH <contact@prooph.de>
  *
  * For the full copyright and license information, please view the LICENSE
@@ -23,7 +23,7 @@ return [
                         'options' => [
                             'route' => '/process-overview',
                             'defaults' => [
-                                'controller' => 'Gingerwork\Monitor\Controller\ProcessesOverview',
+                                'controller' => 'Prooph\Link\Monitor\Controller\ProcessesOverview',
                                 'action' => 'overview'
                             ]
                         ]
@@ -36,7 +36,7 @@ return [
                                 'process_id' => '[A-Za-z0-9-]{36,36}',
                             ),
                             'defaults' => [
-                                'controller' => 'Gingerwork\Monitor\Controller\ProcessView',
+                                'controller' => 'Prooph\Link\Monitor\Controller\ProcessView',
                                 'action' => 'details'
                             ]
                         ]
@@ -56,32 +56,32 @@ return [
         ],
     ],
     'dashboard' => [
-        'gingerwork_monitor_widget' => [
-            'controller' => 'Gingerwork\Monitor\Controller\ProcessesOverview',
+        'prooph_link_monitor_widget' => [
+            'controller' => 'Prooph\Link\Monitor\Controller\ProcessesOverview',
             'order' => 1 //Monitoring should be the first widget
         ]
 
     ],
     'service_manager' => [
         'factories' => [
-            'gingerwork.monitor.process_logger' => 'Gingerwork\Monitor\Service\Factory\DbalProcessLoggerFactory',
-            'gingerwork.monitor.process_stream_reader' => 'Gingerwork\Monitor\Projection\Factory\ProcessStreamReaderFactory',
-            \Gingerwork\Monitor\GingerPlugin\ProcessLogListener::PLUGIN_NAME => 'Gingerwork\Monitor\GingerPlugin\Factory\ProcessLogListenerFactory',
+            'prooph.link.monitor.process_logger' => 'Prooph\Link\Monitor\Service\Factory\DbalProcessLoggerFactory',
+            'prooph.link.monitor.process_stream_reader' => 'Prooph\Link\Monitor\Projection\Factory\ProcessStreamReaderFactory',
+            \Prooph\Link\Monitor\ProcessingPlugin\ProcessLogListener::PLUGIN_NAME => 'Prooph\Link\Monitor\ProcessingPlugin\Factory\ProcessLogListenerFactory',
         ]
     ],
     'controllers' => [
         'factories' => [
-            'Gingerwork\Monitor\Controller\ProcessesOverview' => 'Gingerwork\Monitor\Controller\Factory\ProcessesOverviewControllerFactory',
-            'Gingerwork\Monitor\Controller\ProcessView' => 'Gingerwork\Monitor\Controller\Factory\ProcessViewControllerFactory',
+            'Prooph\Link\Monitor\Controller\ProcessesOverview' => 'Prooph\Link\Monitor\Controller\Factory\ProcessesOverviewControllerFactory',
+            'Prooph\Link\Monitor\Controller\ProcessView' => 'Prooph\Link\Monitor\Controller\Factory\ProcessViewControllerFactory',
         ],
     ],
     'view_manager' => [
         'template_map' => [
-            'gingerwork/monitor/process-view/overview' => __DIR__ . '/../view/gingerwork/monitor/process-view/overview.phtml',
-            'gingerwork/monitor/process-view/process-details-app' => __DIR__ . '/../view/gingerwork/monitor/process-view/process-details-app.phtml',
-            'gingerwork/monitor/process-view/process-details-incomplete' => __DIR__ . '/../view/gingerwork/monitor/process-view/process-details-incomplete.phtml',
-            'gingerwork/monitor/process-view/partial/process-list' => __DIR__ . '/../view/gingerwork/monitor/process-view/partial/process-list.phtml',
-            'gingerwork/monitor/process-view/partial/process-details' => __DIR__ . '/../view/gingerwork/monitor/process-view/partial/process-details.phtml',
+            'prooph/link/monitor/process-view/overview' => __DIR__ . '/../view/prooph/link/monitor/process-view/overview.phtml',
+            'prooph/link/monitor/process-view/process-details-app' => __DIR__ . '/../view/prooph/link/monitor/process-view/process-details-app.phtml',
+            'prooph/link/monitor/process-view/process-details-incomplete' => __DIR__ . '/../view/prooph/link/monitor/process-view/process-details-incomplete.phtml',
+            'prooph/link/monitor/process-view/partial/process-list' => __DIR__ . '/../view/prooph/link/monitor/process-view/partial/process-list.phtml',
+            'prooph/link/monitor/process-view/partial/process-details' => __DIR__ . '/../view/prooph/link/monitor/process-view/partial/process-details.phtml',
         ],
         'template_path_stack' => array(
             __DIR__ . '/../view',
@@ -91,10 +91,10 @@ return [
         'resolver_configs' => array(
             'riot-tags' => [
                 'js/process-monitor/app.js' => [
-                    'gingerwork/monitor/process-view/riot-tag/process-monitor',
-                    'gingerwork/monitor/process-view/riot-tag/task-monitor',
-                    'gingerwork/monitor/process-view/riot-tag/task-status',
-                    'gingerwork/monitor/process-view/riot-tag/task-event-monitor',
+                    'prooph/link/monitor/process-view/riot-tag/process-monitor',
+                    'prooph/link/monitor/process-view/riot-tag/task-monitor',
+                    'prooph/link/monitor/process-view/riot-tag/task-status',
+                    'prooph/link/monitor/process-view/riot-tag/task-event-monitor',
                     'process-config/process-manager/riot-tag/task-desc',
                     'process-config/process-manager/riot-tag/process-play',
                 ]

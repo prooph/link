@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of the Ginger Workflow Framework.
+* This file is part of prooph/link.
  * (c) prooph software GmbH <contact@prooph.de>
  *
  * For the full copyright and license information, please view the LICENSE
@@ -51,7 +51,7 @@ final class LeagueCsvTypeAdapterTest extends TestCase
 
         $testUsers = TestUserCollection::fromNativeValue($usersData);
 
-        $this->assertEquals(3, count($testUsers));
+        $this->assertEquals(3, count($testUsers->value()));
         $this->assertEquals(
             ['John Doe', 'Max Mustermann', 'Donald Duck'],
             array_map(
@@ -70,7 +70,7 @@ final class LeagueCsvTypeAdapterTest extends TestCase
 
         $testUsers = TestUserCollection::fromNativeValue($usersData);
 
-        $this->assertEquals(3, count($testUsers));
+        $this->assertEquals(3, count($testUsers->value()));
         $this->assertEquals(
             ['John Doe', 'Max Mustermann', 'Donald Duck'],
             array_map(
@@ -95,7 +95,7 @@ final class LeagueCsvTypeAdapterTest extends TestCase
 
         $testUsers = TestUserCollection::fromNativeValue($usersData);
 
-        $this->assertEquals(3, count($testUsers));
+        $this->assertEquals(3, count($testUsers->value()));
         $this->assertEquals(3, $metadata['total_items']);
         $this->assertEquals(
             ['John Doe', 'Max Mustermann', 'Donald Duck'],
@@ -121,7 +121,7 @@ final class LeagueCsvTypeAdapterTest extends TestCase
 
         $testUsers = TestUserCollection::fromNativeValue($usersData);
 
-        $this->assertEquals(2, count($testUsers));
+        $this->assertEquals(2, count($testUsers->value()));
         $this->assertEquals(3, $metadata['total_items']);
         $this->assertEquals(
             ['Max Mustermann', 'Donald Duck'],
@@ -146,7 +146,7 @@ final class LeagueCsvTypeAdapterTest extends TestCase
 
         $readUsers = TestUserCollection::fromNativeValue($readUsersData);
 
-        $this->assertEquals(2, count($readUsers));
+        $this->assertEquals(2, count($readUsers->value()));
         $this->assertEquals(
             ['John Doe', 'Max Mustermann'],
             array_map(
@@ -172,7 +172,7 @@ final class LeagueCsvTypeAdapterTest extends TestCase
 
         $readUsers = TestUserCollection::fromNativeValue($readUsersData);
 
-        $this->assertEquals(2, count($readUsers));
+        $this->assertEquals(2, count($readUsers->value()));
         $this->assertEquals(
             ['John Doe', 'Max Mustermann'],
             array_map(
@@ -204,7 +204,7 @@ final class LeagueCsvTypeAdapterTest extends TestCase
 
         $readUsers = TestUserCollection::fromNativeValue($readUsersData);
 
-        $this->assertEquals(3, count($readUsers));
+        $this->assertEquals(3, count($readUsers->value()));
         $this->assertEquals(
             ['John Doe', 'Max Mustermann', 'Donald Duck'],
             array_map(

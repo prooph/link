@@ -19,7 +19,7 @@ $apiUrl = ltrim($this->url('file_connector/api'), '/');
 
 $shortLocale = explode("_", $this->plugin('translate')->getTranslator()->getLocale())[0];
 
-$availableGingerTypes = json_encode($this->available_ginger_types);
+$availableProcessingTypes = json_encode($this->available_processing_types);
 $availableFileTypes  = json_encode($this->available_file_types);
 $availableSystemConnectors = json_encode($this->system_connectors);
 
@@ -43,7 +43,7 @@ Em.I18n.translations = $clientTranslations;
 
 App.Object = Ember.Object.extend(Em.Serializable);
 
-App.GingerTypes = $availableGingerTypes;
+App.ProcessingTypes = $availableProcessingTypes;
 App.FileTypes = $availableFileTypes;
 App.SystemConnectors = $availableSystemConnectors;
 

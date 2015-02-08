@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of the Ginger Workflow Framework.
+* This file is part of prooph/link.
  * (c) prooph software GmbH <contact@prooph.de>
  *
  * For the full copyright and license information, please view the LICENSE
@@ -12,7 +12,7 @@
 namespace SystemConfig\Controller;
 
 use Application\Service\AbstractQueryController;
-use SystemConfig\Projection\GingerConfig;
+use SystemConfig\Projection\ProcessingConfig;
 use SystemConfig\Service\NeedsSystemConfig;
 use Zend\View\Model\ViewModel;
 
@@ -31,18 +31,18 @@ class OverviewController extends AbstractQueryController
     {
         $params = [];
 
-        $params['gingerConfig'] = $this->systemConfig;
+        $params['processingConfig'] = $this->systemConfig;
 
         $params['config_dir_is_writable'] = is_writable($this->systemConfig->getConfigLocation()->toString());
 
         if ($this->systemConfig->isConfigured()) {
-            $params['config_is_writable'] = is_writable($this->systemConfig->getConfigLocation()->toString() . DIRECTORY_SEPARATOR . \SystemConfig\Model\GingerConfig::configFileName());
+            $params['config_is_writable'] = is_writable($this->systemConfig->getConfigLocation()->toString() . DIRECTORY_SEPARATOR . \SystemConfig\Model\ProcessingConfig::configFileName());
         } else {
             $params['config_is_writable'] = true;
         }
 
         $params['config_dir'] = $this->systemConfig->getConfigLocation()->toString();
-        $params['config_file_name'] = \SystemConfig\Model\GingerConfig::configFileName();
+        $params['config_file_name'] = \SystemConfig\Model\ProcessingConfig::configFileName();
 
         return new ViewModel($params);
     }

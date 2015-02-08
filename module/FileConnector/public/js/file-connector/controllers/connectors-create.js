@@ -4,7 +4,7 @@ App.ConnectorsCreateRoute = Em.Route.extend({
     },
     model : function () {
         return App.Object.create({
-            ginger_type : null,
+            processing_type : null,
             name : null,
             metadata : App.Object.create({
                 file_type : null

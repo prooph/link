@@ -16,10 +16,10 @@
                     <div if="{ ! process_type.value }" class="well well-lg text-info process-desc">
                         <?php echo $this->translate('Choose a process type. If you are unsure which type to select go through the list and you will get a description for each type.') ?>
                     </div>
-                    <div if="{ process_type.value == '<?php echo \Ginger\Processor\Definition::PROCESS_LINEAR_MESSAGING ?>' }" class="well well-lg text-info process-desc">
+                    <div if="{ process_type.value == '<?php echo \Prooph\Processing\Processor\Definition::PROCESS_LINEAR_MESSAGING ?>' }" class="well well-lg text-info process-desc">
                         <?php echo $this->translate('The linear process triggers all tasks in a sequence. The previous task must be finished before the next task will start.') ?>
                     </div>
-                    <div if="{ process_type.value == '<?php echo \Ginger\Processor\Definition::PROCESS_PARALLEL_FOR_EACH ?>' }" class="well well-lg text-info process-desc">
+                    <div if="{ process_type.value == '<?php echo \Prooph\Processing\Processor\Definition::PROCESS_PARALLEL_FOR_EACH ?>' }" class="well well-lg text-info process-desc">
                         <?php echo $this->translate('The foreach process only works with collections. It passes each item of the collection to its defined task list. The tasks are triggered in parallel.') ?>
                     </div>
                 </div>
@@ -34,19 +34,19 @@
                             <option each="{ messageTypes }" value="{ value }">{ label }</option>
                         </select>
                     </div>
-                    <div class="{ form-group: true, has-success: ginger_tpye.value }">
-                        <select name="ginger_type" class="form-control form-control-with-desc" onchange="{ update }" onfocus="{ focusGingerType }" onblur="{ blurGingerType }">
+                    <div class="{ form-group: true, has-success: processing_tpye.value }">
+                        <select name="processing_type" class="form-control form-control-with-desc" onchange="{ update }" onfocus="{ focusProcessingType }" onblur="{ blurProcessingType }">
                             <option value="">- <?php echo $this->translate('Data  Type') ?> -</option>
-                            <option each="{ gingerTypes }" value="{ value }">{ label }</option>
+                            <option each="{ processingTypes }" value="{ value }">{ label }</option>
                         </select>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="well well-lg text-info process-desc">
-                        <span if="{ ! isGingerTypeFocused && ! message_type.value }"><?php echo $this->translate('Each process is triggered by a workflow message. Such a message consists of two parts: a message type and a data type.') ?></span>
-                        <span if="{ ! isGingerTypeFocused && message_type.value == '<?php echo \Ginger\Message\MessageNameUtils::COLLECT_DATA ?>' }"><?php echo $this->translate('A collect-data message is useful when the first task of the process should collect data from a source system.') ?></span>
-                        <span if="{ ! isGingerTypeFocused && message_type.value == '<?php echo \Ginger\Message\MessageNameUtils::DATA_COLLECTED ?>' }"><?php echo $this->translate('A data-collected message is useful when a process should be started automatically as soon as such a message is received.') ?></span>
-                        <span if="{ isGingerTypeFocused }"><?php echo $this->translate('Data types are provided by system connectors or plugins. They define the structures a connected system can provide or process.') ?></span>
+                        <span if="{ ! isProcessingTypeFocused && ! message_type.value }"><?php echo $this->translate('Each process is triggered by a workflow message. Such a message consists of two parts: a message type and a data type.') ?></span>
+                        <span if="{ ! isProcessingTypeFocused && message_type.value == '<?php echo \Prooph\Processing\Message\MessageNameUtils::COLLECT_DATA ?>' }"><?php echo $this->translate('A collect-data message is useful when the first task of the process should collect data from a source system.') ?></span>
+                        <span if="{ ! isProcessingTypeFocused && message_type.value == '<?php echo \Prooph\Processing\Message\MessageNameUtils::DATA_COLLECTED ?>' }"><?php echo $this->translate('A data-collected message is useful when a process should be started automatically as soon as such a message is received.') ?></span>
+                        <span if="{ isProcessingTypeFocused }"><?php echo $this->translate('Data types are provided by system connectors or plugins. They define the structures a connected system can provide or process.') ?></span>
                     </div>
                 </div>
             </div>
@@ -61,17 +61,17 @@
 <script type="text/javascript">
     function (context) {
         this.processTypes = context.app.processTypes;
-        this.messageTypes = _.filter(context.app.messages, function (message) { return message.value != '<?php echo \Ginger\Message\MessageNameUtils::PROCESS_DATA  ?>' });
-        this.gingerTypes  = context.app.gingerTypes;
+        this.messageTypes = _.filter(context.app.messages, function (message) { return message.value != '<?php echo \Prooph\Processing\Message\MessageNameUtils::PROCESS_DATA  ?>' });
+        this.processingTypes  = context.app.processingTypes;
 
-        this.isGingerTypeFocused = false;
-        this.focusGingerType = function () { this.isGingerTypeFocused = true };
-        this.blurGingerType  = function () { this.isGingerTypeFocused = false };
+        this.isProcessingTypeFocused = false;
+        this.focusProcessingType = function () { this.isProcessingTypeFocused = true };
+        this.blurProcessingType  = function () { this.isProcessingTypeFocused = false };
 
         this.isValid = function () {
             if(! this.process_type.value) return false;
             if(! this.message_type.value) return false;
-            if(! this.ginger_type.value) return false;
+            if(! this.processing_type.value) return false;
 
             return true;
         }
@@ -79,11 +79,11 @@
         this.generateProcessName = function () {
             var name = "";
 
-            if (this.process_type.value == '<?php echo \Ginger\Processor\Definition::PROCESS_LINEAR_MESSAGING  ?>') name = name + "Linear ";
-            if (this.process_type.value == '<?php echo \Ginger\Processor\Definition::PROCESS_PARALLEL_FOR_EACH  ?>') name = name + "Foreach ";
-            if (this.message_type.value == '<?php echo \Ginger\Message\MessageNameUtils::COLLECT_DATA  ?>') name = name + "Collect ";
-            if (this.message_type.value == '<?php echo \Ginger\Message\MessageNameUtils::DATA_COLLECTED  ?>') name = name + "Process ";
-            if (!_.isEmpty(this.ginger_type.value)) name = name + ginger_type_name(this.ginger_type.value, this.gingerTypes);
+            if (this.process_type.value == '<?php echo \Prooph\Processing\Processor\Definition::PROCESS_LINEAR_MESSAGING  ?>') name = name + "Linear ";
+            if (this.process_type.value == '<?php echo \Prooph\Processing\Processor\Definition::PROCESS_PARALLEL_FOR_EACH  ?>') name = name + "Foreach ";
+            if (this.message_type.value == '<?php echo \Prooph\Processing\Message\MessageNameUtils::COLLECT_DATA  ?>') name = name + "Collect ";
+            if (this.message_type.value == '<?php echo \Prooph\Processing\Message\MessageNameUtils::DATA_COLLECTED  ?>') name = name + "Process ";
+            if (!_.isEmpty(this.processing_type.value)) name = name + processing_type_name(this.processing_type.value, this.processingTypes);
 
             return name;
         };
@@ -94,7 +94,7 @@
                 "process_type" : this.process_type.value,
                 "start_message" : {
                     message_type : this.message_type.value,
-                    ginger_type : this.ginger_type.value
+                    processing_type : this.processing_type.value
                 },
                 "tasks" : []
             }

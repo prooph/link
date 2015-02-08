@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of the Ginger Workflow Framework.
+* This file is part of prooph/link.
  * (c) prooph software GmbH <contact@prooph.de>
  *
  * For the full copyright and license information, please view the LICENSE
@@ -11,14 +11,14 @@
 
 namespace ProcessorProxyTest\Model;
 
-use Ginger\Message\LogMessage;
-use Ginger\Message\WorkflowMessage;
-use Ginger\Processor\Command\StartSubProcess;
-use Ginger\Processor\Event\SubProcessFinished;
-use Ginger\Processor\NodeName;
-use Ginger\Processor\ProcessId;
-use Ginger\Processor\Task\TaskListId;
-use Ginger\Processor\Task\TaskListPosition;
+use Prooph\Processing\Message\LogMessage;
+use Prooph\Processing\Message\WorkflowMessage;
+use Prooph\Processing\Processor\Command\StartSubProcess;
+use Prooph\Processing\Processor\Event\SubProcessFinished;
+use Prooph\Processing\Processor\NodeName;
+use Prooph\Processing\Processor\ProcessId;
+use Prooph\Processing\Processor\Task\TaskListId;
+use Prooph\Processing\Processor\Task\TaskListPosition;
 use ProcessorProxy\Model\MessageLogEntry;
 use ProcessorProxy\Model\MessageStatus;
 use ProcessorProxyTest\TestCase;
@@ -36,7 +36,7 @@ final class MessageLogEntryTest extends TestCase
      * @test
      * @dataProvider provideMessages
      */
-    public function it_can_be_created_from_any_ginger_message_even_if_wrapped_in_a_service_bus_message($message, $expectedLogData)
+    public function it_can_be_created_from_any_processing_message_even_if_wrapped_in_a_service_bus_message($message, $expectedLogData)
     {
         $logEntry = MessageLogEntry::logMessage($message);
 
@@ -59,7 +59,7 @@ final class MessageLogEntryTest extends TestCase
 
         $remoteTaskListPosition = TaskListPosition::at(TaskListId::linkWith(NodeName::fromString("remote-system"), ProcessId::generate()), 1);
 
-        $wfMessageWithoutTaskListPosition = WorkflowMessage::collectDataOf(TestUser::prototype());
+        $wfMessageWithoutTaskListPosition = WorkflowMessage::collectDataOf(TestUser::prototype(), 'test-case', 'localhost');
         $expectedDataWfMessageWithoutTaskListPosition = [
             'message_id' => $wfMessageWithoutTaskListPosition->uuid()->toString(),
             'message_name' => $wfMessageWithoutTaskListPosition->messageName(),
@@ -70,7 +70,7 @@ final class MessageLogEntryTest extends TestCase
             'failure_msg' => null
         ];
 
-        $wfMessageWithTaskListPosition = WorkflowMessage::collectDataOf(TestUser::prototype());
+        $wfMessageWithTaskListPosition = WorkflowMessage::collectDataOf(TestUser::prototype(), 'test-case', 'localhost');
         $wfMessageWithTaskListPosition->connectToProcessTask($localTaskListPosition);
         $expectedDataWfMessageWithTaskListPosition = [
             'message_id' => $wfMessageWithTaskListPosition->uuid()->toString(),
@@ -82,7 +82,7 @@ final class MessageLogEntryTest extends TestCase
             'failure_msg' => null
         ];
 
-        $logMessage = LogMessage::logDebugMsg("Log message", $localTaskListPosition);
+        $logMessage = LogMessage::logDebugMsg("Log message", $wfMessageWithTaskListPosition);
         $expectedDataLogMessage = [
             'message_id' => $logMessage->uuid()->toString(),
             'message_name' => $logMessage->messageName(),
@@ -104,7 +104,9 @@ final class MessageLogEntryTest extends TestCase
             'failure_msg' => null
         ];
 
-        $logMessageSubProcess = LogMessage::logErrorMsg("Faked error", $remoteTaskListPosition);
+        $wfMessageWithRemoteTaskListPosition = WorkflowMessage::collectDataOf(TestUser::prototype(), 'test-case', 'localhost');
+        $wfMessageWithRemoteTaskListPosition->connectToProcessTask($remoteTaskListPosition);
+        $logMessageSubProcess = LogMessage::logErrorMsg("Faked error", $wfMessageWithRemoteTaskListPosition);
         $subProcessFinished = SubProcessFinished::record(
             NodeName::fromString("remote-system"),
             $remoteTaskListPosition->taskListId()->processId(),
@@ -171,7 +173,7 @@ final class MessageLogEntryTest extends TestCase
      */
     public function it_allows_to_assign_a_process_id_when_a_start_message_was_logged()
     {
-        $wfMessage = WorkflowMessage::collectDataOf(TestUser::prototype());
+        $wfMessage = WorkflowMessage::collectDataOf(TestUser::prototype(), 'test-case', 'localhost');
 
         $messageLogEntry = MessageLogEntry::logMessage($wfMessage);
 
@@ -190,7 +192,7 @@ final class MessageLogEntryTest extends TestCase
      */
     public function it_does_not_allow_to_set_a_process_id_when_logged_message_was_not_a_start_message()
     {
-        $wfMessage = WorkflowMessage::collectDataOf(TestUser::prototype());
+        $wfMessage = WorkflowMessage::collectDataOf(TestUser::prototype(), 'test-case', 'localhost');
 
         $taskListPosition = TaskListPosition::at(TaskListId::linkWith(NodeName::defaultName(), ProcessId::generate()), 1);
 
@@ -206,7 +208,7 @@ final class MessageLogEntryTest extends TestCase
      */
     public function it_can_be_marked_as_succeed()
     {
-        $wfMessage = WorkflowMessage::collectDataOf(TestUser::prototype());
+        $wfMessage = WorkflowMessage::collectDataOf(TestUser::prototype(), 'test-case', 'localhost');
 
         $taskListPosition = TaskListPosition::at(TaskListId::linkWith(NodeName::defaultName(), ProcessId::generate()), 1);
 
@@ -227,7 +229,7 @@ final class MessageLogEntryTest extends TestCase
      */
     public function it_can_not_be_marked_as_succeed_if_start_message_was_logged_but_it_was_no_process_id_assigned()
     {
-        $wfMessage = WorkflowMessage::collectDataOf(TestUser::prototype());
+        $wfMessage = WorkflowMessage::collectDataOf(TestUser::prototype(), 'test-case', 'localhost');
 
         $messageLogEntry = MessageLogEntry::logMessage($wfMessage);
 
@@ -239,7 +241,7 @@ final class MessageLogEntryTest extends TestCase
      */
     public function it_can_be_marked_as_failed()
     {
-        $wfMessage = WorkflowMessage::collectDataOf(TestUser::prototype());
+        $wfMessage = WorkflowMessage::collectDataOf(TestUser::prototype(), 'test-case', 'localhost');
 
         $messageLogEntry = MessageLogEntry::logMessage($wfMessage);
 
@@ -286,7 +288,7 @@ final class MessageLogEntryTest extends TestCase
      */
     public function provideEntries()
     {
-        $wfStartMessage = WorkflowMessage::collectDataOf(TestUser::prototype());
+        $wfStartMessage = WorkflowMessage::collectDataOf(TestUser::prototype(), 'test-case', 'localhost');
 
         $startMessageLogEntry = MessageLogEntry::logMessage($wfStartMessage);
 
@@ -302,7 +304,7 @@ final class MessageLogEntryTest extends TestCase
 
         $startMessageLogEntryWithAssignedProcessIdFailed->markAsFailed("Starting process failed");
 
-        $wfMessage = WorkflowMessage::collectDataOf(TestUser::prototype());
+        $wfMessage = WorkflowMessage::collectDataOf(TestUser::prototype(), 'test-case', 'localhost');
 
         $taskListPosition = TaskListPosition::at(TaskListId::linkWith(NodeName::defaultName(), ProcessId::generate()), 1);
 
