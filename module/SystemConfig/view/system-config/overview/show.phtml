@@ -1,4 +1,5 @@
 <h1><?php echo $this->translate('System Configuration') ?></h1>
+<hr>
 <div class="row">
     <?php if (!$this->config_dir_is_writable) : ?>
         <div class="col-md-12">
@@ -27,66 +28,31 @@
             </div>
         </div>
     <?php else : ?>
-        <div class="col-md-8">
-            <div class="row">
-                <table class="table table-hover">
-                    <tr>
-                        <td>
-                            <p class="text-info text-btn-align"><strong>Processing Node Name</strong></p>
-                        </td>
-                        <td>
-                            <p id="config-node-name" class="text-btn-align"><strong><?php echo $this->processingConfig->getNodeName() ?></strong></p>
-                        </td>
-                        <td>
-                            <a id="btn-node-name" href="#" class="btn btn-default edit"><?php echo $this->translate('edit') ?></a>
-                        </td>
-                    </tr>
-                </table>
-            </div>
+        <div class="col-md-12">
+            <system-configurator></system-configurator>
         </div>
     <?php endif; //if is configured end ?>
 </div>
-<script type="text/javascript">
-    var toggleBtn = function($btn) {
-        if ($btn.hasClass('edit')) {
-            $btn.toggleClass('edit', 'save').html('<?php echo $this->translate('save') ?>');
-        } else {
-            $btn.toggleClass('edit', 'save').html('<?php echo $this->translate('edit') ?>');
-        }
-    };
+<?php
+if ($this->processingConfig->isConfigured()) {
 
-    $(function() {
-        $('#btn-node-name').click(function (e) {
-            e.preventDefault();
+//Bootstrap riot app
+$this->inlineScript()->captureStart();
 
-            var $btn = $('#btn-node-name'), $nodeNameConfig = $('#config-node-name'),
-            nodeName = '', oldNodeName = '';
+$nodeName = $this->processingConfig->getNodeName();
 
-            if ($btn.hasClass('edit')) {
-                nodeName = $nodeNameConfig.children('strong').html();
-                var $input = $('<input>').attr('type', 'text').addClass('form-control')
-                    .val(nodeName)
-                    .data('old-val', nodeName);
+echo <<<JS
+window.SysConf = Prooph.Link.App.create(
+    {
+        node_name : '$nodeName'
+    }
+);
 
-                $nodeNameConfig.removeClass('text-btn-align');
-
-                $nodeNameConfig.html($input);
-
-                toggleBtn($btn);
-            } else {
-                nodeName = $nodeNameConfig.children('input').val();
-                oldNodeName = $nodeNameConfig.children('input').data('old-val');
-                $nodeNameConfig.addClass('text-btn-align').html('<strong>'+nodeName+'</strong>');
-                toggleBtn($btn);
-
-                if (nodeName != oldNodeName) {
-                    $.postJSON('<?php echo $this->url('system_config/change_node_name') ?>', {node_name : nodeName})
-                        .done(function (data) {
-                            $.notify('Node Name <?php echo $this->translate('successfully changed') ?>', 'success')
-                        })
-                        .fail($.failNotify);
-                }
-            }
-        })
-    })
-</script>
+$(function () {
+    SysConf.bootstrap("system-configurator").ready();
+});
+JS;
+    $this->inlineScript()->captureEnd();
+    $this->inlineScript()->prependFile($this->basePath() . '/js/system-config/app.js');
+}
+?>

@@ -57,6 +57,23 @@ return array(
             'system-config/dashboard/widget' => __DIR__ . '/../view/system-config/dashboard/widget.phtml',
             'system-config/overview/show' => __DIR__ . '/../view/system-config/overview/show.phtml',
         ],
+        'template_path_stack' => array(
+            __DIR__ . '/../view',
+        ),
+    ),
+    'asset_manager' => array(
+        'resolver_configs' => array(
+            //Riot tags are resolved by the Application\Service\RiotTagCollectionResolver
+            'riot-tags' => [
+                'js/system-config/app.js' => [
+                    'system-config/riot-tag/system-configurator',
+                    'system-config/riot-tag/system-node-name',
+                ],
+            ],
+            'paths' => array(
+                __DIR__ . '/../public',
+            ),
+        ),
     ),
     'service_manager' => [
         'invokables' => [

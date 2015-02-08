@@ -44,6 +44,8 @@ class OverviewController extends AbstractQueryController
         $params['config_dir'] = $this->systemConfig->getConfigLocation()->toString();
         $params['config_file_name'] = \SystemConfig\Model\ProcessingConfig::configFileName();
 
+        $this->layout()->setVariable('includeRiotJs', true);
+
         return new ViewModel($params);
     }
 }

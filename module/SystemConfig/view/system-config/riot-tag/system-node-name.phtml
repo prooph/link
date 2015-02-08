@@ -1,0 +1,60 @@
+<div class="row">
+    <div class="col-md-3">
+        <p class="text-info text-btn-align"><strong>Processing Node Name</strong></p>
+    </div>
+    <div class="col-md-3">
+        <p id="config-node-name" class="text-btn-align"><strong>{ node_name }</strong></p>
+    </div>
+    <div class="col-md-1">
+        <a id="btn-node-name" href="#" class="btn btn-default edit pull-right"><?php echo $this->translate('change') ?></a>
+    </div>
+</div>
+<script type="text/javascript">
+    function (context) {
+
+        this.node_name = context.app.node_name;
+
+        var toggleBtn = function($btn) {
+            if ($btn.hasClass('edit')) {
+                $btn.toggleClass('edit', 'save').html('<?php echo $this->translate('save') ?>');
+            } else {
+                $btn.toggleClass('edit', 'save').html('<?php echo $this->translate('change') ?>');
+            }
+        };
+
+        $(function() {
+            $('#btn-node-name').click(function (e) {
+                e.preventDefault();
+
+                var $btn = $('#btn-node-name'), $nodeNameConfig = $('#config-node-name'),
+                    nodeName = '', oldNodeName = '';
+
+                if ($btn.hasClass('edit')) {
+                    nodeName = $nodeNameConfig.children('strong').html();
+                    var $input = $('<input>').attr('type', 'text').addClass('form-control')
+                        .val(nodeName)
+                        .data('old-val', nodeName);
+
+                    $nodeNameConfig.removeClass('text-btn-align');
+
+                    $nodeNameConfig.html($input);
+
+                    toggleBtn($btn);
+                } else {
+                    nodeName = $nodeNameConfig.children('input').val();
+                    oldNodeName = $nodeNameConfig.children('input').data('old-val');
+                    $nodeNameConfig.addClass('text-btn-align').html('<strong>'+nodeName+'</strong>');
+                    toggleBtn($btn);
+
+                    if (nodeName != oldNodeName) {
+                        $.postJSON('<?php echo $this->url('system_config/change_node_name') ?>', {node_name : nodeName})
+                            .done(function (data) {
+                                $.notify('Node Name <?php echo $this->translate('successfully changed') ?>', 'success')
+                            })
+                            .fail($.failNotify);
+                    }
+                }
+            })
+        })
+    }
+</script>
