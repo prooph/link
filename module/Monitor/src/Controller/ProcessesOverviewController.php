@@ -51,6 +51,8 @@ final class ProcessesOverviewController extends AbstractWidgetController impleme
     {
         $lastLoggedProcesses = $this->processLogger->getLastLoggedProcesses(0, 3);
 
+        if (empty($lastLoggedProcesses)) return false;
+
         $this->addProcessNames($lastLoggedProcesses);
 
         return DashboardWidget::initialize(

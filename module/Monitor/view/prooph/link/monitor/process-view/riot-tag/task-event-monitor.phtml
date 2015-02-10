@@ -67,9 +67,9 @@
         this.getDescription = function () {
             switch (this.event.name) {
                 case "ProcessWasSetUp":
-                    return '<?php echo $this->translate('Task was started')  ?>';
-                case "TaskEntryMarkedAsRunning":
                     return '<?php echo $this->translate('Process was started')  ?>';
+                case "TaskEntryMarkedAsRunning":
+                    return '<?php echo $this->translate('Task was started')  ?>';
                 case "TaskEntryMarkedAsDone":
                     return '<?php echo $this->translate('Task successfully done')  ?>';
                 case "TaskEntryMarkedAsFailed":
