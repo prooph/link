@@ -449,27 +449,32 @@ final class DoctrineTableGateway extends AbstractWorkflowMessageHandler
 
             $itemProto = $prototype->typeProperties()['item']->typePrototype();
 
-            /** @var $tableRow TableRow */
-            foreach ($message->payload()->toType() as $i => $tableRow) {
-                if (! $tableRow instanceof TableRow) {
-                    return LogMessage::logUnsupportedMessageReceived($message);
-                }
+            $typeObj = $message->payload()->toType();
 
-                try {
-                    $this->updateOrInsertTableRow($tableRow, $forceInsert);
+            if ($typeObj) {
 
-                    $successful++;
-                } catch (\Exception $e) {
-                    $datasetIndex = ($tableRow->description()->hasIdentifier())?
-                        $tableRow->description()->identifierName() . " = " . $tableRow->property($tableRow->description()->identifierName())->value()
-                        : $i;
+                /** @var $tableRow TableRow */
+                foreach ($typeObj as $i => $tableRow) {
+                    if (! $tableRow instanceof TableRow) {
+                        return LogMessage::logUnsupportedMessageReceived($message);
+                    }
 
-                    $failed++;
-                    $failedMessages[] = sprintf(
-                        'Dataset %s: %s',
-                        $datasetIndex,
-                        $e->getMessage()
-                    );
+                    try {
+                        $this->updateOrInsertTableRow($tableRow, $forceInsert);
+
+                        $successful++;
+                    } catch (\Exception $e) {
+                        $datasetIndex = ($tableRow->description()->hasIdentifier())?
+                            $tableRow->description()->identifierName() . " = " . $tableRow->property($tableRow->description()->identifierName())->value()
+                            : $i;
+
+                        $failed++;
+                        $failedMessages[] = sprintf(
+                            'Dataset %s: %s',
+                            $datasetIndex,
+                            $e->getMessage()
+                        );
+                    }
                 }
             }
 
