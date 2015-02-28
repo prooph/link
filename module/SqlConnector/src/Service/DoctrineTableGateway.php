@@ -14,6 +14,7 @@ namespace SqlConnector\Service;
 use Application\DataType\SqlConnector\TableRow;
 use Application\SharedKernel\MessageMetadata;
 use Doctrine\DBAL\Connection;
+use Doctrine\DBAL\Driver\Statement;
 use Doctrine\DBAL\Query\QueryBuilder;
 use Prooph\Processing\Functional\Iterator\MapIterator;
 use Prooph\Processing\Message\AbstractWorkflowMessageHandler;
@@ -452,6 +453,9 @@ final class DoctrineTableGateway extends AbstractWorkflowMessageHandler
             $typeObj = $message->payload()->toType();
 
             if ($typeObj) {
+                $this->connection->beginTransaction();
+
+                $insertStmt = null;
 
                 /** @var $tableRow TableRow */
                 foreach ($typeObj as $i => $tableRow) {
@@ -460,7 +464,7 @@ final class DoctrineTableGateway extends AbstractWorkflowMessageHandler
                     }
 
                     try {
-                        $this->updateOrInsertTableRow($tableRow, $forceInsert);
+                        $insertStmt = $this->updateOrInsertTableRow($tableRow, $forceInsert, $insertStmt);
 
                         $successful++;
                     } catch (\Exception $e) {
@@ -476,6 +480,8 @@ final class DoctrineTableGateway extends AbstractWorkflowMessageHandler
                         );
                     }
                 }
+
+                $this->connection->commit();
             }
 
             $report = [
@@ -507,7 +513,7 @@ final class DoctrineTableGateway extends AbstractWorkflowMessageHandler
         }
     }
 
-    private function updateOrInsertTableRow(TableRow $data, $forceInsert = false)
+    private function updateOrInsertTableRow(TableRow $data, $forceInsert = false, Statement $insertStmt = null)
     {
         $id = false;
         $pk = null;
@@ -552,23 +558,55 @@ final class DoctrineTableGateway extends AbstractWorkflowMessageHandler
                     [$pk => $id],
                     $dbTypesArr
                 );
+
+                return $insertStmt;
             } else {
-                $this->connection->insert(
-                    $this->table,
-                    $this->convertToDbData($data),
-                    array_values($dbTypes)
-                );
+                $data = $this->convertToDbData($data);
+
+                return $this->performInsert($data, $dbTypes, $insertStmt);
             }
         } else { //insert without id, useful if column is auto incremented or table has no pk
-            $dbData = $this->convertToDbData($data);
+            $data = $this->convertToDbData($data);
 
             if ($pk) {
-                unset($dbData[$pk]);
+                unset($data[$pk]);
                 unset($dbTypes[$pk]);
             }
 
-            $this->connection->insert($this->table, $dbData, array_values($dbTypes));
+            return $this->performInsert($data, $dbTypes, $insertStmt);
         }
+    }
+
+    /**
+     * @param array $data
+     * @param Statement $stmt
+     * @return Statement
+     */
+    private function performInsert(&$data, &$dbTypes, Statement $stmt = null)
+    {
+        if (is_null($stmt)) {
+            $query = $this->connection->createQueryBuilder();
+
+            $query->insert($this->table)->values(
+                array_combine(array_keys($data), array_fill(0, count($data), '?'))
+            );
+
+            $stmt = $this->connection->prepare($query->getSQL());
+        }
+
+        $bindIndex = 1;
+
+        foreach ($data as $column => $value) {
+            $type = \Doctrine\DBAL\Types\Type::getType($dbTypes[$column]);
+
+            $stmt->bindValue($bindIndex, $value, $type->getBindingType());
+
+            $bindIndex++;
+        }
+
+        $stmt->execute();
+
+        return $stmt;
     }
 
     private function convertToDbData(TableRow $tableRow)
