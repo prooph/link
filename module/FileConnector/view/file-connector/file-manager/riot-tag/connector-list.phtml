@@ -1,0 +1,9 @@
+<div class="list-group text-center">
+    <a each="{ connectors }" class="list-group-item" href="#connectors/{ id }">{ name }</a>
+    <a href="#connectors/create" class="list-group-item list-group-item-success text-uppercase"><?php echo $this->translate('Add New Connector')?></a>
+</div>
+<script type="text/javascript">
+    function (context) {
+        this.connectors = context.app.connectors;
+    }
+</script>

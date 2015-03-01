@@ -85,41 +85,42 @@ return array(
             'file-connector/dashboard/widget' => __DIR__ . '/../view/file-connector/dashboard/widget.phtml',
             'file-connector/file-manager/app' => __DIR__ . '/../view/file-connector/file-manager/app.phtml',
             //Partials for FileConnectorManager
-            'file-connector/file-manager/partial/connectors'        => __DIR__ . '/../view/file-connector/file-manager/partial/connectors.phtml',
-            'file-connector/file-manager/partial/connector-edit'    => __DIR__ . '/../view/file-connector/file-manager/partial/connector-edit.phtml',
             'file-connector/file-manager/partial/sidebar-left'      => __DIR__ . '/../view/file-connector/file-manager/partial/sidebar-left.phtml',
+            //riot tags
+            'file-connector/file-manager/riot-tag/file-manager'     => __DIR__ . '/../view/file-connector/file-manager/riot-tag/file-manager.phtml',
+            'file-connector/file-manager/riot-tag/connector-list'   => __DIR__ . '/../view/file-connector/file-manager/riot-tag/connector-list.phtml',
+            'file-connector/file-manager/riot-tag/connector-details'=> __DIR__ . '/../view/file-connector/file-manager/riot-tag/connector-details.phtml',
+            'file-connector/pm/riot-tag/fileconnector-metadata'     => __DIR__ . '/../view/file-connector/pm/riot-tag/fileconnector-metadata.phtml',
         ],
-        'template_path_stack' => array(
-            __DIR__ . '/../view',
-        ),
     ),
     'process_manager' => [
         'view_addons' => [
             'file-connector/file-manager/partial/pm-metadata-config'
         ]
     ],
-    'asset_manager' => array(
-        'resolver_configs' => array(
-            'collections' => array(
-                'js/file-connector/app.js' => array(
-                    'js/file-connector/controllers/connectors-index.js',
-                    'js/file-connector/controllers/connectors-create.js',
-                    'js/file-connector/controllers/connector-edit.js',
-                    'js/file-connector/models/connector.js',
-                    'js/file-connector/views/helpers.js',
-                ),
-            ),
+    'asset_manager' => [
+        'resolver_configs' => [
             'riot-tags' => [
+                'js/file-connector/app.js' => [
+                    'file-connector/file-manager/riot-tag/file-manager',
+                    'file-connector/file-manager/riot-tag/connector-list',
+                    'file-connector/file-manager/riot-tag/connector-details',
+                    //'js/file-connector/controllers/connectors-index.js',
+                    //'js/file-connector/controllers/connectors-create.js',
+                    //'js/file-connector/controllers/connector-edit.js',
+                    //'js/file-connector/models/connector.js',
+                    //'js/file-connector/views/helpers.js',
+                ],
                 //Inject process manager metadata configurator for file connectors
                 'js/process-config/app.js' => [
                     'file-connector/pm/riot-tag/fileconnector-metadata',
                 ],
             ],
-            'paths' => array(
+            'paths' => [
                 __DIR__ . '/../public',
-            ),
-        ),
-    ),
+            ],
+        ],
+    ],
     'service_manager' => [
         'factories' => [
             'fileconnector.file_type_adapter_manager' => 'FileConnector\Service\FileTypeAdapter\FileTypeAdapterManagerFactory',

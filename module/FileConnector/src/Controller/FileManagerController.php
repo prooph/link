@@ -49,7 +49,7 @@ final class FileManagerController extends AbstractQueryController
 
         $viewModel->setTemplate('file-connector/file-manager/app');
 
-        $this->layout()->setVariable('includeEmberJs', true);
+        $this->layout()->setVariable('includeRiotJs', true);
 
         return $viewModel;
     }
@@ -61,7 +61,7 @@ final class FileManagerController extends AbstractQueryController
         foreach ($this->systemConfig->getConnectors() as $id => $connector) {
             if (strpos($id, "filegateway:::") !== false) {
                 $connector['id'] = $id;
-                $fileConnectors[$id] = $connector;
+                $fileConnectors[] = $connector;
             }
         }
 

@@ -1,71 +1,37 @@
 <div class="row text-center">
-    <div id="app" class="col-md-12">
-        <h1><?php echo $this->translate('File Connector Manager') ?></h1>
-        <script type="text/x-handlebars" data-template-name="file-manager">
-            {{outlet}}
-        </script>
+    <div class="col-md-12">
+        <h1 class="text-center"><?php echo $this->translate('File Manager') ?></h1>
+        <file-manager></file-manager>
     </div>
 </div>
 <?php
 
-echo $this->partial('file-connector/file-manager/partial/connectors');
-echo $this->partial('file-connector/file-manager/partial/connector-edit');
-echo $this->partial('file-connector/file-manager/partial/sidebar-left');
+$this->partial('file-connector/file-manager/partial/sidebar-left');
 
 //Bootstrap ember app
 $this->inlineScript()->captureStart();
 
-$apiUrl = ltrim($this->url('file_connector/api'), '/');
+//$apiUrl = ltrim($this->url('file_connector/api'), '/');
 
-$shortLocale = explode("_", $this->plugin('translate')->getTranslator()->getLocale())[0];
-
+$fileConnectors = json_encode($this->file_connectors);
 $availableProcessingTypes = json_encode($this->available_processing_types);
 $availableFileTypes  = json_encode($this->available_file_types);
 $availableSystemConnectors = json_encode($this->system_connectors);
 
-$clientTranslations = json_encode([
-    'file_manager' => [
-        'label' => $this->translate('File Manager')
-    ]
-]);
 echo <<<JS
-window.App = Ember.Application.create({
-    rootElement : '#app'
-});
-
-DS.RESTAdapter.reopen({
-  namespace : '{$apiUrl}'
-});
-
-Em.I18n.locale = '{$shortLocale}';
-
-Em.I18n.translations = $clientTranslations;
-
-App.Object = Ember.Object.extend(Em.Serializable);
-
-App.ProcessingTypes = $availableProcessingTypes;
-App.FileTypes = $availableFileTypes;
-App.SystemConnectors = $availableSystemConnectors;
-
-App.Router.map(function() {
-    this.resource('connectors', { path: '/' }, function() {
-        this.route('create');
-        this.resource('connector', {path: '/connector/:connector_id'}, function() {
-            this.route('edit');
-        });
-    });
-});
-
-App.ApplicationRoute = Ember.Route.extend({
-    model : function() {
-        {$this->emberPushToStore('connector', $this->file_connectors)}
-
-        this.store.all("connector").forEach(function(connector) {
-            connector.set("metadata", Em.hashToObject(connector.get("metadata"), App.Object));
-        });
+window.FM = Prooph.Link.App.create(
+    {
+        connectors : {$fileConnectors},
+        processingTypes : {$availableProcessingTypes},
+        fileTypes : {$availableFileTypes},
+        systemConnectors : {$availableSystemConnectors}
     }
+);
+
+$(function () {
+    FM.bootstrap("file-manager").ready();
 });
 JS;
 $this->inlineScript()->captureEnd();
-$this->inlineScript()->appendFile($this->basePath() . '/js/file-connector/app.js');
+$this->inlineScript()->prependFile($this->basePath() . '/js/file-connector/app.js');
 ?>

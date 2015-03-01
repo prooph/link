@@ -61,10 +61,6 @@ final class FileConnector extends AbstractRestController implements ActionContro
      */
     public function create(array $data)
     {
-        if (! array_key_exists("connector", $data)) return new ApiProblemResponse(new ApiProblem(422, 'Root key connector missing in request data'));
-
-        $data = $data["connector"];
-
         $result = $this->validateConnectorData($data);
 
         if ($result instanceof ApiProblemResponse) return $result;
@@ -90,7 +86,7 @@ final class FileConnector extends AbstractRestController implements ActionContro
 
         $data['id'] = $id;
 
-        return ["connector" => $data];
+        return $data;
     }
 
     /**
@@ -101,10 +97,6 @@ final class FileConnector extends AbstractRestController implements ActionContro
     public function update($id, array $data)
     {
         if (! $this->existsConnector($id)) return new ApiProblemResponse(new ApiProblem(404, 'Connector can not be found'));
-
-        if (! array_key_exists("connector", $data)) return new ApiProblemResponse(new ApiProblem(422, 'Root key connector missing in request data'));
-
-        $data = $data["connector"];
 
         $data['ui_metadata_riot_tag'] = self::UI_METADATA_RIOT_TAG;
         $data['icon'] = self::ICON;
@@ -121,7 +113,7 @@ final class FileConnector extends AbstractRestController implements ActionContro
 
         $data['id'] = $id;
 
-        return ['connector' => $data];
+        return $data;
     }
 
     /**
