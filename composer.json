@@ -12,6 +12,13 @@
     "require": {
         "php": ">=5.5",
         "prooph/processing" : "dev-master",
+        "prooph/link-app-core" : "dev-master",
+        "prooph/link-dashboard" : "dev-master",
+        "prooph/link-process-manager" : "dev-master",
+        "prooph/link-monitor" : "dev-master",
+        "prooph/link-file-connector" : "dev-master",
+        "prooph/link-sql-connector" : "dev-master",
+        "prooph/link-processor-proxy" : "dev-master",
         "zendframework/zendframework": "~2.3",
         "zfcampus/zf-api-problem": "~1.0",
         "zfcampus/zf-content-negotiation": "~1.0",
@@ -32,10 +39,7 @@
     "bin-dir" : "./bin",
     "autoload": {
         "psr-4": {
-            "Prooph\\Link\\Monitor\\": "module/Monitor/src"
-        },
-        "classmap": [
-            "module/Monitor/Module.php"
-        ]
+            "Prooph\\Link\\Application\\DataType\\": "data/Application/DataType"
+        }
     }
 }

@@ -62,22 +62,9 @@
                 <?php if (isset($this->sidebar_right)) echo $this->sidebar_right; ?>
             </div>
         </div>
-        <?php if ($this->includeEmberJs) : ?>
         <?php echo $this->inlineScript()
-            ->prependFile($this->basePath() . '/js/ember.helpers.js')
-            ->prependFile($this->basePath() . '/js/ember.i18n-plurals.js')
-            ->prependFile($this->basePath() . '/js/ember.i18n.js')
-            ->prependFile($this->basePath() . '/js/ember.data.js')
-            ->prependFile($this->basePath() . '/js/ember.js')
-            ->prependFile($this->basePath() . '/js/handlebars.js')
+            ->prependFile($this->basePath() . '/js/prooph.link.riot.app.js')
+            ->prependFile($this->basePath() . '/js/riot.js')
         ?>
-        <?php elseif ($this->includeRiotJs) : ?>
-            <?php echo $this->inlineScript()
-                ->prependFile($this->basePath() . '/js/prooph.link.riot.app.js')
-                ->prependFile($this->basePath() . '/js/riot.js')
-            ?>
-        <?php else: ?>
-            <?php echo $this->inlineScript(); ?>
-        <?php endif; ?>
     </body>
 </html>

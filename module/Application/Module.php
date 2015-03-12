@@ -23,11 +23,6 @@ class Module
         $eventManager        = $e->getApplication()->getEventManager();
         $moduleRouteListener = new ModuleRouteListener();
         $moduleRouteListener->attach($eventManager);
-
-        /** @var $sm ControllerManager */
-        $cm = $e->getApplication()->getServiceManager()->get('ControllerLoader');
-        $cm->addInitializer(new ActionControllerInitializer());
-        $cm->addInitializer(new ControllerTranslatorProvider());
     }
 
     public function getConfig()
@@ -41,7 +36,6 @@ class Module
             'Zend\Loader\StandardAutoloader' => array(
                 'namespaces' => array(
                     __NAMESPACE__ => __DIR__ . '/src',
-                    __NAMESPACE__ . '\DataType' => __DIR__ . '/../../data/Application/DataType',
                 ),
             ),
         );

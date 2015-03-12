@@ -9,14 +9,14 @@ return array(
         'AssetManager',
         'DoctrineModule',
         'DoctrineORMModule',
-        'SystemConfig',
-        'ProcessConfig',
-        'FileConnector',
-        'SqlConnector',
-        'ProcessorProxy',
+        'Prooph\Link\ProcessManager',
+        'Prooph\Link\FileConnector',
+        'Prooph\Link\SqlConnector',
+        'Prooph\Link\ProcessorProxy',
         'Prooph\Link\Monitor',
-        'Dashboard',
-        'Application',
+        'Prooph\Link\Dashboard',
+        'Prooph\Link\Application',
+        'Application'
     ),
 
     // These are various options for the listeners attached to the ModuleManager

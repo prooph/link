@@ -12,9 +12,9 @@
  */
 
 return array(
-    'system_config_dir' => \SystemConfig\Definition::getSystemConfigDir(),
-    'system_data_dir' => \SystemConfig\Definition::getDataDir(),
-    'system_data_type_dir' => \SystemConfig\Definition::getDataDir() . DIRECTORY_SEPARATOR . "Application" . DIRECTORY_SEPARATOR . "DataType",
+    'system_config_dir' => \Prooph\Link\Application\Definition::getSystemConfigDir(),
+    'system_data_dir' => \Prooph\Link\Application\Definition::getDataDir(),
+    'system_data_type_dir' => \Prooph\Link\Application\Definition::getDataDir() . DIRECTORY_SEPARATOR . "Application" . DIRECTORY_SEPARATOR . "DataType",
     'locations' => [
         'inbox'  => __DIR__ . '/../../data/inbox',
         'outbox' => __DIR__ . '/../../data/outbox',
@@ -24,8 +24,8 @@ return array(
     //The value (the plugin) must be a service alias
     'processing' => [
         'plugins' => [
-            \ProcessorProxy\ProcessingPlugin\StartMessageProcessIdLogger::PLUGIN_NAME => \ProcessorProxy\ProcessingPlugin\StartMessageProcessIdLogger::PLUGIN_NAME,
-            \ProcessorProxy\ProcessingPlugin\MessageFlowLogger::PLUGIN_NAME   => \ProcessorProxy\ProcessingPlugin\MessageFlowLogger::PLUGIN_NAME,
+            \Prooph\Link\ProcessorProxy\ProcessingPlugin\StartMessageProcessIdLogger::PLUGIN_NAME => \Prooph\Link\ProcessorProxy\ProcessingPlugin\StartMessageProcessIdLogger::PLUGIN_NAME,
+            \Prooph\Link\ProcessorProxy\ProcessingPlugin\MessageFlowLogger::PLUGIN_NAME   => \Prooph\Link\ProcessorProxy\ProcessingPlugin\MessageFlowLogger::PLUGIN_NAME,
             \Prooph\Link\Monitor\ProcessingPlugin\ProcessLogListener::PLUGIN_NAME => \Prooph\Link\Monitor\ProcessingPlugin\ProcessLogListener::PLUGIN_NAME,
         ]
     ],
@@ -35,7 +35,7 @@ return array(
             'Doctrine\\ORM\\Mapping\\UnderscoreNamingStrategy' => 'Doctrine\\ORM\\Mapping\\UnderscoreNamingStrategy',
         ),
         'factories' => [
-            'processing_environment' => Application\Service\Factory\ProcessingEnvironmentFactory::class,
+            'processing_environment' => \Prooph\Link\Application\Service\Factory\ProcessingEnvironmentFactory::class,
             \Prooph\Processing\Processor\Definition::SERVICE_WORKFLOW_PROCESSOR       => \Prooph\Processing\Environment\Factory\WorkflowProcessorFactory::class,
             \Prooph\Processing\Processor\Definition::SERVICE_PROCESS_FACTORY          => \Prooph\Processing\Environment\Factory\ProcessFactoryFactory::class,
             \Prooph\Processing\Processor\Definition::SERVICE_PROCESS_REPOSITORY       => \Prooph\Processing\Environment\Factory\ProcessRepositoryFactory::class,
@@ -49,7 +49,7 @@ return array(
         ],
         'aliases' => [
             //We tell doctrine that it should use the application db connection instead of creating an own connection
-            'doctrine.connection.orm_default' => 'application.db',
+            'doctrine.connection.orm_default' => 'prooph.link.app.db',
         ]
     ],
     'doctrine' => array(

@@ -23,17 +23,6 @@ return array(
         ),
     ),
     'service_manager' => array(
-        'invokables' => [
-            'application.psb.single_handle_method_invoke_strategy' => 'Application\ProophPlugin\SingleHandleMethodInvokeStrategy',
-        ],
-        'factories' => [
-            'application.config_location'     => 'Application\Service\Factory\ConfigLocationFactory',
-            'application.data_location'       => 'Application\Service\Factory\DataLocationFactory',
-            'application.data_type_location'  => 'Application\Service\Factory\ApplicationDataTypeLocationFactory',
-            'application.location_translator' => 'Application\SharedKernel\Factory\LocationTranslatorFactory',
-            'application.db'                  => 'Application\Service\Factory\ApplicationDbFactory',
-            'application.riot_tag.collection.resolver' => 'Application\Service\Factory\RiotTagCollectionResolverFactory',
-        ],
         'abstract_factories' => array(
             'Zend\Cache\Service\StorageCacheAbstractServiceFactory',
             'Zend\Log\LoggerAbstractServiceFactory',
@@ -67,33 +56,4 @@ return array(
             'ViewJsonStrategy',
         ),
     ),
-    'view_helpers' => array(
-        'invokables'=> array(
-            'emberPushToStore' => 'Application\View\Helper\EmberPushToStore',
-            'riotTag'          => 'Application\View\Helper\RiotTag'
-        )
-    ),
-    'asset_manager' => [
-        'resolvers' => [
-            'application.riot_tag.collection.resolver' => 2000
-        ]
-    ],
-    'zf-content-negotiation' => [
-        //Application wide selectors for the content negotiation module
-        'selectors'   => array(
-            'Json' => array(
-                'ZF\ContentNegotiation\JsonModel' => array(
-                    'application/json',
-                    'application/*+json',
-                ),
-            ),
-        ),
-    ],
-    'zf-api-problem' => [
-        'accept_filters' => [
-            'application/json',
-            'application/*+json',
-        ]
-    ],
-    ''
 );
