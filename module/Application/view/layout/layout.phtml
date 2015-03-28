@@ -1,5 +1,4 @@
 <?php echo $this->doctype(); ?>
-
 <html lang="en">
     <head>
         <meta charset="utf-8">
@@ -11,12 +10,22 @@
         ?>
 
         <!-- Le styles -->
-        <?php echo $this->headLink(/*array('rel' => 'shortcut icon', 'type' => 'image/vnd.microsoft.icon', 'href' => $this->basePath() . '/img/favicon.ico')*/)
+        <?php
+        /**
+         * Link globally required CSS files.
+         * The default layout uses the Bootswatch Slate template: https://bootswatch.com/slate/
+         */
+        echo $this->headLink(/*array('rel' => 'shortcut icon', 'type' => 'image/vnd.microsoft.icon', 'href' => $this->basePath() . '/img/favicon.ico')*/)
                         ->prependStylesheet($this->basePath() . '/css/style.css')
-                        ->prependStylesheet($this->basePath() . '/css/bootstrap.slate.min.css') ?>
+                        ->prependStylesheet($this->basePath() . '/css/bootstrap.slate.min.css')
+        ?>
 
         <!-- Scripts -->
-        <?php echo $this->headScript()
+        <?php
+        /**
+         * Link globally required javascript libs
+         */
+        echo $this->headScript()
             ->prependFile($this->basePath() . '/js/global.settings.js')
             ->prependFile($this->basePath() . '/js/notify.min.js')
             ->prependFile($this->basePath() . '/js/bootstrap.min.js')
@@ -40,7 +49,11 @@
                 </div>
                 <div class="collapse navbar-collapse">
                     <ul class="nav navbar-nav">
-
+                        <?php //add navbar links here ?>
+                    </ul>
+                    <ul class="nav navbar-nav navbar-right">
+                        <?php //This icon can be manipulated by JS. The Javascript ticker included in prooph/link-app-core changes color of the icon when the js ticker is running or a request failed ?>
+                        <li id="js_ticker_status" class="navbar-text navbar-text-lg"><span class="glyphicon glyphicon-dashboard" title="Javascript Ticker"></span></li>
                     </ul>
                 </div><!--/.nav-collapse -->
             </div>
@@ -65,6 +78,13 @@
         <?php echo $this->inlineScript()
             ->prependFile($this->basePath() . '/js/prooph.link.riot.app.js')
             ->prependFile($this->basePath() . '/js/riot.js')
+        ?>
+        <?php
+        /**
+         * The javascript ticker view helper is provided by prooph/link-app-core.
+         * You should remove the line, if you don't want to use the js ticker functionality
+         */
+        echo $this->javascriptTicker();
         ?>
     </body>
 </html>
