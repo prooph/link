@@ -11,7 +11,8 @@
     "homepage": "https://github.com/prooph/link",
     "require": {
         "php": ">=5.5",
-        "prooph/processing" : "~0.2",
+        "prooph/processing" : "dev-master",
+        "prooph/link-message-queue": "dev-master",
         "prooph/link-app-core" : "~0.1",
         "prooph/link-dashboard" : "~0.1",
         "prooph/link-process-manager" : "~0.1",

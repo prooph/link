@@ -13,6 +13,7 @@ return array(
         'Prooph\Link\FileConnector',
         'Prooph\Link\SqlConnector',
         'Prooph\Link\ProcessorProxy',
+        'Prooph\Link\MessageQueue',
         'Prooph\Link\Monitor',
         'Prooph\Link\Dashboard',
         'Prooph\Link\Application',
