@@ -19,4 +19,4 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Call javascriptTicker view helper in the default layout
 - Include a "#js_ticker_status" icon in the header navbar
 
-[unreleased]: https://github.com/prooph/link-app-core/compare/v0.1.0...HEAD
+[unreleased]: https://github.com/prooph/link/compare/v0.1.0...HEAD
