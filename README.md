@@ -1,19 +1,15 @@
 prooph LINK
 ===========
 
-Prooph LINK is a data linking and workflow processing application. It is build on top of [prooph processing](https://github.com/prooph/processing)
-and it is 100% open source. We make use of carefully selected open source libraries from the PHP and JS universe,
-add specific logic for process automation and monitoring and put a modern UI on top of it to make
-it available for all kind of users no matter if they have development experiences or not.
+Prooph LINK is a workflow processing application made for all kind of users no matter if they have development experiences or not. It is build on top of [prooph/processing](https://github.com/prooph/processing) and puts a modern UI on top of it to make automated workflow processing a breeze.
 
 # Toolkit, Application, Both?
 
 When you have a look at the source you will recognize that this repo is more or less empty. So what are we talking about?
-prooph LINK is the name of an application but it consists of different modules that you can mix and match together with your own stuff.
 This repo acts as a starting point. Think of it as a skeleton. You can download it, follow the installation instruction below and
 you will get a fully running application. When you are familiar with it you probably will start to think about customization.
-We can tell you that when you reach this point everything is already prepared for you, so you can start to individualize the
-application.
+We can tell you that when you reach this point everything is already prepared for you, so you can start to individualize the application and include it in your own project.
+We make use of the module system of the Zend Framework 2 and use composer to pull in prooph LINK modules. This way you can decide of your own which modules you want to use and of course you can mix and match them with your own modules.
 
 # Installation
 
@@ -33,7 +29,15 @@ The application runs already in production, but only with our support. Please co
 
 # Documentation
 
-More information is coming soon. Stay tuned!
+Please referrer to the module documentations. You can find all modules included in the default skeleton in the list below.
+
+- [Prooph\Link\Application](https://github.com/prooph/link-app-core)
+- [Prooph\Link\Dashboard](https://github.com/prooph/link-dashboard)
+- [Prooph\Link\ProcessManager](https://github.com/prooph/link-process-manager)
+- [Prooph\Link\ProcessorProxy](https://github.com/prooph/link-processor-proxy)
+- [Prooph\Link\Monitor](https://github.com/prooph/link-monitor)
+- [Prooph\Link\FileConnector](https://github.com/prooph/link-file-connector)
+- [Prooph\Link\SqlConnector](https://github.com/prooph/link-sql-connector)
 
 # Support
 
