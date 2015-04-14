@@ -117,5 +117,9 @@ $(function() {
     $.notify.defaults({
         globalPosition: 'bottom left'
     });
+
+    //Affix relative width fix
+    var $affixElement = $("#sidebar-left");
+    $affixElement.width($affixElement.parent().width());
 });
 
