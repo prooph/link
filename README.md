@@ -35,7 +35,6 @@ Please referrer to the module documentations. You can find all modules included 
 - [Prooph\Link\Dashboard](https://github.com/prooph/link-dashboard)
 - [Prooph\Link\ProcessManager](https://github.com/prooph/link-process-manager)
 - [Prooph\Link\ProcessorProxy](https://github.com/prooph/link-processor-proxy)
-- [Prooph\Link\Monitor](https://github.com/prooph/link-monitor)
 - [Prooph\Link\FileConnector](https://github.com/prooph/link-file-connector)
 - [Prooph\Link\SqlConnector](https://github.com/prooph/link-sql-connector)
 - [Prooph\Link\MessageQueue](https://github.com/prooph/link-message-queue)

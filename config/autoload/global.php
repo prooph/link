@@ -26,7 +26,6 @@ return array(
         'plugins' => [
             \Prooph\Link\ProcessorProxy\ProcessingPlugin\StartMessageProcessIdLogger::PLUGIN_NAME => \Prooph\Link\ProcessorProxy\ProcessingPlugin\StartMessageProcessIdLogger::PLUGIN_NAME,
             \Prooph\Link\ProcessorProxy\ProcessingPlugin\MessageFlowLogger::PLUGIN_NAME   => \Prooph\Link\ProcessorProxy\ProcessingPlugin\MessageFlowLogger::PLUGIN_NAME,
-            \Prooph\Link\Monitor\ProcessingPlugin\ProcessLogListener::PLUGIN_NAME => \Prooph\Link\Monitor\ProcessingPlugin\ProcessLogListener::PLUGIN_NAME,
         ]
     ],
     //Processing environment defaults

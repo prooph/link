@@ -4,6 +4,11 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased][unreleased]
 
+## [0.3.0] - 2015-05-10
+
+### Changed
+- link-monitor is now part of link-process-manager, see prooph/link-process-manager#7
+
 ## [0.2.0] - 2015-05-10
 ### Added
 - Integrate message-queue module
@@ -30,5 +35,6 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Call javascriptTicker view helper in the default layout
 - Include a "#js_ticker_status" icon in the header navbar
 
-[unreleased]: https://github.com/prooph/link/compare/v0.2.0...HEAD
+[unreleased]: https://github.com/prooph/link/compare/v0.3.0...HEAD
+[0.3.0]: https://github.com/prooph/link/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/prooph/link/compare/v0.1.0...v0.2.0
