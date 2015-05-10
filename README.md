@@ -1,6 +1,8 @@
 prooph LINK
 ===========
 
+![flowchart](https://github.com/prooph/link-process-manager/blob/master/docs/img/flowchart.png)
+
 Prooph LINK is a workflow processing application made for all kind of users no matter if they have development experiences or not. It is build on top of [prooph/processing](https://github.com/prooph/processing) and puts a modern UI on top of it to make automated workflow processing a breeze.
 
 # Toolkit, Application, Both?
