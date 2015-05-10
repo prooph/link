@@ -57,6 +57,9 @@ return [
                     'filename_template'  => 'productcollection-{{#now}}Y-m-d{{/now}}.csv',
                 ],
                 'ui_metadata_riot_tag' => 'fileconnector-metadata',
+                'icon' => 'glyphicon-file',
+                'icon_type' => 'glyphicon',
+                'node_name' => 'localhost',
             ],
             'sqlconnector:::processing_test_source' => [
                 'name' => 'Processing Test Source DB',
@@ -71,6 +74,9 @@ return [
                 'dbal_connection' => 'processing_test_source',
                 'table' => 'products',
                 'ui_metadata_riot_tag' => 'sqlconnector-metadata',
+                'icon' => 'glyphicon-hdd',
+                'icon_type' => 'glyphicon',
+                'node_name' => 'localhost',
             ]
         ],
     ],

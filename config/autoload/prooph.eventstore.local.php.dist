@@ -1,0 +1,20 @@
+<?php
+//This config is activated by the install script bin/install.php
+//But the memory configuration is overridden as soon as the prooph LINK set up routine is triggered
+//The memory config is required to be able to load an event store instance even without a configured connection
+return [
+    'proophessor' => [
+        'event_store' => [
+            'adapter' => [
+                'type' => 'Prooph\EventStore\Adapter\Doctrine\DoctrineEventStoreAdapter',
+                'options' => [
+                    'connection' => [
+                        'driver' => 'pdo_sqlite',
+                        'memory'   => true
+                    ],
+                    'serializer_adapter' => 'json',
+                ]
+            ]
+        ]
+    ]
+];

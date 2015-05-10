@@ -50,6 +50,8 @@ return array(
         'aliases' => [
             //We tell doctrine that it should use the application db connection instead of creating an own connection
             'doctrine.connection.orm_default' => 'prooph.link.app.db',
+            //Processing uses prooph.event_store service name to retrieve the event store
+            'prooph.event_store' => 'proophessor.event_store'
         ]
     ],
     'doctrine' => array(

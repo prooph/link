@@ -52,7 +52,9 @@ Prooph.Link = {
     },
     App : {
         create : function (config) {
-            return new Prooph.Link.__AppPrototype(config);
+            var app = new Prooph.Link.__AppPrototype(config);
+            riot.observable(app);
+            return app;
         }
     },
     namespace : function(name){

@@ -73,7 +73,7 @@ foreach ($features as $featureAlias => $config) {
     if (! isset($config['class'])) {
         throw \Prooph\EventStore\Configuration\Exception\ConfigurationException::configurationError(
             sprintf(
-                "Missing class definition in prooph.event_store feature configuration of feature %s",
+                "Missing class definition in proophessor.event_store feature configuration of feature %s",
                 $featureAlias
             )
         );
@@ -83,8 +83,10 @@ foreach ($features as $featureAlias => $config) {
 }
 
 return array(
-    'prooph.event_store' => array_merge(array(
-        'features' => $featureAliases,
-        'feature_manager' => $featureManagerConfig,
-    ), $settings)
+    'proophessor' => [
+        'event_store' => array_merge([
+            'features' => $featureAliases,
+            'feature_manager' => $featureManagerConfig,
+        ], $settings)
+    ],
 );

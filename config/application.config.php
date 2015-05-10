@@ -4,8 +4,7 @@ return array(
     'modules' => array(
         'ZF\ContentNegotiation',
         'ZF\ApiProblem',
-        'ProophServiceBusModule',
-        'ProophEventStoreModule',
+        'Prooph\Proophessor',
         'AssetManager',
         'DoctrineModule',
         'DoctrineORMModule',

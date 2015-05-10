@@ -16,9 +16,15 @@ if (! file_exists('vendor/autoload.php')) {
 }
 
 copy('config/autoload/local.php.dist', 'config/autoload/local.php');
+copy('config/autoload/prooph.eventstore.local.php.dist', 'config/autoload/prooph.eventstore.local.php');
 
 if (! file_exists('config/autoload/local.php')) {
     echo "Failed to rename 'config/autoload/local.php.dist' to 'config/autoload/local.php'\nPlease check the write permissions and run the script again!\n";
+    exit(1);
+}
+
+if (! file_exists('config/autoload/prooph.eventstore.local.php')) {
+    echo "Failed to rename 'config/autoload/prooph.eventstore.local.php.dist' to 'config/autoload/prooph.eventstore.local.php'\nPlease check the write permissions and run the script again!\n";
     exit(1);
 }
 
