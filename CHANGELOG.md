@@ -3,8 +3,10 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased][unreleased]
+
+## [0.4.0] - 2015-05-12
 ### Added
-- riot: upgraded to version 2.0.15
+- riot: upgraded to version 2.0.15 - BC break!
   - router can be stopped and started
   - Scope of listeners did change, better to use always self reference
   - riot-if behaviour did change, elements are now removed from the dom instead of hiding them
@@ -42,6 +44,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Call javascriptTicker view helper in the default layout
 - Include a "#js_ticker_status" icon in the header navbar
 
-[unreleased]: https://github.com/prooph/link/compare/v0.3.0...HEAD
+[unreleased]: https://github.com/prooph/link/compare/v0.4.0...HEAD
+[0.4.0]: https://github.com/prooph/link/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/prooph/link/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/prooph/link/compare/v0.1.0...v0.2.0
