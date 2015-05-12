@@ -45,6 +45,16 @@ Prooph.Link = {
             }
         }
 
+        this.router = {
+            stop : function () {
+                riot.route.stop();
+            },
+            restart : function () {
+                riot.route.start();
+                //riot.route(routeListener);
+            }
+        }
+
         this.ready = function () {
             this.trigger("ready");
             riot.route.exec(routeListener);
@@ -53,7 +63,6 @@ Prooph.Link = {
     App : {
         create : function (config) {
             var app = new Prooph.Link.__AppPrototype(config);
-            riot.observable(app);
             return app;
         }
     },
