@@ -3,6 +3,13 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased][unreleased]
+### Added
+- riot: upgraded to version 2.0.15
+  - router can be stopped and started
+  - Scope of listeners did change, better to use always self reference
+  - riot-if behaviour did change, elements are now removed from the dom instead of hiding them
+    - Initialization logic needs to be aligned or even better: put child tags in if conditions
+- riot: app.router.stop/restart like riot.router.stop/start but attaches the routeListener again
 
 ## [0.3.0] - 2015-05-10
 
