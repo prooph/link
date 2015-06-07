@@ -4,6 +4,7 @@ namespace Application\Migrations;
 
 use Doctrine\DBAL\Migrations\AbstractMigration,
     Doctrine\DBAL\Schema\Schema;
+use Prooph\Link\ProcessManager\Projection\Tables;
 
 /**
  * Auto-generated Migration: Please modify to your need!
@@ -12,7 +13,7 @@ class Version20150120223833 extends AbstractMigration
 {
     public function up(Schema $schema)
     {
-        $processes = $schema->createTable("processes");
+        $processes = $schema->createTable(Tables::PROCESS_LOG);
 
         $processes->addColumn('process_id', 'string', ['length' => 36]);
         $processes->addColumn('start_message', 'string', ['notnull' => false]);
