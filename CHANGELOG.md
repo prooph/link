@@ -12,6 +12,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
   - riot-if behaviour did change, elements are now removed from the dom instead of hiding them
     - Initialization logic needs to be aligned or even better: put child tags in if conditions
 - riot: app.router.stop/restart like riot.router.stop/start but attaches the routeListener again
+- new global js function: format_iso_datetime
 
 ## [0.3.0] - 2015-05-10
 

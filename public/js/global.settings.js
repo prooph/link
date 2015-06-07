@@ -58,6 +58,12 @@ window.status_icon = function(status) {
     return '<span class="glyphicon ' + statusIcon + ' text-' + statusTextClass + '"></span>';
 };
 
+window.format_iso_datetime = function (iso8601DateStr) {
+    var dateobj = new Date(iso8601DateStr);
+
+    return dateobj.toLocaleString();
+};
+
 //jQuery Additions
 (function( $ ) {
 
