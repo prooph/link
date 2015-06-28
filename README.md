@@ -3,7 +3,9 @@ prooph LINK
 
 ![flowchart](https://github.com/prooph/link-process-manager/blob/master/docs/img/flowchart.png)
 
-Prooph LINK is a workflow processing application written in PHP. It is designed to run in standard PHP environments be it shared hosting or a managed PHP iinfrastructure. The modular architecture allows easy integration of any software that offers a public accessible API. Distributed Domain Driven Design, CQRS and Event Sourcing quarantee a scalable and maintainable software. And with the prooph software GmbH the project has a solid background with long term support. Try it. It is Open Source.
+Prooph LINK is a workflow processing application written in PHP. It is designed to run in standard PHP environments be it shared hosting or a managed PHP infrastructure. The modular architecture allows easy integration of any software that offers a public accessible API. Distributed Domain-Driven Design, CQRS and Event Sourcing quarantee a scalable and maintainable software. The team of prooph software GmbH provides long term support for prooph LINK. You can try it without any registration or contract. It is open source!
+
+If you need help or more information get in touch with us. We look forward to hear from you. 
 
 # Toolkit, Application, Both?
 
